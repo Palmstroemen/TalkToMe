@@ -165,7 +165,19 @@ Ebene 4  Global                   Ansichten, Rückgängig/Wiederholen, Speichern
 - Nicht ausführbare Befehle (`isActive() == False`) werden nicht ausgeführt, sondern vermerkt, z. B. „Pad braucht einen ausgewählten Sketch“.
 - Findet sich ein Befehl nur in einer **anderen** Workbench, wird er nicht automatisch ausgeführt. In einer späteren Ausbaustufe kann das System den Wechsel der Workbench anbieten.
 
-### 6.3 Kontext-Synchronisation
+### 6.3 Globale Befehle und Workbench-Wechsel
+
+- **Ebene 4 (global)** umfasst die `Std_`-Befehle, die in jeder Workbench gelten, z. B. Speichern, Öffnen, Rückgängig, Ansichten, Zoom, Auswahl. Quelle sind die Standard-Toolbars und -Menüs (`Workbench.listMenus()`, `listToolbars()`) bzw. die Liste aller Befehle (`Gui.Command.listAll()`).
+- **Workbench-Wechsel** sind in FreeCAD keine normalen Befehle. Sie werden als virtuelle Befehle `workbench:<Name>` geführt und mit `Gui.activateWorkbench()` ausgeführt. Ihr Wortschatz stammt aus den Menütexten der Workbenches.
+- **Mehrdeutigkeit:** Bei Phrasen wie „Öffne den Sketcher“ (Workbench-Wechsel oder `Sketcher_NewSketch`?) entscheidet der Kontext. Ist in PartDesign eine Fläche gewählt, gilt der neue Sketch, sonst der Wechsel. Sind beide Kandidaten gleich gut, wird nichts ausgeführt und der Fehlerton gespielt (Grundprinzip 4).
+
+### 6.4 Zeigewörter („da“, „hier“, „das“)
+
+- **Momentaufnahme:** Zum Zeitpunkt einer Äußerung hält das Addon die **Mausposition in der 3D-Ansicht** und die **Auswahl** fest. Gemeint ist der Beginn der Äußerung, nicht der Moment, in dem der Text vorliegt.
+- **Auswertung:** „Zoome da hinein“ zoomt zur Mausposition. „Lösche das“ und „polstere das auf“ wirken auf die Auswahl.
+- **Rückfrage statt Raten:** Fehlt der Bezug, z. B. bei „lösche das“ ohne Auswahl, wird nichts ausgeführt und der Fehlerton gespielt.
+
+### 6.5 Kontext-Synchronisation
 
 Das Addon schickt bei jeder relevanten Änderung einen Kontext-Schnappschuss an den Dienst: Wechsel der Workbench, Betreten oder Verlassen des Bearbeitungsmodus, Öffnen oder Schließen eines Taskdialogs, Änderung der Auswahl. Die Schnappschüsse werden gebündelt, damit nicht jede Mausbewegung einen auslöst. Der Dienst hat damit **vor** jeder Äußerung den aktuellen Kontext und kann ihn der Spracherkennung als Hotwords mitgeben.
 
@@ -261,6 +273,32 @@ Priorität tief   automatisch erzeugt          aus den übersetzten QAction-Text
 
 Der Lernmodus lässt sich umsetzen, weil `Gui.Command.get(id).getAction()` die QActions der Befehle liefert. Mit deren Signal `triggered` kann man sich verbinden. Das ist laut Quellcode von FreeCAD 1.1.4 verfügbar.
 
+### 8.4 Ziel: normal sprechen statt Befehle auswendig lernen
+
+Nutzer sollen nicht die Befehlsnamen lernen müssen. Manche Bezeichnungen sind ungewohnt, etwa „Aufpolstern“ für Pad. Gemeint ist oft „extrudieren“, „hochziehen“ oder „zieh das in 3D auf“. Dafür arbeiten die Ebenen zusammen:
+
+| Ebene | Deckt ab | Beispiel für `PartDesign_Pad` |
+|---|---|---|
+| Automatischer Wortschatz | Bezeichnungen der Buttons | „Aufpolstern“, „Pad“ |
+| Übersetzungstabelle (Pakete + eigene Einträge) | Gebräuchliche Synonyme und Wendungen | „extrudieren“, „hochziehen“, „in 3D aufziehen“ |
+| Embeddings (Stufe 2) | Umschreibungen, die nicht in der Tabelle stehen | „zieh das jetzt nach oben raus“ |
+| Lernmodus | Persönliche Ausdrücke und typische Fehlerkennungen | „extrahiere das“ (falsch gehört für „extrudiere“) |
+
+Gespeichert wird im Lernmodus immer der **tatsächlich erkannte** Text, nicht der gemeinte. Damit lernt das System auch die Fehler der Spracherkennung mit.
+
+### 8.5 Lernmodus im Detail
+
+- **Zeitfenster statt Gleichzeitigkeit:** Der Text einer Äußerung liegt erst nach dem Satzende vor. Gepaart werden deshalb die letzte Äußerung und ein Button-Klick, die innerhalb eines Zeitfensters liegen (z. B. ±5 s, einstellbar).
+- **Der Klick wird normal ausgeführt.** Der Lernmodus beobachtet nur und unterdrückt nichts.
+- **Bestätigung:** Ein Bestätigungston signalisiert, dass eine neue Zuordnung gespeichert wurde. In der Statusleiste steht „»…« → Befehl“. Rückgängig machen lässt sich das über den Wortschatz-Editor (Phase 5).
+- **Ein- und ausschalten:** Der Lernmodus ist eigenständig schaltbar. Zusätzlich ist er nach einem Fehlerton kurz automatisch aktiv (siehe 9.3).
+
+### 8.6 Makros
+
+- **Makros mit Toolbar-Button** sind für FreeCAD normale Befehle mit eigener QAction. Sie werden vom Lernmodus genauso erkannt und über `Gui.runCommand` ausgeführt.
+- **Makros ohne Button** werden in der Übersetzungstabelle als eigener Eintragstyp hinterlegt, der auf die Makro-Datei verweist (`{"macro": "MeinMakro.FCMacro", "phrases": [...]}`). Sie werden über FreeCADs Makro-Ausführung gestartet.
+- **Gesprochene Makros aus Befehlsfolgen** („Standardplatte“ → Sketch, Rechteck, Pad 12 mm) bleiben wie in 8.3 beschrieben möglich.
+
 ---
 
 ## 9. Dauerzuhören (Mikrofon-Schalter)
@@ -315,6 +353,7 @@ Die Verbindung läuft über TCP auf `127.0.0.1` (Port einstellbar), mit einer JS
 | Addon → Dienst | `listen` | `on` / `off` |
 | Addon → Dienst | `context` | Kontext-Schnappschuss (Ebenen, Kandidaten mit Texten, Auswahl) |
 | Dienst → Addon | `state` | `listening` / `processing` / `idle` / `error` |
+| Dienst → Addon | `speech_start` | Eine Äußerung beginnt. Das Addon hält Mausposition und Auswahl fest (6.4) |
 | Dienst → Addon | `plan` | Plan (Abschnitt 7) |
 | Dienst → Addon | `not_understood` | Erkannter Text, ggf. Top-3-Kandidaten |
 | Addon → Dienst | `result` | `ok` / `failed` (+ Grund), daraufhin spielt der Dienst den Ton |

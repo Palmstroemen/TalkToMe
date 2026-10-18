@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
+  <name>Talk to me</name>
+  <description>Local, multilingual voice control for FreeCAD.</description>
+  <version>0.0.1</version>
+  <date>2026-10-18</date>
+  <maintainer email="19696982+Palmstroemen@users.noreply.github.com">Palmstroemen</maintainer>
+  <license file="LICENSE">LGPL-2.1-or-later</license>
+  <icon>Resources/icons/TalkToMe.svg</icon>
+  <content>
+    <!-- Not a workbench: a global toolbar available in every workbench. -->
+    <other>
+      <name>Talk to me</name>
+      <subdirectory>./</subdirectory>
+      <freecadmin>1.0.0</freecadmin>
+    </other>
+  </content>
+</package>

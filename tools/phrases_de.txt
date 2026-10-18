@@ -1,0 +1,22 @@
+# Testsätze für die Messung der Spracherkennung (Phase 0).
+# Eine Zeile pro Satz. Alternative, ebenfalls richtige Schreibweisen mit " | " trennen.
+Zeichne ein Rechteck
+Kreis
+Linie
+Schließe den Sketch
+Polstere zwölf Millimeter auf | Polstere 12 Millimeter auf | Polstere 12 mm auf
+Drehe auf die andere Seite
+Ansicht von vorne
+Isometrische Ansicht
+Rückgängig
+Wiederholen
+Tasche fünf Millimeter | Tasche 5 Millimeter | Tasche 5 mm
+Fase zwei Millimeter | Fase 2 Millimeter | Fase 2 mm
+Verrundung drei Millimeter | Verrundung 3 Millimeter | Verrundung 3 mm
+Neuer Sketch | Neue Skizze
+Horizontale Bemaßung
+Spiegeln
+Alles einpassen
+Speichern
+Wechsle zu Part Design | Wechsle zu PartDesign
+Abbrechen

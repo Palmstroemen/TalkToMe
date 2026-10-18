@@ -1,0 +1,20 @@
+{
+    "Sketcher_NewSketch":       ["Neuer Sketch", "Neue Skizze", "Öffne den Sketcher", "Sketch öffnen", "Skizze öffnen"],
+    "Sketcher_LeaveSketch":     ["Schließe den Sketch", "Schließe den Sketcher", "Sketch schließen", "Skizze schließen"],
+    "Sketcher_CreateRectangle": ["Rechteck", "Viereck"],
+    "Sketcher_CreateCircle":    ["Kreis"],
+    "Sketcher_CreateLine":      ["Linie", "Strecke"],
+    "Sketcher_Dimension":       ["Bemaßung", "Maß"],
+    "PartDesign_Pad":           ["Polster", "Polstere", "aufpolstern"],
+    "PartDesign_Pocket":        ["Tasche"],
+    "PartDesign_Chamfer":       ["Fase"],
+    "PartDesign_Fillet":        ["Verrundung", "abrunden"],
+    "PartDesign_Mirrored":      ["Spiegeln"],
+    "Std_ViewFront":            ["Ansicht von vorne", "Vorderansicht"],
+    "Std_ViewRear":             ["andere Seite", "Rückansicht", "Ansicht von hinten"],
+    "Std_ViewIsometric":        ["isometrische Ansicht", "isometrisch"],
+    "Std_ViewFitAll":           ["alles einpassen", "alles zeigen"],
+    "Std_Undo":                 ["rückgängig"],
+    "Std_Redo":                 ["wiederholen"],
+    "Std_Save":                 ["speichern"]
+}
