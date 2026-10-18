@@ -222,3 +222,75 @@ def test_disconnect_stops_listening(service, parts):
     while parts["source"].running and time.monotonic() < deadline:
         time.sleep(0.01)
     assert not parts["source"].running
+
+
+# --- Phase 1: decisions in the service ----------------------------------------------
+
+CANDIDATES = [
+    {"id": "Sketcher_CreateRectangle", "level": "edit", "phrases": ["Rechteck"], "active": True},
+    {"id": "Std_Save", "level": "global", "phrases": ["Speichern"], "active": True},
+]
+
+
+def service_saying(parts, text):
+    parts["transcriber"] = FakeTranscriber(text)
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=CANDIDATES)
+    c.send("listen", on=True)
+    return s, c
+
+
+def wait_tones(tones, n, timeout=5):
+    deadline = time.monotonic() + timeout
+    while len(tones.played) < n and time.monotonic() < deadline:
+        time.sleep(0.01)
+
+
+def test_speech_start_is_announced(parts):
+    s, c = service_saying(parts, "Zeichne ein Rechteck")
+    c.wait_for("speech_start")
+    c.wait_for("transcript")
+    c.close()
+    s.stop()
+
+
+def test_plan_for_known_command(parts):
+    s, c = service_saying(parts, "Zeichne ein Rechteck")
+    msg = c.wait_for("plan")
+    assert msg["command"] == "Sketcher_CreateRectangle"
+    assert msg["score"] >= 0.75
+    assert parts["tones"].played == []          # the tone follows the addon's result
+    c.send("result", ok=True)
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["ok"]
+    c.close()
+    s.stop()
+
+
+def test_not_understood_plays_error_tone(parts):
+    s, c = service_saying(parts, "Klaus")
+    msg = c.wait_for("not_understood")
+    assert msg["reason"] == "no_match"
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["error"]
+    c.close()
+    s.stop()
+
+
+def test_unrelated_talk_is_ignored_silently(parts):
+    s, c = service_saying(parts, "Ich gehe jetzt erst mal einen Kaffee trinken")
+    c.wait_for("ignored")
+    time.sleep(0.2)
+    assert parts["tones"].played == []
+    c.close()
+    s.stop()
+
+
+def test_candidates_become_hotwords(parts):
+    s, c = service_saying(parts, "Zeichne ein Rechteck")
+    c.wait_for("plan")
+    assert parts["transcriber"].hotwords[-1] == "Rechteck, Speichern"
+    c.close()
+    s.stop()

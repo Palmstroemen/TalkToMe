@@ -93,3 +93,12 @@ def test_invalid_config():
         make(frame_ms=0)
     with pytest.raises(ValueError):
         make(end_threshold=0.6)        # above the start threshold
+
+
+def test_in_speech_reports_running_utterance():
+    seg = make()
+    assert not seg.in_speech
+    run(seg, [SPEECH] * 3)
+    assert seg.in_speech
+    run(seg, [SILENCE] * 10)
+    assert not seg.in_speech

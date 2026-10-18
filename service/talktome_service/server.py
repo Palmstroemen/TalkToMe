@@ -16,6 +16,8 @@ import time
 import numpy as np
 
 from talktome_service.segmenter import Segmenter
+from ttm_core.context import LEVELS
+from ttm_core.decision import decide
 from ttm_core.matching import hotwords
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 
@@ -44,6 +46,8 @@ class Service:
         self._send_lock = threading.Lock()
         self._listening = False
         self._hotwords = None
+        self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
+        self.language = self.info.get("language")
         self._mute_until = 0.0
         self._stop = threading.Event()
         self._threads = []
@@ -108,6 +112,7 @@ class Service:
                             return
                         authenticated = True
                         self._client = conn
+                        self.language = msg.get("language") or self.language
                         self.send("welcome", **self.info)
                         self.send("state", state="listening" if self._listening else "idle")
                         continue
@@ -143,13 +148,26 @@ class Service:
         if kind == "listen":
             self._set_listening(bool(msg.get("on")))
         elif kind == "context":
-            self._hotwords = hotwords(msg.get("hotwords") or [])
+            self._set_context(msg)
         elif kind == "result":
             self._play("ok" if msg.get("ok") else "error")
         elif kind == "bye":
             self._stop.set()
         else:
             self.log("ignored message: {}".format(kind))
+
+    def _set_context(self, msg):
+        """Candidates for decisions; their phrases (higher levels first) also become hotwords."""
+        candidates = msg.get("candidates")
+        if candidates is not None:
+            self._candidates = candidates
+        words = msg.get("hotwords")
+        if words is None and candidates is not None:
+            order = {level: i for i, level in enumerate(LEVELS)}
+            ranked = sorted(candidates, key=lambda c: order.get(c.get("level"), len(LEVELS)))
+            words = [p for c in ranked for p in c.get("phrases", [])]
+        if words is not None:
+            self._hotwords = hotwords(words)
 
     # --- audio pipeline --------------------------------------------------------------
 
@@ -193,7 +211,12 @@ class Service:
             prob = self.vad.prob(frame)
         if time.monotonic() < self._mute_until:
             prob = 0.0
-        return self.segmenter.push(frame, prob)
+        was_speaking = self.segmenter.in_speech
+        utterance = self.segmenter.push(frame, prob)
+        if self.segmenter.in_speech and not was_speaking:
+            # The addon takes its context snapshot now (mouse position, selection, DESIGN.md 6.4).
+            self.send("speech_start")
+        return utterance
 
     def _stt_loop(self):
         while not self._stop.is_set():
@@ -215,7 +238,21 @@ class Service:
                 result.update(audio_ms=int(len(audio) * 1000 / SAMPLE_RATE),
                               speech_ms=utterance.speech_ms, truncated=utterance.truncated)
                 self.send("transcript", **result)
+                if self._candidates is not None:
+                    self._decide(result["text"])
             self.send("state", state="listening" if self._listening else "idle")
+
+    def _decide(self, text):
+        d = decide(text, self._candidates, language=self.language)
+        info = dict(text=text, command=d.command, score=d.score, level=d.level,
+                    alternatives=d.alternatives)
+        if d.kind == "execute":
+            self.send("plan", **info)              # the addon executes and answers with "result"
+        elif d.kind == "not_understood":
+            self.send("not_understood", reason=d.reason, **info)
+            self._play("error")
+        else:
+            self.send("ignored", reason=d.reason, text=text)
 
     def _play(self, kind):
         try:

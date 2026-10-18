@@ -52,6 +52,11 @@ class Segmenter:
         self._speech_count = 0
         self._silence_run = 0
 
+    @property
+    def in_speech(self):
+        """True while an utterance is being recorded."""
+        return self._current is not None
+
     def push(self, frame, prob):
         """Add one frame. Returns a finished Utterance or None."""
         if self._current is None:

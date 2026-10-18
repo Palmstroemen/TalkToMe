@@ -1,0 +1,40 @@
+{
+    "_comment": "Deutsches Wortschatz-Paket: Synonyme zusätzlich zu den Button-Texten aus FreeCAD. Befehls-ID -> Phrasen.",
+
+    "Sketcher_NewSketch":       ["Neuer Sketch", "Neue Skizze", "Öffne den Sketcher", "Sketch öffnen", "Skizze öffnen"],
+    "Sketcher_LeaveSketch":     ["Schließe den Sketch", "Schließe den Sketcher", "Sketch schließen", "Skizze schließen", "Sketch verlassen"],
+    "Sketcher_CreateRectangle": ["Rechteck", "Viereck"],
+    "Sketcher_CreateCircle":    ["Kreis"],
+    "Sketcher_CreateLine":      ["Linie", "Strecke"],
+    "Sketcher_CreatePolyline":  ["Polylinie", "Linienzug"],
+    "Sketcher_Dimension":       ["Bemaßung", "Maß", "bemaßen"],
+
+    "PartDesign_Pad":           ["Polster", "Polstere", "aufpolstern", "extrudieren", "hochziehen"],
+    "PartDesign_Pocket":        ["Tasche", "Vertiefung", "ausschneiden"],
+    "PartDesign_Chamfer":       ["Fase", "anfasen"],
+    "PartDesign_Fillet":        ["Verrundung", "abrunden", "verrunden"],
+    "PartDesign_Mirrored":      ["Spiegeln", "spiegle"],
+
+    "Std_ViewFront":            ["Ansicht von vorne", "Vorderansicht", "von vorne"],
+    "Std_ViewRear":             ["andere Seite", "Rückansicht", "Ansicht von hinten", "von hinten"],
+    "Std_ViewTop":              ["Draufsicht", "von oben"],
+    "Std_ViewBottom":           ["Untersicht", "von unten"],
+    "Std_ViewLeft":             ["von links"],
+    "Std_ViewRight":            ["von rechts"],
+    "Std_ViewIsometric":        ["isometrische Ansicht", "isometrisch"],
+    "Std_ViewFitAll":           ["alles einpassen", "alles zeigen"],
+    "Std_ViewZoomIn":           ["hineinzoomen", "zoome hinein", "größer"],
+    "Std_ViewZoomOut":          ["herauszoomen", "zoome heraus", "kleiner"],
+    "Std_Undo":                 ["rückgängig"],
+    "Std_Redo":                 ["wiederholen"],
+    "Std_Save":                 ["speichern", "speichere das"],
+
+    "ui:cancel":                ["Abbrechen", "Abbruch", "Stopp"],
+    "ui:ok":                    ["OK", "Okay", "Bestätigen", "Fertig"],
+
+    "workbench:PartDesignWorkbench": ["Part Design", "Wechsle zu Part Design"],
+    "workbench:SketcherWorkbench":   ["Wechsle zum Sketcher"],
+    "workbench:PartWorkbench":       ["Wechsle zu Part"],
+    "workbench:DraftWorkbench":      ["Wechsle zu Draft"],
+    "workbench:TechDrawWorkbench":   ["Wechsle zu TechDraw", "Tech Draw"]
+}

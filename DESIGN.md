@@ -177,7 +177,21 @@ Ebene 4  Global                   Ansichten, Rückgängig/Wiederholen, Speichern
 - **Auswertung:** „Zoome da hinein“ zoomt zur Mausposition. „Lösche das“ und „polstere das auf“ wirken auf die Auswahl.
 - **Rückfrage statt Raten:** Fehlt der Bezug, z. B. bei „lösche das“ ohne Auswahl, wird nichts ausgeführt und der Fehlerton gespielt.
 
-### 6.5 Kontext-Synchronisation
+### 6.5 Werkzeug-Ebene und Folgebefehle
+
+Viele Befehle starten ein **interaktives Werkzeug**, das weitere Eingaben erwartet. Beispiel: Nach „Zeichne ein Rechteck“ läuft das Rechteck-Werkzeug des Sketchers. Der Nutzer klickt die Ecken oder gibt die Seitenlängen genau an.
+
+- **Neue oberste Ebene „Werkzeug“** (über „Dialog“): Solange ein Werkzeug läuft, haben seine Folgeeingaben Vorrang, etwa „Breite 50“, „Höhe 30“, „50 mal 30“, „fertig“, „abbrechen“.
+- **Folgebefehle stehen im Wortschatz beim auslösenden Befehl**, mit eigenen Parameterschemata, z. B. `Sketcher_CreateRectangle → { width: mm, height: mm }`.
+- **Eingabe der Werte:** FreeCAD 1.x zeigt beim Zeichnen im Sketcher Eingabefelder direkt in der Ansicht (*On-View-Parameters*). Die Werte könnten wie Tastatureingaben dort hineingeschrieben werden (Zahl, Tab, Zahl, Enter).
+- **Mausklicks bleiben beim Nutzer.** Sprache und Maus ergänzen sich. Was der Nutzer *während* der Klicks sagt („von hier … nach hier“), ist Begleitsprache und wird ignoriert (Abschnitt 9.4).
+
+**Zu klären in FreeCAD (vor Phase 4):**
+1. Lässt sich von Python aus erkennen, **ob und welches Werkzeug gerade läuft**? Falls nicht, muss das Addon es selbst verfolgen: Werkzeug gestartet, bis Escape, Enter oder ein neuer Befehl.
+2. Nehmen die **On-View-Parameters** simulierte Tastatureingaben zuverlässig an? Gibt es eine direktere Schnittstelle?
+3. Welche Werkzeuge haben welche Folgeeingaben? Das ergibt eine Liste pro Workbench, beginnend mit Sketcher und PartDesign.
+
+### 6.6 Kontext-Synchronisation
 
 Das Addon schickt bei jeder relevanten Änderung einen Kontext-Schnappschuss an den Dienst: Wechsel der Workbench, Betreten oder Verlassen des Bearbeitungsmodus, Öffnen oder Schließen eines Taskdialogs, Änderung der Auswahl. Die Schnappschüsse werden gebündelt, damit nicht jede Mausbewegung einen auslöst. Der Dienst hat damit **vor** jeder Äußerung den aktuellen Kontext und kann ihn der Spracherkennung als Hotwords mitgeben.
 
@@ -329,6 +343,20 @@ Dauerzuhören ist das größte Risiko des Designs. Das System hört auch Telefon
 
 Die Schwellenwerte sind einstellbar und werden in der Spike-Phase an echten Aufnahmen kalibriert.
 
+### 9.4 Begleitsprache
+
+Nutzer sprechen mehr als Befehle, etwa: „Zeichne ein Rechteck … und zwar von hier (Klick) nach hier (Klick).“ Die Spracherkennung zerlegt das bei Pausen in Stücke:
+
+| Stück | Behandlung |
+|---|---|
+| „Zeichne ein Rechteck“ | Befehl → ausführen |
+| „und zwar von hier“ | nur Füllwörter → **still ignorieren** |
+| „nach hier“ | nur Füllwörter → **still ignorieren** |
+
+- **Füllwörter pro Sprache** (`ttm_core/languages.py`: „und“, „zwar“, „hier“, „da“, „nach“, „jetzt“ …): Ein Satzstück, das nur aus ihnen besteht, löst weder Befehl noch Fehlerton aus.
+- **Beim Bewerten echter Befehle bleiben sie erhalten:** „von vorne“ trifft weiterhin die Vorderansicht.
+- **Ohne diese Regel** hätte „von hier“ wegen der Ähnlichkeit zu „von hinten“ sogar einen falschen Ansichtswechsel auslösen können.
+
 **Mögliche Erweiterung**, falls Fehlauslösungen ein Problem bleiben: Ein optionales Rufwort (z. B. „FreeCAD, …“) wird **nur im Dauerzuhör-Modus** verlangt. Es lässt sich in den Einstellungen abschalten.
 
 ---
@@ -428,7 +456,7 @@ Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → T
 | **1 – Grundbefehle** | Kontext-Sammler, automatischer Wortschatz aus QAction-Texten, Stufe 1, Ausführen mit `runCommand` | „Rechteck“ im Sketcher funktioniert |
 | **2 – Robust zuhören** | Ablehnungslogik (9.3), Kalibrierung der Schwellen, Korpus | Dauerzuhören ohne störende Fehlauslösungen |
 | **3 – Anlernen** | Embeddings (Stufe 2), Lernmodus, `custom`-Dateien | Synonyme und eigene Begriffe |
-| **4 – Parameter & Folgen** | LLM (Stufe 3), Parameterschemata, Undo-Transaktionen | „Schließe den Sketch und polstere 12 mm auf“ |
+| **4 – Parameter & Folgen** | LLM (Stufe 3), Parameterschemata, Undo-Transaktionen, Werkzeug-Ebene mit Folgebefehlen (6.5) | „Schließe den Sketch und polstere 12 mm auf“, „Rechteck … Breite 50, Höhe 30“ |
 | **5 – Pakete & Editor** | Teilbare Workbench-Pakete, grafischer Wortschatz-Editor | Community-Erweiterbarkeit |
 
 ---

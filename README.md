@@ -1,10 +1,12 @@
 # Talk to me
 
-Local, multilingual voice control for FreeCAD 1.x. Status: **Phase 0** (speech recognition spike).
+Local, multilingual voice control for FreeCAD 1.x. Status: **Phase 1** (single commands).
 Design: see [DESIGN.md](DESIGN.md).
 
-In Phase 0 the microphone button shows recognized sentences in FreeCAD's status bar.
-No FreeCAD command is executed yet.
+The microphone button listens continuously while switched on. Spoken commands of the current
+context ("Rechteck", "Schließe den Sketch", "Rückansicht", "Wechsle zu Part Design", "Abbrechen")
+are executed; the result shows in the status bar. Set the parameter `DryRun` to only show what
+would be executed.
 
 ## Setup (Linux)
 
@@ -23,9 +25,9 @@ service/.venv/bin/python tools/try_talktome.py               # microphone on, Ct
 service/.venv/bin/python tools/try_talktome.py --model small
 ```
 
-Every recognized sentence is printed with its latency and the matching test command from
-`tools/test_commands_de.json` (edit it to add your own phrases). You hear a confirmation tone
-when a test command was recognized and an error tone otherwise.
+Every recognized sentence is printed with its latency and the service's decision, using the
+vocabulary in `vocab/de.json` (edit it to add your own phrases). You hear a confirmation tone
+when a command was recognized and an error tone when it was close but not clear.
 
 ## Measure models
 
@@ -52,6 +54,7 @@ Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkTo
 | `Model` | by hardware | `tiny`, `base`, `small`, ... |
 | `Device` | `auto` | `auto`, `cuda`, `cpu` |
 | `ServicePython` | `service/.venv/bin/python` | Python of the speech service |
+| `DryRun` | `false` | Only show recognized commands, don't execute them |
 
 ## Tests
 

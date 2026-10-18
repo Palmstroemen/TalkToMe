@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Microphone button and connection to the speech service (Phase 0).
+"""Microphone button and connection to the speech service.
 
-Phase 0 only shows what was recognized. No FreeCAD command is executed yet.
+The addon sends the command candidates of the current context, the service decides,
+and the addon executes the resulting plan (Phase 1: single commands).
 """
 
 import os
@@ -14,6 +15,8 @@ import FreeCADGui as Gui
 # FreeCAD's PySide module wraps PySide2 (Qt5) or PySide6 (Qt6), whichever FreeCAD is built with.
 from PySide import QtCore, QtGui, QtWidgets
 
+from talktome import context as ttm_context
+from talktome import executor
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
 
 # QAction moved from QtWidgets (Qt5) to QtGui (Qt6).
@@ -66,6 +69,8 @@ class Controller(QtCore.QObject):
         self.action.setCheckable(True)
         self.action.toggled.connect(self.on_toggled)
 
+        self.language = PARAMS.GetString("Language", "de")
+        self.vocab = ttm_context.load_vocabulary(self.language)
         self.process = None
         self.sock = None
         self.decoder = LineDecoder()
@@ -98,19 +103,15 @@ class Controller(QtCore.QObject):
         self.send_context()
 
     def send_context(self):
-        """Hint the texts of the visible toolbar buttons to the speech recognition.
-
-        A first, simple context (DESIGN.md 6.1): the translated button texts of the
-        current workbench. Phase 1 replaces this with the full context snapshot.
-        """
-        texts = []
-        for tb in self.mw.findChildren(QtWidgets.QToolBar):
-            if tb.isVisible() and tb.objectName() != TOOLBAR:
-                for action in tb.actions():
-                    text = action.text().replace("&", "").strip(" .…")
-                    if text and not action.isSeparator():
-                        texts.append(text)
-        self.send("context", hotwords=texts)
+        """Send the command candidates of the current context (DESIGN.md 6)."""
+        if self.sock is None:
+            return
+        try:
+            candidates = ttm_context.collect(self.vocab)
+        except Exception as e:
+            log("collecting the context failed: {}".format(e))
+            return
+        self.send("context", candidates=candidates)
 
     def on_toggled(self, checked):
         self.want_listen = checked
@@ -253,20 +254,37 @@ class Controller(QtCore.QObject):
                 self.status("no usable GPU found, using the CPU")
         elif kind == "state":
             self.set_state(msg.get("state", "idle"))
+        elif kind == "speech_start":
+            self.send_context()                # fresh snapshot while the user is speaking
         elif kind == "transcript":
-            self.on_transcript(msg)
+            log("»{}« ({} ms)".format(msg.get("text", ""), msg.get("stt_ms", 0)))
+        elif kind == "plan":
+            self.on_plan(msg)
+        elif kind == "not_understood":
+            self.status("not understood: »{}« ({})".format(msg.get("text", ""), msg.get("reason")))
+            log("not understood »{}«, reason {}, candidates {}".format(
+                msg.get("text"), msg.get("reason"), msg.get("alternatives")))
+        elif kind == "ignored":
+            log("ignored »{}«".format(msg.get("text", "")))
         elif kind == "error":
             App.Console.PrintWarning("Talk to me: {}\n".format(msg.get("message")))
 
-    def on_transcript(self, msg):
-        text = msg.get("text", "")
-        if text:
-            self.status("»{}«  ({} ms)".format(text, msg.get("stt_ms", 0)))
-            App.Console.PrintMessage("Talk to me: »{}« ({} ms)\n".format(text, msg.get("stt_ms", 0)))
+    def on_plan(self, msg):
+        command, text = msg.get("command", ""), msg.get("text", "")
+        if PARAMS.GetBool("DryRun", False):
+            ok, reason = True, "dry run, not executed"
         else:
-            self.status("(not understood)")
-        # Phase 0: nothing is executed yet, recognized text counts as success.
-        self.send("result", ok=bool(text))
+            try:
+                ok, reason = executor.execute(command)
+            except Exception as e:
+                ok, reason = False, str(e)
+        if ok:
+            self.status("»{}« → {}{}".format(text, command, "  ({})".format(reason) if reason else ""))
+            App.Console.PrintMessage("Talk to me: »{}« → {}\n".format(text, command))
+        else:
+            self.status("»{}« → {} failed: {}".format(text, command, reason))
+            App.Console.PrintWarning("Talk to me: »{}« → {} failed: {}\n".format(text, command, reason))
+        self.send("result", ok=ok)
 
 
 _controller = None

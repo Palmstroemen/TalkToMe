@@ -8,7 +8,7 @@ tones are played just like they will be in FreeCAD.
     service/.venv/bin/python tools/try_talktome.py --model small
     service/.venv/bin/python tools/try_talktome.py --input-wav a.wav b.wav     # without microphone
 
-The test commands come from tools/test_commands_de.json (command ID -> phrases).
+Commands and phrases come from vocab/<language>.json (command ID -> phrases); the service\ndecides exactly as it will in FreeCAD.
 Stop with Ctrl+C.
 """
 
@@ -25,7 +25,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.join(ROOT, "service")
 sys.path.insert(0, ROOT)
 
-from ttm_core.matching import match  # noqa: E402
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message  # noqa: E402
 
 END_SILENCE_MS = 640     # pause after which the service considers a sentence finished
@@ -55,24 +54,25 @@ def start_service(args, token):
     raise SystemExit("speech service did not start (exit code {})".format(proc.wait()))
 
 
-def show_transcript(msg, commands, threshold, language):
+def show_transcript(msg):
     text = msg.get("text", "")
     stt_ms = msg.get("stt_ms", 0)
-    stamp = time.strftime("%H:%M:%S")
     timing = "Erkennung {} ms · Antwortzeit ≈ {} ms · gesprochen {:.1f} s".format(
         stt_ms, END_SILENCE_MS + stt_ms, msg.get("speech_ms", 0) / 1000)
-    if not text:
-        print("{}  {}   {}".format(stamp, color(90, "(nichts verstanden)"), color(90, timing)))
-        return False
-    cmd, score = match(text, commands, threshold, language)
-    print("{}  »{}«".format(stamp, color(1, text)))
-    if cmd:
-        print("          → {}  {}".format(color(32, cmd), color(90, "(Übereinstimmung {:.2f})".format(score))))
+    print("{}  »{}«   {}".format(time.strftime("%H:%M:%S"), color(1, text) if text else "", color(90, timing)))
+
+
+def show_decision(msg):
+    kind = msg["type"]
+    alternatives = ", ".join("{} {:.2f}".format(c, s) for c, s in msg.get("alternatives") or [])
+    if kind == "plan":
+        print("          → {}  {}".format(color(32, msg["command"]), color(90, "(Wert {:.2f})".format(msg["score"]))))
+    elif kind == "not_understood":
+        reasons = {"no_match": "kein passender Befehl", "ambiguous": "mehrdeutig", "inactive": "gerade nicht verfügbar"}
+        print("          → {}  {}".format(color(31, "nicht verstanden: " + reasons.get(msg.get("reason"), str(msg.get("reason")))),
+                                          color(90, alternatives)))
     else:
-        print("          → {}  {}".format(color(31, "kein Testbefehl"), color(90, "(bester Wert {:.2f})".format(score))))
-    hints = "no_speech {}  logprob {}".format(msg.get("no_speech_prob"), msg.get("avg_logprob"))
-    print("          {}   {}".format(color(90, timing), color(90, hints)))
-    return cmd is not None
+        print("          → {}".format(color(90, "ignoriert (kein Befehl gemeint)")))
 
 
 def main():
@@ -82,25 +82,28 @@ def main():
     ap.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     ap.add_argument("--mic", help="input device name or index")
     ap.add_argument("--input-wav", nargs="+", help="use WAV files instead of the microphone")
-    ap.add_argument("--commands", default=os.path.join(ROOT, "tools", "test_commands_de.json"))
-    ap.add_argument("--threshold", type=float, default=0.75)
+    ap.add_argument("--commands", help="vocabulary file (default: vocab/<language>.json)")
     ap.add_argument("--volume", type=float, default=0.4, help="tone volume, 0 = silent")
     ap.add_argument("--no-hotwords", action="store_true", help="don't hint the test vocabulary to Whisper")
     ap.add_argument("--exit-after", type=int, default=0, help="stop after N sentences (for scripts)")
     args = ap.parse_args()
 
-    with open(args.commands, encoding="utf-8") as f:
-        commands = json.load(f)
+    path = args.commands or os.path.join(ROOT, "vocab", "{}.json".format(args.language))
+    with open(path, encoding="utf-8") as f:
+        commands = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
 
     token = secrets.token_hex(16)
     print(color(90, "Starte Sprachdienst (beim ersten Mal wird das Modell heruntergeladen) ..."))
     proc, port = start_service(args, token)
     sock = socket.create_connection(("127.0.0.1", port))
     sock.sendall(encode(make_message("hello", token=token, version=VERSION, language=args.language)))
-    if not args.no_hotwords:
-        # The test vocabulary stands in for the context vocabulary FreeCAD will send.
-        phrases = [p for ps in commands.values() for p in ps]
-        sock.sendall(encode(make_message("context", hotwords=phrases)))
+    # The vocabulary file stands in for the context FreeCAD will send: all commands, all active.
+    candidates = [{"id": cmd, "level": "workbench", "phrases": phrases, "active": True}
+                  for cmd, phrases in commands.items()]
+    context = make_message("context", candidates=candidates)
+    if args.no_hotwords:
+        context["hotwords"] = []
+    sock.sendall(encode(context))
     sock.sendall(encode(make_message("listen", on=True)))
     decoder = LineDecoder()
     count = 0
@@ -116,8 +119,11 @@ def main():
                 elif msg["type"] == "state" and msg["state"] == "listening" and count == 0:
                     print(color(32, "● Mikrofon an – sprich einen Befehl. Strg+C beendet.\n"))
                 elif msg["type"] == "transcript":
-                    ok = show_transcript(msg, commands, args.threshold, args.language)
-                    sock.sendall(encode(make_message("result", ok=ok)))
+                    show_transcript(msg)
+                elif msg["type"] in ("plan", "not_understood", "ignored"):
+                    show_decision(msg)
+                    if msg["type"] == "plan":        # FreeCAD would execute it now
+                        sock.sendall(encode(make_message("result", ok=True)))
                     count += 1
                 elif msg["type"] == "error":
                     print(color(31, "Fehler: {}".format(msg.get("message"))))
