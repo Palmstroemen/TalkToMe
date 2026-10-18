@@ -1,0 +1,408 @@
+# Talk to me – Designdokument
+
+*Sprachsteuerung für FreeCAD 1.x – lokal, mehrsprachig, kontextbezogen, anlernbar.*
+
+Stand: 18.10.2026 · Status: Entwurf · Lizenz: LGPL-2.1-or-later (wie FreeCAD)
+
+---
+
+## 1. Ziel
+
+„Talk to me“ ist ein FreeCAD-Addon, mit dem man FreeCAD per Sprache **bedient**. Gesprochene Befehle ersetzen Klicks auf Buttons, Menüs und Ansichtswechsel. Die Modellierarbeit mit Maus und Skizze bleibt beim Nutzer.
+
+Beispiele:
+
+| Gesprochen | Wirkung |
+|---|---|
+| „Zeichne ein Rechteck“ (im Sketcher) | Rechteck-Werkzeug des Sketchers wird aktiviert, der Nutzer klickt die Punkte |
+| „Rechteck“ (in Draft) | Rechteck-Werkzeug von Draft wird aktiviert |
+| „Schließe den Sketch und polstere ihn 12 mm auf“ | Sketch verlassen → Pad erzeugen → Länge = 12 mm |
+| „Dreh auf die andere Seite“ | Ansicht wechselt auf die Gegenseite |
+| „Rückgängig“ | Letzte Aktion wird rückgängig gemacht |
+
+### Abgrenzung zu bestehenden Projekten
+
+Bestehende LLM-Addons für FreeCAD (z. B. `ghbalf/freecad-ai`, diverse MCP-Server) lassen ein LLM **Python-Code erzeugen**, der Geometrie baut, und werden per Text bedient. „Talk to me“ führt dagegen **ausschließlich vorhandene FreeCAD-Befehle** aus einer Whitelist aus. Es entsteht kein generierter Code. Das ist robuster, sicherer und auch mit kleinen lokalen Modellen machbar.
+
+### Nicht-Ziele (vorerst)
+
+- Geometrie aus Beschreibungen generieren („Mach mir ein Zahnrad“)
+- Gesprochene Antworten (Sprachausgabe/TTS)
+- Cloud-Dienste jeglicher Art
+- FreeCAD-Versionen vor 1.0
+
+---
+
+## 2. Anforderungen
+
+| # | Anforderung | Folge für das Design |
+|---|---|---|
+| A1 | **Alle Sprachen** | Intern nur sprachneutrale Befehls-IDs. Sprache nur an den Rändern (Erkennung, Wortschatz) |
+| A2 | **Kontextbezogen** | Kandidaten werden nach aktuellem Zustand gefiltert und priorisiert (Abschnitt 6) |
+| A3 | **Leicht anlernbar** | Wortschatz-Dateien in mehreren Ebenen, Lernen im laufenden Betrieb (Abschnitt 8) |
+| A4 | **Nur lokal** | Spracherkennung, Embeddings und LLM laufen auf dem eigenen Rechner |
+| A5 | **Feste Sprache pro Nutzer** | Sprache wird eingestellt statt erkannt, was schneller und treffsicherer ist |
+| A6 | **Mikrofon-Schalter statt Push-to-Talk** | Ein Button schaltet das Zuhören ein und aus. Eingeschaltet hört das System ständig zu (Abschnitt 9) |
+| A7 | **Rückmeldung per Ton** | Bestätigungston bei Erfolg, Fehlerton bei Nichtverstehen (Abschnitt 10) |
+| A8 | **Nur FreeCAD 1.x** | Neuere APIs dürfen genutzt werden, kein Kompatibilitätsballast |
+| A9 | **Mit und ohne Grafikkarte** | GPU-Profil als Normalfall, CPU-Profil als vollwertige Rückfallebene (Abschnitt 12.1) |
+
+---
+
+## 3. Grundprinzipien
+
+1. **Befehls-IDs als gemeinsame Sprache.** Intern gibt es nur FreeCAD-Befehls-IDs wie `Sketcher_CreateRectangle`, `Draft_Rectangle` oder `PartDesign_Pad`, plus Parameterschemata wie `Pad(length: mm)`.
+2. **Whitelist statt Code.** Ausgeführt wird nur, was als Befehl in FreeCAD existiert, gerade aktiv ist und gültige Parameter hat.
+3. **Schnell vor schlau.** Die meisten Befehle werden ohne LLM über den Wortschatz erkannt. Das LLM kommt nur bei zusammengesetzten Sätzen oder Parametern zum Einsatz.
+4. **Lieber nichts tun als das Falsche tun.** Bei Unsicherheit wird nichts ausgeführt (Fehlerton oder Stille, siehe 9.3).
+5. **Testbare Logik.** Matching, Kontext-Priorisierung und Wortschatz-Verwaltung sind reines Python ohne FreeCAD und Qt und werden testgetrieben entwickelt.
+
+---
+
+## 4. Architektur
+
+Das System besteht aus **zwei Prozessen**:
+
+```
+┌───────────── FreeCAD-Addon „Talk to me“ (dünn, Python/Qt) ─────────────┐        ┌──────────── Sprachdienst (eigener Prozess) ─────────────┐
+│                                                                        │        │                                                         │
+│  Mikrofon-Button (Toolbar, umschaltbar, zeigt Zustand)                 │        │  Audioaufnahme (dauerhaft, solange eingeschaltet)       │
+│                                                                        │        │  Sprachaktivitätserkennung (VAD) → Äußerungen           │
+│  Kontext-Sammler                                                       │ ─────► │  Spracherkennung (faster-whisper, feste Sprache,        │
+│    aktive Workbench, Edit-Modus, Taskdialog, Auswahl,                  │context │    Kontext-Wortschatz als Hotwords)                     │
+│    Kandidaten-Befehle mit übersetzten Texten, isActive()               │        │  Matching (Wortschatz → Embeddings → LLM)               │
+│                                                                        │        │  Wortschatz & Gelerntes (Dateien)                       │
+│  Ausführer                                                             │ ◄───── │  Töne (Bestätigung / Fehler)                            │
+│    Gui.runCommand, Eigenschaften setzen, Undo-Transaktionen            │ plan   │                                                         │
+│                                                                        │        │                                                         │
+│  Lern-Beobachter (QAction.triggered)                                   │ ─────► │                                                         │
+│                                                                        │result  │                                                         │
+└────────────────────────────────────────────────────────────────────────┘        └─────────────────────────────────────────────────────────┘
+                                         lokaler Socket (127.0.0.1), JSON-Nachrichten
+```
+
+### Warum zwei Prozesse?
+
+- **Keine Abhängigkeiten in FreeCADs Python.** Pakete wie faster-whisper, ctranslate2, onnxruntime, sounddevice oder die Modelle in FreeCADs mitgelieferte Python-Umgebung (AppImage, Flatpak, Windows-Installer) zu installieren, ist fehleranfällig. Der Sprachdienst läuft in einer eigenen venv.
+- **Die Oberfläche bleibt flüssig.** Dauerzuhören, Erkennung und LLM blockieren FreeCAD nicht.
+- **Absturzisolation.** Stürzt der Dienst ab, läuft FreeCAD weiter.
+- **Modelle bleiben geladen.** Sie werden einmal beim Start des Dienstes geladen, nicht bei jedem Befehl.
+
+### Lebenszyklus
+
+- Das Addon startet den Dienst beim ersten Einschalten des Mikrofons als Unterprozess. Der Pfad zum Python-Interpreter der venv steht in den Einstellungen.
+- Das Addon beendet den Dienst, wenn FreeCAD geschlossen wird.
+- Ausschalten des Mikrofons stoppt nur die Audioaufnahme. Der Dienst und seine Modelle bleiben geladen, damit das Wiedereinschalten sofort wirkt.
+
+---
+
+## 5. Komponenten
+
+### 5.1 FreeCAD-Addon
+
+| Modul | Aufgabe | FreeCAD-abhängig? |
+|---|---|---|
+| `InitGui.py` | Registrierung: Toolbar mit Mikrofon-Button, Einstellungsseite | ja |
+| `context.py` | Kontext sammeln und als neutrales Datenobjekt liefern | ja (Sammeln) |
+| `executor.py` | Plan prüfen und ausführen, Undo-Transaktion | ja |
+| `observer.py` | Klicks auf Befehle beobachten (Lernmodus) | ja |
+| `client.py` | Socket-Verbindung zum Dienst, Nachrichten, Neuverbindung | nein (Qt-Socket oder Thread) |
+| `ttm_core/` | Gemeinsame, reine Logik (siehe 5.3) | **nein** |
+
+### 5.2 Sprachdienst
+
+| Modul | Aufgabe |
+|---|---|
+| `audio.py` | Aufnahme über `sounddevice`, Ringpuffer |
+| `vad.py` | Erkennung von Sprachaktivität (z. B. Silero VAD), Zerlegung in Äußerungen |
+| `stt.py` | faster-whisper mit fester Sprache und Kontext-Hotwords |
+| `matcher.py` | Stufen 1–3 des Matchings (Abschnitt 7) |
+| `llm.py` | Anbindung an ein lokales LLM (Ollama oder llama.cpp) mit JSON-Schema-Ausgabe |
+| `vocab.py` | Wortschatz laden, zusammenführen, Gelerntes speichern |
+| `tones.py` | Bestätigungs- und Fehlerton erzeugen und abspielen |
+| `server.py` | Socket-Server, Nachrichtenverarbeitung |
+
+### 5.3 Gemeinsamer Kern `ttm_core`
+
+Dieser Kern ist reines Python ohne FreeCAD und Qt und vollständig mit pytest getestet:
+
+- Datenmodelle: Kontext, Kandidat, Plan, Ergebnis
+- Kontext-Priorisierung (Abschnitt 6)
+- Unscharfer Wortschatz-Abgleich (Stufe 1)
+- Zusammenführen der Wortschatz-Ebenen
+- Prüfung der Parameter gegen die Schemata
+- Nachrichtenformat (Serialisierung)
+
+---
+
+## 6. Kontextmodell
+
+### 6.1 Was erfasst wird
+
+| Kontextmerkmal | Quelle in FreeCAD 1.x |
+|---|---|
+| Aktive Workbench | `Gui.activeWorkbench()` |
+| Sichtbare Befehle der Workbench | `Workbench.listToolbars()`, `Workbench.getToolbarItems()` |
+| Befehl aktuell ausführbar? | `Gui.Command.get(id).isActive()` |
+| Englischer Quelltext eines Befehls | `Gui.Command.get(id).getInfo()` → `menuText`, `toolTip` |
+| **Übersetzter** Text eines Befehls | `Gui.Command.get(id).getAction()` → QAction(s) → `text()`, `toolTip()` |
+| Bearbeitungsmodus (z. B. im Sketch) | `Gui.ActiveDocument.getInEdit()` |
+| Offener Aufgabendialog | `Gui.Control.activeDialog()` |
+| Auswahl | `Gui.Selection.getSelectionEx()` |
+
+Laut Quellcode von FreeCAD 1.1.4 (`CommandPyImp.cpp`) liefert `getInfo()` die **unübersetzten** Quelltexte. Die übersetzten Texte der Oberflächensprache liefert nur die QAction aus `getAction()`. QActions entstehen erst, wenn ein Befehl in einer Toolbar oder einem Menü auftaucht. Bei Workbenches, die noch nie aktiviert wurden, fehlen sie daher anfangs, und dann dient der englische Text als Rückfallebene.
+
+### 6.2 Prioritätsebenen
+
+```
+Ebene 1  Offener Aufgabendialog   z. B. Pad-Dialog: „12 Millimeter“, „umkehren“, „OK“, „abbrechen“
+Ebene 2  Bearbeitungsmodus        z. B. im Sketch: Sketcher-Befehle
+Ebene 3  Aktive Workbench         Befehle ihrer Toolbars (= die sichtbaren Buttons)
+Ebene 4  Global                   Ansichten, Rückgängig/Wiederholen, Speichern, Workbench wechseln
+```
+
+- Gesucht wird von Ebene 1 nach Ebene 4. Ein Treffer in einer höheren Ebene schlägt einen gleich guten in einer tieferen.
+- Nicht ausführbare Befehle (`isActive() == False`) werden nicht ausgeführt, sondern vermerkt, z. B. „Pad braucht einen ausgewählten Sketch“.
+- Findet sich ein Befehl nur in einer **anderen** Workbench, wird er nicht automatisch ausgeführt. In einer späteren Ausbaustufe kann das System den Wechsel der Workbench anbieten.
+
+### 6.3 Kontext-Synchronisation
+
+Das Addon schickt bei jeder relevanten Änderung einen Kontext-Schnappschuss an den Dienst: Wechsel der Workbench, Betreten oder Verlassen des Bearbeitungsmodus, Öffnen oder Schließen eines Taskdialogs, Änderung der Auswahl. Die Schnappschüsse werden gebündelt, damit nicht jede Mausbewegung einen auslöst. Der Dienst hat damit **vor** jeder Äußerung den aktuellen Kontext und kann ihn der Spracherkennung als Hotwords mitgeben.
+
+---
+
+## 7. Matching-Pipeline
+
+```
+Äußerung (Audio)
+  │
+  ▼
+Spracherkennung   faster-whisper, language=<fest>, hotwords=<Wortschatz des Kontexts>
+  │  Text
+  ▼
+Stufe 1  Wortschatz-Abgleich (unscharf) in Kontext-Kandidaten       → Treffer sicher?  → Plan
+  │ nein
+  ▼
+Stufe 2  Embedding-Ähnlichkeit (mehrsprachiges Modell)              → Treffer sicher?  → Plan
+  │ nein / Satz enthält Parameter oder mehrere Befehle
+  ▼
+Stufe 3  Kleines LLM: Kandidatenliste + Satz → JSON-Plan (Schema)   → gültig?          → Plan
+  │ nein
+  ▼
+Nicht verstanden  → Fehlerton (oder Stille, siehe 9.3)
+```
+
+### Plan-Format
+
+```json
+{
+  "utterance": "schließe den Sketch und polstere ihn 12 mm auf",
+  "steps": [
+    { "command": "Sketcher_LeaveSketch" },
+    { "command": "PartDesign_Pad", "params": { "length": 12.0 } }
+  ],
+  "confidence": 0.86,
+  "stage": 3
+}
+```
+
+### Parameter
+
+- Parametrische Befehle bekommen ein Schema im Wortschatz, z. B. `PartDesign_Pad: { length: mm }`.
+- Parameter werden **nicht** über die Felder des Taskdialogs gesetzt, das ist fragil. Stattdessen wird das Objekt erzeugt und seine Eigenschaft direkt gesetzt, z. B. `Pad.Length = 12 mm`, gefolgt von einer Neuberechnung.
+- Zahlen und Einheiten werden sprachabhängig normalisiert („zwölf Millimeter“, „12 mm“, „1,2 cm“).
+
+### Ausführung
+
+- Jeder Plan läuft in **einer** Undo-Transaktion. „Rückgängig“ hebt also den ganzen Sprachbefehl auf, nicht nur den letzten Schritt.
+- Vor jedem Schritt wird erneut geprüft, ob der Befehl existiert und aktiv ist. Der Kontext kann sich seit dem Schnappschuss geändert haben.
+- Schlägt ein Schritt fehl, wird abgebrochen, die Transaktion zurückgenommen und der Fehlerton gespielt.
+
+---
+
+## 8. Wortschatz und Anlernen
+
+### 8.1 Ebenen
+
+```
+Priorität hoch   user/learned.<lang>.json     im Betrieb gelernte Phrasen
+                 user/custom.<lang>.json      vom Nutzer gepflegte Schlüsselwörter und Makros
+                 vocab/<workbench>.<lang>.json  mitgelieferte und teilbare Pakete
+Priorität tief   automatisch erzeugt          aus den übersetzten QAction-Texten (+ englische Rückfallebene)
+```
+
+### 8.2 Format eines Pakets
+
+```json
+{
+  "workbench": "PartDesignWorkbench",
+  "language": "de",
+  "commands": {
+    "PartDesign_Pad": {
+      "phrases": ["Polster", "aufpolstern", "extrudieren", "hochziehen"],
+      "params": { "length": "mm" }
+    },
+    "PartDesign_Pocket": {
+      "phrases": ["Tasche", "Vertiefung", "ausschneiden"],
+      "params": { "length": "mm" }
+    }
+  }
+}
+```
+
+### 8.3 Anlernen
+
+| Weg | Ablauf |
+|---|---|
+| **Schlüsselwörter definieren** | Phrasen zu Befehls-IDs in `custom.<lang>.json` eintragen. Später gibt es dafür einen Editor |
+| **Pakete pro Workbench** | Pakete für einzelne Workbenches, auch für Addon-Workbenches, können geteilt und installiert werden |
+| **Lernmodus** | Nach einer nicht verstandenen Äußerung klickt der Nutzer innerhalb weniger Sekunden den gemeinten Button. Das Addon beobachtet `QAction.triggered` und speichert die Äußerung als Phrase für diesen Befehl |
+| **Makros** | Eine Phrase steht für eine Befehlsfolge, z. B. „Standardplatte“ → Sketch auf XY, Rechteck, Pad 12 mm |
+
+Der Lernmodus lässt sich umsetzen, weil `Gui.Command.get(id).getAction()` die QActions der Befehle liefert. Mit deren Signal `triggered` kann man sich verbinden. Das ist laut Quellcode von FreeCAD 1.1.4 verfügbar.
+
+---
+
+## 9. Dauerzuhören (Mikrofon-Schalter)
+
+### 9.1 Bedienung
+
+- **Ein Toolbar-Button** mit Mikrofon-Symbol schaltet das Zuhören ein und aus (umschaltbar). Optional kann der Button zusätzlich ein Tastenkürzel bekommen.
+- **Der Zustand ist deutlich sichtbar:** Das Symbol unterscheidet die Zustände aus, hört zu, verarbeitet gerade und Dienst nicht erreichbar.
+- **Optional:** Das Zuhören pausiert automatisch, solange FreeCAD nicht das aktive Fenster ist. Das ist nützlich bei Videokonferenzen.
+
+### 9.2 Von Audio zu Äußerungen
+
+- Die Audioaufnahme läuft dauerhaft, solange das Mikrofon eingeschaltet ist.
+- **Die Sprachaktivitätserkennung (VAD)** trennt Sprache von Stille. Eine Äußerung endet nach einer kurzen Pause, die einstellbar ist und bei etwa 0,5–0,8 s liegt.
+- Sehr kurze Geräusche wie Klicks oder Husten werden verworfen.
+- **Nur Äußerungen** werden erkannt, nicht der Dauerstrom. Das spart Rechenzeit.
+- **Eigene Töne:** Während Bestätigungs- und Fehlertöne abgespielt werden, ist die Aufnahme stumm geschaltet, damit sich das System nicht selbst hört.
+
+### 9.3 Nicht jedes Gesprochene ist ein Befehl
+
+Dauerzuhören ist das größte Risiko des Designs. Das System hört auch Telefonate, Selbstgespräche und Kollegen. Damit es dabei weder etwas Falsches ausführt noch ständig Fehlertöne spielt, gilt eine dreistufige Entscheidung:
+
+| Ergebnis | Bedingung (Beispiel) | Reaktion |
+|---|---|---|
+| **Ausführen** | Hohe Konfidenz und Befehl im Kontext aktiv | Ausführen + Bestätigungston |
+| **Fehlerton** | Äußerung wirkt wie ein Befehlsversuch (kurz, enthält Befehls- oder Wortschatznähe), aber kein sicherer Treffer | Nichts ausführen + Fehlerton, Lernmodus kurz bereit |
+| **Ignorieren** | Lange Sätze ohne Wortschatznähe, typische Gesprächssprache | Nichts tun, kein Ton |
+
+Die Schwellenwerte sind einstellbar und werden in der Spike-Phase an echten Aufnahmen kalibriert.
+
+**Mögliche Erweiterung**, falls Fehlauslösungen ein Problem bleiben: Ein optionales Rufwort (z. B. „FreeCAD, …“) wird **nur im Dauerzuhör-Modus** verlangt. Es lässt sich in den Einstellungen abschalten.
+
+---
+
+## 10. Rückmeldung
+
+- **Bestätigungston:** kurz und hell, wenn ein Plan erfolgreich ausgeführt wurde.
+- **Fehlerton:** kurz und tiefer, wenn etwas nicht verstanden wurde oder fehlgeschlagen ist.
+- **Erzeugung der Töne:** Der Sprachdienst erzeugt sie synthetisch, z. B. als Sinus mit Hüllkurve, und spielt sie über `sounddevice` ab. Das Addon braucht kein Qt-Multimedia.
+- **Optional: Text in der Statusleiste,** z. B. „Erkannt: ‚Rechteck‘ → Sketcher_CreateRectangle“. Das hilft beim Anlernen und bei der Fehlersuche.
+- **Später** ist ein kleines Overlay mit den Top-3-Kandidaten bei Unsicherheit denkbar. Gesprochene Antworten sind kein Ziel (siehe Nicht-Ziele).
+
+---
+
+## 11. Protokoll zwischen Addon und Dienst
+
+Die Verbindung läuft über TCP auf `127.0.0.1` (Port einstellbar), mit einer JSON-Nachricht pro Zeile.
+
+| Richtung | Nachricht | Inhalt |
+|---|---|---|
+| Addon → Dienst | `hello` | Protokollversion, Sprache, FreeCAD-Version |
+| Addon → Dienst | `listen` | `on` / `off` |
+| Addon → Dienst | `context` | Kontext-Schnappschuss (Ebenen, Kandidaten mit Texten, Auswahl) |
+| Dienst → Addon | `state` | `listening` / `processing` / `idle` / `error` |
+| Dienst → Addon | `plan` | Plan (Abschnitt 7) |
+| Dienst → Addon | `not_understood` | Erkannter Text, ggf. Top-3-Kandidaten |
+| Addon → Dienst | `result` | `ok` / `failed` (+ Grund), daraufhin spielt der Dienst den Ton |
+| Addon → Dienst | `learn` | Äußerung + Befehls-ID aus dem Lernmodus |
+
+Die Verbindung wird nur lokal angenommen, also nicht an andere Netzwerkschnittstellen gebunden. Zusätzlich gibt es ein beim Start erzeugtes Token, damit keine anderen lokalen Programme Befehle einschleusen können.
+
+---
+
+## 12. Technikwahl
+
+| Baustein | Vorschlag | Alternativen |
+|---|---|---|
+| Spracherkennung | **faster-whisper**, Modell `small` (int8 auf der CPU, float16 auf der GPU) | whisper.cpp, Vosk (sehr schnell, aber schwächer) |
+| VAD | **Silero VAD** | webrtcvad |
+| Embeddings | Kleines **mehrsprachiges** Sentence-Embedding-Modell | – |
+| LLM | **Ollama** mit kleinem Instruct-Modell (1–4 B Parameter), Ausgabe per JSON-Schema | llama.cpp-Server |
+| Audio | **sounddevice** (PortAudio) | – |
+| Addon-UI | FreeCADs `PySide`-Kompatibilitätsschicht (Qt5/Qt6) | – |
+| Tests | **pytest** für `ttm_core` und den Dienst, Smoke-Tests mit FreeCAD-Stubs für das Addon | – |
+
+Die konkreten Modelle werden in der Spike-Phase nach Latenz und Treffsicherheit auf der Zielhardware ausgewählt.
+
+### 12.1 Mit und ohne Grafikkarte
+
+Das System muss **mit und ohne GPU** funktionieren. Da CAD-Rechner meist eine Grafikkarte haben, ist der GPU-Betrieb der Normalfall, für den optimiert wird. Der CPU-Betrieb ist eine vollwertige Rückfallebene.
+
+| | GPU-Profil (Standard, wenn erkannt) | CPU-Profil |
+|---|---|---|
+| Spracherkennung | faster-whisper `small` oder größer, float16 | faster-whisper `base`/`small`, int8 |
+| Embeddings | auf der GPU | auf der CPU (klein genug) |
+| LLM (Stufe 3) | 3–4 B Parameter | 1–2 B Parameter oder abgeschaltet |
+| Erwartung | Auch zusammengesetzte Sätze flüssig | Einfache Befehle flüssig, Stufe 3 spürbar langsamer |
+
+- **Automatische Erkennung:** Beim Start prüft der Dienst, ob eine nutzbare GPU vorhanden ist (CUDA, ggf. später ROCm/Metal), und wählt das Profil. Die Wahl lässt sich in den Einstellungen übersteuern.
+- **Grafikspeicher wird mit FreeCAD geteilt:** Die GPU rendert gleichzeitig die 3D-Ansicht. Der Dienst bekommt deshalb ein einstellbares VRAM-Budget und wählt die Modellgrößen danach. Reicht der Speicher nicht, laufen einzelne Bausteine (z. B. das LLM) auf der CPU weiter, statt dass FreeCAD ins Stocken gerät.
+- **Kein Abbruch bei fehlender GPU:** Fehlen Treiber oder CUDA-Bibliotheken, fällt der Dienst mit Hinweis in der Statusleiste auf das CPU-Profil zurück.
+
+---
+
+## 13. Einstellungen
+
+Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → Talk to me*:
+
+- Sprache (fest)
+- Pfad zum Python-Interpreter des Sprachdienstes
+- Mikrofon (Geräteauswahl)
+- Hardware-Profil: automatisch / GPU / CPU, VRAM-Budget, Modellgröße für die Spracherkennung
+- LLM an/aus, Modellname
+- Schwellenwerte: ausführen / Fehlerton / ignorieren
+- Pausendauer, ab der eine Äußerung als beendet gilt
+- Zuhören pausieren, wenn FreeCAD nicht aktiv ist
+- Lautstärke der Töne
+- Statusleisten-Text an/aus
+
+---
+
+## 14. Teststrategie
+
+- **`ttm_core`** wird testgetrieben mit pytest entwickelt: Matching, Priorisierung, Wortschatz-Zusammenführung, Parameter-Normalisierung, Protokoll.
+- **Sprachdienst:** Tests mit aufgezeichneten Audio-Beispielen pro Sprache als Regressionstests für Erkennung und Ablehnung (Abschnitt 9.3), dazu Latenzmessungen.
+- **Addon:** Smoke-Tests mit gestubbtem FreeCAD unter PySide2 und PySide6, wie bei WB_Organizer. Kontext-Sammler und Ausführer werden zusätzlich manuell nach einer Checkliste in FreeCAD 1.x geprüft.
+- **Korpus:** Sammlung typischer Befehle und typischer Nicht-Befehle pro Sprache, um Fehlauslösungen zu messen.
+
+---
+
+## 15. Fahrplan
+
+| Phase | Inhalt | Ergebnis |
+|---|---|---|
+| **0 – Spike** | Dienst mit Audio + VAD + faster-whisper, Mikrofon-Button in FreeCAD, erkannten Text in der Statusleiste anzeigen, Töne | Latenz und Treffsicherheit gemessen, **jeweils im GPU- und im CPU-Profil** |
+| **1 – Grundbefehle** | Kontext-Sammler, automatischer Wortschatz aus QAction-Texten, Stufe 1, Ausführen mit `runCommand` | „Rechteck“ im Sketcher funktioniert |
+| **2 – Robust zuhören** | Ablehnungslogik (9.3), Kalibrierung der Schwellen, Korpus | Dauerzuhören ohne störende Fehlauslösungen |
+| **3 – Anlernen** | Embeddings (Stufe 2), Lernmodus, `custom`-Dateien | Synonyme und eigene Begriffe |
+| **4 – Parameter & Folgen** | LLM (Stufe 3), Parameterschemata, Undo-Transaktionen | „Schließe den Sketch und polstere 12 mm auf“ |
+| **5 – Pakete & Editor** | Teilbare Workbench-Pakete, grafischer Wortschatz-Editor | Community-Erweiterbarkeit |
+
+---
+
+## 16. Risiken und offene Fragen
+
+| Thema | Risiko / Frage | Gegenmaßnahme / nächster Schritt |
+|---|---|---|
+| Fehlauslösungen beim Dauerzuhören | Gespräche lösen Befehle aus | Dreistufige Entscheidung (9.3), Undo-Transaktion, optional Rufwort |
+| Latenz im CPU-Profil | Erkennung + LLM zu langsam | Stufe 1 ohne LLM, kleinere Modelle, Stufe 3 abschaltbar (12.1) |
+| GPU-Konkurrenz mit FreeCAD | Modelle belegen VRAM, 3D-Ansicht ruckelt | VRAM-Budget, Auslagern einzelner Bausteine auf die CPU (12.1) |
+| Fehlende QActions | Workbenches ohne bisherige Aktivierung haben keine übersetzten Texte | Englische Rückfallebene, Wortschatz beim Aktivieren nachladen |
+| Befehle mit interaktiven Dialogen | Manche Befehle öffnen Dialoge, die Eingaben erwarten | Parameter über Objekteigenschaften setzen, Dialog-Ebene (6.2) |
+| Installation des Dienstes | venv, Modelle herunterladen, PortAudio | Installationsskript, später Prüfung in der Einstellungsseite |
+| GPU-Hersteller | CUDA (NVIDIA) ist am besten unterstützt, AMD/Intel/Apple weniger | Zunächst CUDA + CPU, andere Backends später prüfen |
+| Name des Repo-Ordners | `TalkToMe` (ohne Leerzeichen), Anzeigename „Talk to me“ | Bei Bedarf umbenennen |
