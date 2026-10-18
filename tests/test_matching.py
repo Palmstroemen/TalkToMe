@@ -1,6 +1,6 @@
 """Tests for the first, vocabulary-based matching stage (DESIGN.md section 7, stage 1)."""
 
-from ttm_core.matching import match
+from ttm_core.matching import hotwords, match
 
 COMMANDS = {
     "Sketcher_CreateRectangle": ["Rechteck", "Viereck"],
@@ -42,3 +42,73 @@ def test_empty_text():
 
 def test_threshold():
     assert match("Kreiß", COMMANDS, threshold=0.99)[0] is None
+
+
+# --- sound-alike matching (German, Cologne phonetics) -----------------------------
+
+DE = dict(language="de")
+CAD = dict(COMMANDS, PartDesign_Chamfer=["Fase"], PartDesign_Pocket=["Tasche"])
+
+
+def test_misheard_word_matches_by_sound():
+    assert match("Zeichen ein Richtig", CAD, **DE)[0] == "Sketcher_CreateRectangle"
+
+
+def test_homophone_with_parameters():
+    assert match("Phase 2 mm", CAD, **DE)[0] == "PartDesign_Chamfer"
+    assert match("Phase zwei Millimeter", CAD, **DE)[0] == "PartDesign_Chamfer"
+
+
+def test_parameters_do_not_lower_the_score():
+    assert match("Tasche 5 mm", CAD, **DE) == ("PartDesign_Pocket", 1.0)
+
+
+def test_short_sound_code_needs_the_whole_sentence():
+    # "Vase" sounds like "Fase" (code 38), but inside a longer sentence that's too weak
+    assert match("Das ist eine schöne Vase", CAD, **DE)[0] is None
+
+
+def test_sound_match_scores_below_exact_match():
+    _, sound = match("Richtig", CAD, **DE)
+    _, exact = match("Rechteck", CAD, **DE)
+    assert sound < exact
+
+
+def test_without_language_no_sound_matching():
+    assert match("Zeichen ein Richtig", CAD)[0] is None
+
+
+# --- compound words: spaces and hyphens don't matter --------------------------------
+
+WB = {"workbench:PartDesignWorkbench": ["PartDesign"],
+      "workbench:SketcherWorkbench": ["Sketcher"]}
+
+
+def test_separated_words_match_compound_phrase():
+    assert match("Wechsle zu Part Design", WB)[0] == "workbench:PartDesignWorkbench"
+    assert match("Part-Design", WB)[0] == "workbench:PartDesignWorkbench"
+
+
+def test_compound_text_matches_separated_phrase():
+    assert match("partdesign bitte", {"x": ["Part Design"]})[0] == "x"
+
+
+def test_joined_words_still_score_as_exact():
+    assert match("Part Design", WB) == ("workbench:PartDesignWorkbench", 1.0)
+
+
+# --- hotwords for the speech recognition ---------------------------------------------
+
+def test_hotwords_are_unique_and_keep_order():
+    assert hotwords(["Rechteck", "Kreis", "rechteck", " Linie "]) == "Rechteck, Kreis, Linie"
+
+
+def test_hotwords_are_limited():
+    text = hotwords(["Wort{}".format(i) for i in range(500)], max_chars=50)
+    assert len(text) <= 50
+    assert text.startswith("Wort0, Wort1")
+
+
+def test_hotwords_empty():
+    assert hotwords([]) is None
+    assert hotwords(["", "  "]) is None

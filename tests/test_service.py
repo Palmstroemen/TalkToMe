@@ -50,9 +50,11 @@ class FakeTranscriber:
     def __init__(self, text):
         self.text = text
         self.samples = []
+        self.hotwords = []
 
-    def transcribe(self, audio):
+    def transcribe(self, audio, hotwords=None):
         self.samples.append(len(audio))
+        self.hotwords.append(hotwords)
         return {"text": self.text, "stt_ms": 5}
 
 
@@ -137,6 +139,15 @@ def test_transcript_after_listen_on(service, parts):
     assert msg["text"] == "Zeichne ein Rechteck"
     assert msg["audio_ms"] > 0 and msg["speech_ms"] > 0
     assert parts["transcriber"].samples and parts["transcriber"].samples[0] % FRAME == 0
+    c.close()
+
+
+def test_context_hotwords_reach_the_recognizer(service, parts):
+    c = connect(service)
+    c.send("context", hotwords=["Rechteck", "Kreis", "rechteck"])
+    c.send("listen", on=True)
+    c.wait_for("transcript")
+    assert parts["transcriber"].hotwords[-1] == "Rechteck, Kreis"
     c.close()
 
 

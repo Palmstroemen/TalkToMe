@@ -93,6 +93,25 @@ class Controller(QtCore.QObject):
             tb.addAction(self.action)
         return tb is not None
 
+    def on_workbench_activated(self, *args):
+        self.ensure_in_toolbar()
+        self.send_context()
+
+    def send_context(self):
+        """Hint the texts of the visible toolbar buttons to the speech recognition.
+
+        A first, simple context (DESIGN.md 6.1): the translated button texts of the
+        current workbench. Phase 1 replaces this with the full context snapshot.
+        """
+        texts = []
+        for tb in self.mw.findChildren(QtWidgets.QToolBar):
+            if tb.isVisible() and tb.objectName() != TOOLBAR:
+                for action in tb.actions():
+                    text = action.text().replace("&", "").strip(" .…")
+                    if text and not action.isSeparator():
+                        texts.append(text)
+        self.send("context", hotwords=texts)
+
     def on_toggled(self, checked):
         self.want_listen = checked
         if checked:
@@ -183,6 +202,7 @@ class Controller(QtCore.QObject):
         self.sock.setblocking(False)
         self.decoder = LineDecoder()
         self.send("hello", token=self.token, version=VERSION, language=PARAMS.GetString("Language", "de"))
+        self.send_context()
         if self.want_listen:
             self.send("listen", on=True)
         self.poll.start()
@@ -260,7 +280,7 @@ def setup():
         return False
     if _controller is None:
         _controller = Controller(mw)
-        mw.workbenchActivated.connect(lambda *a: _controller.ensure_in_toolbar())
+        mw.workbenchActivated.connect(_controller.on_workbench_activated)
         QtWidgets.QApplication.instance().aboutToQuit.connect(_controller.shutdown)
     _controller.ensure_in_toolbar()
     return True

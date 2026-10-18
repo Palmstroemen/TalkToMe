@@ -55,7 +55,7 @@ def start_service(args, token):
     raise SystemExit("speech service did not start (exit code {})".format(proc.wait()))
 
 
-def show_transcript(msg, commands, threshold):
+def show_transcript(msg, commands, threshold, language):
     text = msg.get("text", "")
     stt_ms = msg.get("stt_ms", 0)
     stamp = time.strftime("%H:%M:%S")
@@ -64,7 +64,7 @@ def show_transcript(msg, commands, threshold):
     if not text:
         print("{}  {}   {}".format(stamp, color(90, "(nichts verstanden)"), color(90, timing)))
         return False
-    cmd, score = match(text, commands, threshold)
+    cmd, score = match(text, commands, threshold, language)
     print("{}  »{}«".format(stamp, color(1, text)))
     if cmd:
         print("          → {}  {}".format(color(32, cmd), color(90, "(Übereinstimmung {:.2f})".format(score))))
@@ -85,6 +85,7 @@ def main():
     ap.add_argument("--commands", default=os.path.join(ROOT, "tools", "test_commands_de.json"))
     ap.add_argument("--threshold", type=float, default=0.75)
     ap.add_argument("--volume", type=float, default=0.4, help="tone volume, 0 = silent")
+    ap.add_argument("--no-hotwords", action="store_true", help="don't hint the test vocabulary to Whisper")
     ap.add_argument("--exit-after", type=int, default=0, help="stop after N sentences (for scripts)")
     args = ap.parse_args()
 
@@ -96,6 +97,10 @@ def main():
     proc, port = start_service(args, token)
     sock = socket.create_connection(("127.0.0.1", port))
     sock.sendall(encode(make_message("hello", token=token, version=VERSION, language=args.language)))
+    if not args.no_hotwords:
+        # The test vocabulary stands in for the context vocabulary FreeCAD will send.
+        phrases = [p for ps in commands.values() for p in ps]
+        sock.sendall(encode(make_message("context", hotwords=phrases)))
     sock.sendall(encode(make_message("listen", on=True)))
     decoder = LineDecoder()
     count = 0
@@ -111,7 +116,7 @@ def main():
                 elif msg["type"] == "state" and msg["state"] == "listening" and count == 0:
                     print(color(32, "● Mikrofon an – sprich einen Befehl. Strg+C beendet.\n"))
                 elif msg["type"] == "transcript":
-                    ok = show_transcript(msg, commands, args.threshold)
+                    ok = show_transcript(msg, commands, args.threshold, args.language)
                     sock.sendall(encode(make_message("result", ok=ok)))
                     count += 1
                 elif msg["type"] == "error":

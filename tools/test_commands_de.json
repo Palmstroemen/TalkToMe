@@ -5,7 +5,7 @@
     "Sketcher_CreateCircle":    ["Kreis"],
     "Sketcher_CreateLine":      ["Linie", "Strecke"],
     "Sketcher_Dimension":       ["Bemaßung", "Maß"],
-    "PartDesign_Pad":           ["Polster", "Polstere", "aufpolstern"],
+    "PartDesign_Pad":           ["Polster", "Polstere", "aufpolstern", "extrudieren", "hochziehen"],
     "PartDesign_Pocket":        ["Tasche"],
     "PartDesign_Chamfer":       ["Fase"],
     "PartDesign_Fillet":        ["Verrundung", "abrunden"],
@@ -16,5 +16,12 @@
     "Std_ViewFitAll":           ["alles einpassen", "alles zeigen"],
     "Std_Undo":                 ["rückgängig"],
     "Std_Redo":                 ["wiederholen"],
-    "Std_Save":                 ["speichern"]
+    "Std_Save":                 ["speichern"],
+    "ui:cancel":                ["Abbrechen", "Abbruch", "Stopp"],
+    "ui:ok":                    ["OK", "Okay", "Bestätigen", "Fertig"],
+    "workbench:PartDesignWorkbench":  ["Part Design", "Wechsle zu Part Design"],
+    "workbench:SketcherWorkbench":    ["Wechsle zum Sketcher", "Sketcher Workbench"],
+    "workbench:PartWorkbench":        ["Wechsle zu Part", "Part Workbench"],
+    "workbench:DraftWorkbench":       ["Wechsle zu Draft", "Draft"],
+    "workbench:TechDrawWorkbench":    ["Wechsle zu TechDraw", "Tech Draw", "Zeichnung"]
 }

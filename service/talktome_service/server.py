@@ -16,6 +16,7 @@ import time
 import numpy as np
 
 from talktome_service.segmenter import Segmenter
+from ttm_core.matching import hotwords
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 
 SAMPLE_RATE = 16000
@@ -42,6 +43,7 @@ class Service:
         self._client = None
         self._send_lock = threading.Lock()
         self._listening = False
+        self._hotwords = None
         self._mute_until = 0.0
         self._stop = threading.Event()
         self._threads = []
@@ -140,6 +142,8 @@ class Service:
         kind = msg["type"]
         if kind == "listen":
             self._set_listening(bool(msg.get("on")))
+        elif kind == "context":
+            self._hotwords = hotwords(msg.get("hotwords") or [])
         elif kind == "result":
             self._play("ok" if msg.get("ok") else "error")
         elif kind == "bye":
@@ -201,7 +205,7 @@ class Service:
             self.send("state", state="processing")
             start = time.monotonic()
             try:
-                result = dict(self.transcriber.transcribe(audio))
+                result = dict(self.transcriber.transcribe(audio, hotwords=self._hotwords))
             except Exception as e:      # keep the service alive
                 self.log("transcription failed: {}".format(e))
                 self.send("error", message="transcription failed: {}".format(e))

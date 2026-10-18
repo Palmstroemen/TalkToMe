@@ -37,3 +37,20 @@ Die gefühlte Antwortzeit ist etwa **0,64 s Pausenerkennung + Erkennungszeit**.
 - **Messung mit echter Stimme:** `tools/measure_stt.py record` und `bench`.
 - **Standardmodell im CPU-Profil:** vorerst `base`, `tiny` mit Hotwords als schnelle Alternative prüfen.
 - **Zeitlimit und Konfidenzschwelle** vor Phase 1 einbauen.
+
+## Nachtrag: Klangähnlicher Abgleich + Hotwords + Längenbegrenzung
+
+Gleiche 20 synthetische Sätze, Abgleich jetzt mit Kölner Phonetik (`language="de"`), Zahlen und Einheiten werden beim Abgleich ignoriert, Whisper-Ausgabe auf 40 Tokens begrenzt.
+
+| Modell | Hotwords | Befehlstreffer vorher → jetzt | **Falsche** Befehle | Erkennung Ø / max |
+|---|---|---|---|---|
+| tiny | nein | 12 → **14** | 0 | 0,52 s / 1,4 s |
+| tiny | ja   | 17 → **17** | 0 | 0,52 s / 1,2 s |
+| base | nein | 16 → **17** | 0 | 0,99 s / 2,5 s |
+| base | ja   | 18 → **17** | **2** | 1,00 s / 1,9 s (vorher max 6,9 s) |
+
+- **Kölner Phonetik:** reiner Gewinn. „Zeichen ein Richtig“ → Rechteck, „Phase 2 mm“ / „Faset 2 mm“ → Fase. In diesen Messungen keine Fehlauslösung.
+- **Längenbegrenzung:** Der Ausreißer ist weg (max. 1,9 s statt 6,9 s).
+- **Hotwords sind zweischneidig:** Bei `tiny` bringen sie +3 Treffer ohne Fehlauslösung. Bei `base` hat Whisper zweimal Wörter aus der Hinweisliste „gehört“, die nicht gesagt wurden: „Rückgängig“ → „Rechteck öffnen“, „Isometrische Ansicht“ → „Ansicht“. Das sind zwei **falsch ausgeführte** Befehle.
+- **`avg_logprob` trennt die Fehlauslösungen nicht sauber** von richtigen Treffern (−0,37 und −0,77 gegenüber richtigen Treffern bis −0,92). Für die Sicherheit vor dem Ausführen (Phase 1) braucht es also mehr als eine einfache Schwelle, z. B. eine Kombination aus Abgleich-Score, Konfidenz und Zweitbestem Kandidaten.
+- **Vorbehalt:** „Rückgängig“ wird von der synthetischen Stimme offenbar schlecht ausgesprochen (scheitert mit jedem Modell). Belastbar wird das erst mit echter Stimme.

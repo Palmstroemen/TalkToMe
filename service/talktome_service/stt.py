@@ -12,6 +12,10 @@ def cuda_device_count():
 
 
 class Transcriber:
+    # Spoken commands are short. Limiting the output stops Whisper's occasional
+    # hallucination loops (measured: one 6.9 s outlier with hotwords, docs/phase0-results.md).
+    MAX_NEW_TOKENS = 40
+
     def __init__(self, profile, language, beam_size=1, cpu_threads=0, download_root=None):
         from faster_whisper import WhisperModel
         self.profile = profile
@@ -26,7 +30,7 @@ class Transcriber:
         segments, _ = self.model.transcribe(
             audio, language=self.language, beam_size=self.beam_size,
             vad_filter=False, condition_on_previous_text=False,
-            without_timestamps=True, hotwords=hotwords)
+            without_timestamps=True, hotwords=hotwords, max_new_tokens=self.MAX_NEW_TOKENS)
         segments = list(segments)       # decoding happens while iterating
         stt_ms = int((time.monotonic() - start) * 1000)
         n = max(len(segments), 1)
