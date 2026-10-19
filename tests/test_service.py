@@ -261,6 +261,7 @@ def test_plan_for_known_command(parts):
     msg = c.wait_for("plan")
     assert msg["command"] == "Sketcher_CreateRectangle"
     assert msg["score"] >= 0.75
+    assert msg["via"] == "name"
     assert parts["tones"].played == []          # the tone follows the addon's result
     c.send("result", ok=True)
     wait_tones(parts["tones"], 1)

@@ -16,7 +16,7 @@ SEPARATOR = "Separator"
 
 
 def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_open=False,
-                     workbenches=None, current_workbench=None, vocab=None):
+                     workbenches=None, current_workbench=None, vocab=None, descriptions=None):
     """
     toolbar_items      {toolbar name: [command ids]} of the active workbench
     labels             {command id: [button texts]}, translated first, English after
@@ -26,14 +26,17 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     workbenches        {workbench name: [display names]} for switching workbenches
     current_workbench  name of the active workbench (no switch offered to it)
     vocab              {command id: [phrases]} from vocabulary files; they come first
+    descriptions       {command id: help text} in the user's language (status tips)
     """
     vocab = vocab or {}
+    descriptions = descriptions or {}
     candidates, seen = [], set()
 
     def add(id_, level, phrases, is_active=True):
         if phrases and id_ not in seen:
             seen.add(id_)
-            candidates.append({"id": id_, "level": level, "phrases": phrases, "active": is_active})
+            candidates.append({"id": id_, "level": level, "phrases": phrases, "active": is_active,
+                               "description": descriptions.get(id_, "")})
 
     if dialog_open:
         add("ui:ok", "dialog", merge_phrases(vocab.get("ui:ok")))

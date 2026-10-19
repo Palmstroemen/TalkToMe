@@ -112,3 +112,21 @@ def test_hotwords_are_limited():
 def test_hotwords_empty():
     assert hotwords([]) is None
     assert hotwords(["", "  "]) is None
+
+
+# --- function words ------------------------------------------------------------------------
+
+def test_function_words_do_not_match_by_sound():
+    """ "und" sounds like "Undo" (Kölner Phonetik 062)."""
+    assert match("Extrudiere das und ziehe es ab", {"Std_Undo": ["Undo"]}, language="de")[0] is None
+
+
+def test_function_words_do_not_match_by_spelling():
+    """ "einen" looks like "Einfügen", "gut" like "Cut"."""
+    commands = {"Std_Paste": ["Einfügen"], "Std_Cut": ["Cut"]}
+    assert match("Ich trinke einen Kaffee", commands, language="de")[0] is None
+    assert match("Das sieht gut aus", commands, language="de")[0] is None
+
+
+def test_phrase_with_function_words_still_matches():
+    assert match("Ansicht von vorne", {"Std_ViewFront": ["von vorne"]}, language="de")[0] == "Std_ViewFront"

@@ -101,3 +101,71 @@ def test_alternatives_are_sorted():
 def test_same_command_twice_is_not_ambiguous():
     candidates = [cand("Std_Save", ["Speichern"], "global"), cand("Std_Save", ["sichern"], "workbench")]
     assert decide("Speichern", candidates, language="de").kind == "execute"
+
+
+# --- help texts as a fallback (stage 1b) -------------------------------------------------
+
+def described(id_, phrases, description, level="workbench", active=True):
+    return dict(cand(id_, phrases, level, active), description=description)
+
+
+DESCRIBED = [
+    described("PartDesign_Pocket", ["Vertiefung"],
+              "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und zieht das Ergebnis von dem Körper ab"),
+    described("PartDesign_Pad", ["Aufpolsterung"],
+              "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und fügt das Ergebnis dem Körper hinzu"),
+    described("PartDesign_Groove", ["Nut"],
+              "Dreht die Skizze oder das Profil um eine Linie oder Achse herum und zieht das Ergebnis von dem Körper ab"),
+    described("Std_Undo", ["Rückgängig"], "Die vorherige Aktion rückgängig machen", "global"),
+]
+
+
+def test_description_finds_command_without_its_name():
+    d = decide("Extrudiere das und ziehe es vom bestehenden Körper ab", DESCRIBED, language="de")
+    assert d.kind == "execute"
+    assert d.command == "PartDesign_Pocket"
+    assert d.via == "description"
+
+
+def test_name_wins_over_description():
+    d = decide("Aufpolsterung", DESCRIBED, language="de")
+    assert d.command == "PartDesign_Pad"
+    assert d.via == "name"
+
+
+def test_description_needs_a_clear_lead():
+    """Only "extrudieren" and "Körper": Pocket and Pad fit equally well."""
+    d = decide("Extrudiere den Körper", DESCRIBED, language="de")
+    assert d.kind == "not_understood"
+
+
+def test_description_needs_more_than_one_known_word():
+    d = decide("Ich mag meinen Körper, und zwar sehr", DESCRIBED, language="de")
+    assert d.kind == "ignore"
+
+
+def test_inactive_command_found_by_description_is_not_executed():
+    candidates = [dict(c, active=c["id"] != "PartDesign_Pocket") for c in DESCRIBED]
+    d = decide("Extrudiere das und ziehe es vom Körper ab", candidates, language="de")
+    assert d.kind == "not_understood"
+    assert d.reason == "inactive"
+
+
+def test_without_descriptions_long_sentences_are_still_ignored():
+    d = decide("Ich ziehe es jetzt vom Körper ab", CANDIDATES, language="de")
+    assert d.kind == "ignore"
+
+
+def test_description_wins_over_a_name_explaining_little_of_the_sentence():
+    """The vocabulary maps "extrudieren" to Pad, the whole sentence describes Pocket."""
+    candidates = [dict(c, phrases=c["phrases"] + ["extrudieren"]) if c["id"] == "PartDesign_Pad" else c
+                  for c in DESCRIBED]
+    d = decide("Extrudiere das und ziehe es vom bestehenden Körper ab", candidates, language="de")
+    assert (d.kind, d.command, d.via) == ("execute", "PartDesign_Pocket", "description")
+
+
+def test_name_stays_when_it_explains_the_sentence():
+    candidates = [dict(c, phrases=c["phrases"] + ["extrudieren"]) if c["id"] == "PartDesign_Pad" else c
+                  for c in DESCRIBED]
+    d = decide("Extrudieren", candidates, language="de")
+    assert (d.command, d.via) == ("PartDesign_Pad", "name")

@@ -245,7 +245,7 @@ class Service:
     def _decide(self, text):
         d = decide(text, self._candidates, language=self.language)
         info = dict(text=text, command=d.command, score=d.score, level=d.level,
-                    alternatives=d.alternatives)
+                    alternatives=d.alternatives, via=d.via)
         if d.kind == "execute":
             self.send("plan", **info)              # the addon executes and answers with "result"
         elif d.kind == "not_understood":

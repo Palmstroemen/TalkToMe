@@ -22,3 +22,28 @@ PARAMETER_WORDS = {
         "elf", "zwölf", "zwanzig", "dreißig", "vierzig", "fünfzig", "hundert", "tausend",
     },
 }
+
+# Words that join clauses: "Extrudiere das und ziehe es ab" has two clauses.
+CLAUSE_WORDS = {
+    "de": {"und", "dann", "danach", "anschließend"},
+}
+
+# Particles of separable verbs, standing at the end of a clause: "zieht ... ab", "fügt ... hinzu".
+PARTICLES = {
+    "de": {"ab", "an", "auf", "aus", "ein", "fest", "herum", "hinzu", "mit", "um", "weg", "zu",
+           "zurück", "zusammen"},
+}
+
+# Words without meaning for identifying a command, left out when comparing with help texts.
+STOP_WORDS = {
+    "de": FILLER_WORDS["de"] | PARTICLES["de"] | {
+        "ein", "eine", "einen", "einem", "einer", "eines", "den", "dem", "des",
+        "er", "sie", "ihn", "ihm", "ihr", "ihnen", "ich", "du", "wir", "man", "mir", "mich", "uns",
+        "dies", "diese", "dieser", "dieses", "diesen", "diesem", "sein", "seine", "seinen",
+        "in", "im", "ins", "am", "an", "auf", "aus", "bei", "beim", "für", "mit", "um", "vom",
+        "zum", "zur", "über", "unter", "vor", "hinter", "neben", "zwischen", "durch", "gegen", "ohne",
+        "oder", "aber", "wie", "wenn", "als", "auch", "nur", "nicht", "kein", "keine",
+        "bin", "sind", "war", "wird", "werden", "wurde", "hat", "haben", "kann", "soll", "will",
+        "möchte", "bitte", "mal", "doch", "einfach",
+    },
+}

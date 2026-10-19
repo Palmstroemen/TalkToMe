@@ -10,7 +10,7 @@ language has a phonetic algorithm, by sound ("Richtig" sounds like "Rechteck").
 import re
 from difflib import SequenceMatcher
 
-from ttm_core.languages import PARAMETER_WORDS
+from ttm_core.languages import PARAMETER_WORDS, STOP_WORDS
 from ttm_core.phonetics import PHONETICS
 from ttm_core.text import normalize
 
@@ -27,8 +27,12 @@ def command_words(text, language=None):
     return [w for w in normalize(text).split() if not NUMBER.match(w) and w not in params]
 
 
-def phrase_score(text_words, phrase_words, phonetic=None):
-    """Similarity of a phrase with the best matching stretch of the text, 0..1."""
+def phrase_score(text_words, phrase_words, phonetic=None, stop=frozenset()):
+    """Similarity of a phrase with the best matching stretch of the text, 0..1.
+
+    Stretches made only of stop words are skipped inside longer sentences: "und" sounds like
+    "Undo", "gut" looks like "Cut".
+    """
     n = len(phrase_words)
     if not text_words or not n:
         return 0.0
@@ -38,6 +42,8 @@ def phrase_score(text_words, phrase_words, phonetic=None):
     for i in range(max(1, len(text_words) - n + 1)):
         window = text_words[i:i + n]
         partial = len(window) < len(text_words)
+        if partial and all(w in stop for w in window):
+            continue
         score = SequenceMatcher(None, " ".join(window), phrase).ratio()
         if phrase_codes and all(phrase_codes) and len(window) == n:
             same_sound = [phonetic(w) for w in window] == phrase_codes
@@ -55,7 +61,10 @@ def phrase_score(text_words, phrase_words, phonetic=None):
         if not 1 <= size <= len(text_words):
             continue
         for i in range(len(text_words) - size + 1):
-            score = SequenceMatcher(None, "".join(text_words[i:i + size]), compact).ratio()
+            window = text_words[i:i + size]
+            if size < len(text_words) and all(w in stop for w in window):
+                continue
+            score = SequenceMatcher(None, "".join(window), compact).ratio()
             if size < len(text_words):
                 score *= PARTIAL
             best = max(best, score)
@@ -71,11 +80,12 @@ def match(text, commands, threshold=0.75, language=None):
     if not words:
         return None, 0.0
     phonetic = PHONETICS.get(language)
+    stop = STOP_WORDS.get(language, frozenset())
     best_key, best_cmd = (0.0, 0), None
     for cmd, phrases in commands.items():
         for phrase in phrases:
             phrase_words = command_words(phrase, language)
-            key = (phrase_score(words, phrase_words, phonetic), len(phrase_words))
+            key = (phrase_score(words, phrase_words, phonetic, stop), len(phrase_words))
             if key > best_key:
                 best_key, best_cmd = key, cmd
     score = round(best_key[0], 3)

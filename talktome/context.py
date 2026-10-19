@@ -42,8 +42,11 @@ def _command_name(action):
     return value.decode() if isinstance(value, bytes) else str(value)
 
 
-def _describe(cmd_id, labels, active):
-    """Add the translated and English texts of a command. Returns its group children, if any."""
+def _describe(cmd_id, labels, active, descriptions):
+    """Add the translated and English texts and the translated help text of a command.
+
+    Returns its group children, if any.
+    """
     cmd = Gui.Command.get(cmd_id)
     if cmd is None:
         return []
@@ -57,8 +60,10 @@ def _describe(cmd_id, labels, active):
         if name and name != cmd_id:
             children.append(name)
             labels.setdefault(name, []).append(action.text())
+            descriptions.setdefault(name, action.statusTip())
         else:
             texts.append(action.text())
+            descriptions.setdefault(cmd_id, action.statusTip())
     try:
         texts.append(cmd.getInfo().get("menuText", ""))
     except Exception:
@@ -75,14 +80,14 @@ def collect(vocab):
     """Candidates of the current context, as plain data for the speech service."""
     wb = Gui.activeWorkbench()
     toolbars = {name: list(items) for name, items in wb.getToolbarItems().items()}
-    labels, active = {}, {}
+    labels, active, descriptions = {}, {}, {}
     for name in list(toolbars):
         expanded = []
         for cmd_id in toolbars[name]:
-            children = _describe(cmd_id, labels, active)
+            children = _describe(cmd_id, labels, active, descriptions)
             if children:                       # a group button: offer its entries, not the group
                 for child in children:
-                    _describe(child, labels, active)
+                    _describe(child, labels, active, descriptions)
                 expanded.extend(children)
             else:
                 expanded.append(cmd_id)
@@ -104,4 +109,5 @@ def collect(vocab):
 
     return build_candidates(toolbars, labels, active, edit_prefix=edit_prefix,
                             dialog_open=bool(Gui.Control.activeDialog()),
-                            workbenches=workbenches, current_workbench=wb.name(), vocab=vocab)
+                            workbenches=workbenches, current_workbench=wb.name(), vocab=vocab,
+                            descriptions=descriptions)

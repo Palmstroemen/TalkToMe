@@ -209,6 +209,9 @@ Spracherkennung   faster-whisper, language=<fest>, hotwords=<Wortschatz des Kont
 Stufe 1  Wortschatz-Abgleich (unscharf) in Kontext-Kandidaten       → Treffer sicher?  → Plan
   │ nein
   ▼
+Stufe 1b Abgleich mit den Hilfstexten der Befehle (Wortstämme)      → Treffer sicher?  → Plan
+  │ nein
+  ▼
 Stufe 2  Embedding-Ähnlichkeit (mehrsprachiges Modell)              → Treffer sicher?  → Plan
   │ nein / Satz enthält Parameter oder mehrere Befehle
   ▼
@@ -217,6 +220,30 @@ Stufe 3  Kleines LLM: Kandidatenliste + Satz → JSON-Plan (Schema)   → gülti
   ▼
 Nicht verstanden  → Fehlerton (oder Stille, siehe 9.3)
 ```
+
+### Stufe 1b: Hilfstexte
+
+FreeCAD beschreibt jeden Befehl in einem Statustext, übersetzt in die Sprache des Benutzers
+(„Vertiefung: Extrudiert die ausgewählte Skizze … und zieht das Ergebnis von dem Körper ab“).
+Damit findet „Extrudiere das und ziehe es vom Körper ab“ die Vertiefung, ohne dass ihr Name
+fällt (`ttm_core/description.py`):
+
+- Satz und Hilfstexte werden auf Wortstämme reduziert („Extrudiere“, „extrudiert“ → „extrud“),
+  Stoppwörter fallen weg.
+- Trennbare Verben: Ein Partikel am Satzende wird mit dem Verb am Satzanfang verbunden
+  („zieht … ab“ → „ab+zieh“). Nur so unterscheiden sich Vertiefung und Aufpolsterung.
+- Ein Befehl punktet mit dem Anteil des Satzes, den sein Hilfstext abdeckt. Seltene Wörter
+  zählen mehr. Wörter, die in keinem Hilfstext vorkommen, zählen nicht.
+- Sicher heißt: mindestens zwei bekannte Wörter, Abdeckung ≥ 0,7, Vorsprung ≥ 0,15 vor dem
+  Zweitbesten. Die Hilfstexte verwandter Befehle sind sich sehr ähnlich.
+- Der Name hat Vorrang. Ausnahme: Er erklärt weniger als die Hälfte der bedeutungstragenden
+  Wörter, und die Hilfstexte zeigen eindeutig auf einen Befehl („extrudieren“ ist im
+  Wortschatz die Aufpolsterung, der ganze Satz beschreibt aber die Vertiefung).
+- Abschnitte des Satzes, die nur aus Stoppwörtern bestehen, treffen keinen Namen:
+  „und“ klingt wie „Undo“, „gut“ sieht aus wie „Cut“.
+
+Grenze: Andere Wörter als im Hilfstext („mach die Kanten rund“ statt „Verrundung“) findet erst
+Stufe 2.
 
 ### Plan-Format
 

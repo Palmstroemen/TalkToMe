@@ -286,6 +286,8 @@ class Controller(QtCore.QObject):
                 ok, reason = executor.execute(command)
             except Exception as e:
                 ok, reason = False, str(e)
+        if msg.get("via") == "description":
+            command += " (from help text)"
         if ok:
             self.status("»{}« → {}{}".format(text, command, "  ({})".format(reason) if reason else ""))
             App.Console.PrintMessage("Talk to me: »{}« → {}\n".format(text, command))

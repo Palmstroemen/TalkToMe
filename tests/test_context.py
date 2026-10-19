@@ -82,3 +82,14 @@ def test_workbench_switches_exclude_the_current_one():
     assert c["workbench:SketcherWorkbench"]["level"] == "global"
     assert c["workbench:SketcherWorkbench"]["phrases"] == ["Sketcher"]
     assert "workbench:PartDesignWorkbench" not in c
+
+
+def test_descriptions_are_attached():
+    cands = build_candidates({"tb": ["PartDesign_Pad"]}, {"PartDesign_Pad": ["Aufpolsterung"]}, {},
+                             descriptions={"PartDesign_Pad": "Extrudiert die Skizze"})
+    assert cands[0]["description"] == "Extrudiert die Skizze"
+
+
+def test_description_is_empty_when_unknown():
+    cands = build_candidates({"tb": ["PartDesign_Pad"]}, {"PartDesign_Pad": ["Aufpolsterung"]}, {})
+    assert cands[0]["description"] == ""
