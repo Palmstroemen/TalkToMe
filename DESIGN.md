@@ -471,5 +471,7 @@ Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → T
 | Fehlende QActions | Workbenches ohne bisherige Aktivierung haben keine übersetzten Texte | Englische Rückfallebene, Wortschatz beim Aktivieren nachladen |
 | Befehle mit interaktiven Dialogen | Manche Befehle öffnen Dialoge, die Eingaben erwarten | Parameter über Objekteigenschaften setzen, Dialog-Ebene (6.2) |
 | Installation des Dienstes | venv, Modelle herunterladen, PortAudio | Installationsskript, später Prüfung in der Einstellungsseite |
+| FreeCAD in einer Sandbox (Flatpak, Snap) | Der Sprachdienst läuft als Unterprozess mit einer venv, die auf das System-Python verweist. In der Sandbox gibt es dieses Python nicht, und der Mikrofonzugriff ist eingeschränkt | Vorerst AppImage oder Distributionspaket empfehlen (README). Später den Dienst unabhängig von FreeCAD starten (eigener Autostart, FreeCAD verbindet sich nur per Socket) oder als eigenständiges Paket ausliefern |
+| Veraltete FreeCAD-Versionen aus Distributionen | `apt install freecad` liefert unter Ubuntu 22.04 / Mint 21 FreeCAD 0.19 (2021). Dort fehlt z. B. `QtWidgets` in FreeCADs PySide-Schicht | Rückfall auf `QtGui` (`talktome/qt.py`), Tests gegen die 0.19-Schicht. Zielversion bleibt 1.x |
 | GPU-Hersteller | CUDA (NVIDIA) ist am besten unterstützt, AMD/Intel/Apple weniger | Zunächst CUDA + CPU, andere Backends später prüfen |
 | Name des Repo-Ordners | `TalkToMe` (ohne Leerzeichen), Anzeigename „Talk to me“ | Bei Bedarf umbenennen |

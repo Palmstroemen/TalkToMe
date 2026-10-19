@@ -10,7 +10,9 @@ def _talktome_init():
     toolbar.SetString("Name", "Talk to me")
     toolbar.SetBool("Active", True)
 
-    timer = QtCore.QTimer()
+    # FreeCAD runs this file with exec() inside a function: module-level names vanish
+    # afterwards. The main window as parent keeps the timer alive.
+    timer = QtCore.QTimer(FreeCADGui.getMainWindow())
     tries = [0]
 
     def try_setup():
@@ -21,7 +23,6 @@ def _talktome_init():
 
     timer.timeout.connect(try_setup)
     timer.start(500)
-    return timer      # keep a reference, or the timer is garbage collected
 
 
-_talktome_timer = _talktome_init()
+_talktome_init()

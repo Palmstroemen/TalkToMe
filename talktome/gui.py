@@ -12,15 +12,11 @@ import sys
 
 import FreeCAD as App
 import FreeCADGui as Gui
-# FreeCAD's PySide module wraps PySide2 (Qt5) or PySide6 (Qt6), whichever FreeCAD is built with.
-from PySide import QtCore, QtGui, QtWidgets
 
 from talktome import context as ttm_context
 from talktome import executor
+from talktome.qt import QAction, QtCore, QtGui, QtWidgets
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
-
-# QAction moved from QtWidgets (Qt5) to QtGui (Qt6).
-QAction = getattr(QtWidgets, "QAction", None) or QtGui.QAction
 
 ADDON_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.join(ADDON_DIR, "service")
@@ -29,6 +25,10 @@ PARAMS      = App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe")
 TOOLBAR     = "Talk to me"
 POLL_MS     = 50
 STATUS_MS   = 8000
+STDERR_KEEP = 20
+
+# Set by FreeCAD's AppImage or bundle for its own Python; the service runs on another Python.
+FOREIGN_ENV = ("PYTHONHOME", "PYTHONPATH", "PYTHONSTARTUP", "LD_LIBRARY_PATH", "LD_PRELOAD")
 
 ICONS = {
     "off":        "mic_off.svg",
@@ -72,6 +72,7 @@ class Controller(QtCore.QObject):
         self.language = PARAMS.GetString("Language", "de")
         self.vocab = ttm_context.load_vocabulary(self.language)
         self.process = None
+        self.stderr_tail = []
         self.sock = None
         self.decoder = LineDecoder()
         self.token = secrets.token_hex(16)
@@ -151,9 +152,12 @@ class Controller(QtCore.QObject):
         args += PARAMS.GetString("ExtraArgs", "").split()
 
         env = QtCore.QProcessEnvironment.systemEnvironment()
+        for name in FOREIGN_ENV:
+            env.remove(name)
         env.insert("TTM_TOKEN", self.token)
         env.insert("PYTHONPATH", os.pathsep.join([ADDON_DIR, SERVICE_DIR]))
         env.insert("PYTHONIOENCODING", "utf-8")
+        self.stderr_tail = []
         self.process = QtCore.QProcess(self)
         self.process.setProcessEnvironment(env)
         self.process.setWorkingDirectory(SERVICE_DIR)
@@ -175,12 +179,16 @@ class Controller(QtCore.QObject):
         err = self.process.readAllStandardError().data().decode("utf-8", "replace")
         for line in err.splitlines():
             log(line)
+            self.stderr_tail = (self.stderr_tail + [line])[-STDERR_KEEP:]
 
     def on_finished(self, *args):
         self.disconnect_socket()
         self.process = None
         if self.state != "off":
-            self.fail("speech service stopped, see Report view (log level) for details")
+            if self.stderr_tail:
+                App.Console.PrintWarning("Talk to me: speech service output:\n  {}\n".format(
+                    "\n  ".join(self.stderr_tail)))
+            self.fail("speech service stopped, see Report view for details")
 
     def shutdown(self):
         self.send("bye")

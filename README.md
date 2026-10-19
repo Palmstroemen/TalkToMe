@@ -36,6 +36,16 @@ service/.venv/bin/python tools/measure_stt.py record --out samples/de     # reco
 service/.venv/bin/python tools/measure_stt.py bench --samples samples/de --models tiny,base,small -v
 ```
 
+## Which FreeCAD?
+
+FreeCAD **1.x** is the target; 0.19 works as far as tested, but without newer sketcher features.
+
+| Installation | Works with Talk to me? |
+|---|---|
+| **AppImage** from [FreeCAD's releases](https://github.com/FreeCAD/FreeCAD/releases) | **Yes, recommended.** Runs directly on the system, so it can start the speech service and use the microphone. |
+| Flatpak, Snap | **Not yet.** FreeCAD runs in a sandbox: the service's venv points to the system's Python, which doesn't exist inside the sandbox, and microphone access is restricted. |
+| `apt install freecad` | Works, but Debian/Ubuntu/Mint LTS releases ship an old version (Ubuntu 22.04 / Mint 21: FreeCAD 0.19). |
+
 ## Use in FreeCAD
 
 Link the repository into FreeCAD's Mod folder and restart FreeCAD. The folder differs between

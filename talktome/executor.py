@@ -6,7 +6,7 @@ changed since the utterance started.
 """
 
 import FreeCADGui as Gui
-from PySide import QtCore, QtGui, QtWidgets
+from talktome.qt import QtCore, QtGui, QtWidgets
 
 
 def _task_button(which):

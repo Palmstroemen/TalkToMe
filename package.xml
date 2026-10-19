@@ -8,11 +8,12 @@
   <license file="LICENSE">LGPL-2.1-or-later</license>
   <icon>Resources/icons/TalkToMe.svg</icon>
   <content>
-    <!-- Not a workbench: a global toolbar available in every workbench. -->
-    <other>
+    <!-- Not a real workbench but a global toolbar. FreeCAD only runs InitGui.py for
+         "workbench" content, so it is declared as one, without a classname. -->
+    <workbench>
       <name>Talk to me</name>
       <subdirectory>./</subdirectory>
       <freecadmin>1.0.0</freecadmin>
-    </other>
+    </workbench>
   </content>
 </package>
