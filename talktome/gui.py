@@ -9,6 +9,7 @@ import os
 import secrets
 import socket
 import sys
+import time
 
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -18,6 +19,7 @@ from talktome import context as ttm_context
 from talktome import executor
 from talktome.qt import QtCore, QtGui, QtWidgets
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
+from ttm_core.training import classify, learn, options
 
 ADDON_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.join(ADDON_DIR, "service")
@@ -26,6 +28,7 @@ PARAMS      = App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe")
 POLL_MS     = 50
 STATUS_MS   = 8000
 STDERR_KEEP = 20
+MISSES_KEEP = 8              # not understood utterances offered in the training page
 
 # Set by FreeCAD's AppImage or bundle for its own Python; the service runs on another Python.
 FOREIGN_ENV = ("PYTHONHOME", "PYTHONPATH", "PYTHONSTARTUP", "LD_LIBRARY_PATH", "LD_PRELOAD")
@@ -70,7 +73,13 @@ class Controller(QtCore.QObject):
         self.action.toggled.connect(self.on_toggled)
 
         self.language = PARAMS.GetString("Language", "de")
-        self.vocab = ttm_context.load_vocabulary(self.language)
+        self.vocab, self.heard = ttm_context.load_vocabulary(self.language)
+        self.last_candidates = None  # the context sent last; a training situation is taken from it
+        self.misses = []             # recent not understood utterances with their situation
+        self.trainer = None          # the open training page
+        self.training_candidates = None
+        self.training_restore = None # microphone state to restore after training
+        self.asking = None           # the open question menu: {"text", "options", "candidates", "popup"}
         self.process = None
         self.stderr_tail = []
         self.created = None          # (utterance id, document, object) of the last object a step created
@@ -97,16 +106,65 @@ class Controller(QtCore.QObject):
     def on_workbench_activated(self, *args):
         self.send_context()
 
+    def training(self):
+        return self.trainer is not None and self.trainer.recording
+
     def send_context(self):
         """Send the command candidates of the current context (DESIGN.md 6)."""
         if self.sock is None:
             return
+        if self.training():                    # the trained situation stays, for its hints
+            self.send("context", candidates=self.training_candidates)
+            return
         try:
-            candidates = ttm_context.collect(self.vocab, self.language)
+            candidates = ttm_context.collect(self.vocab, self.language, self.heard)
         except Exception as e:
             log("collecting the context failed: {}".format(e))
             return
+        self.last_candidates = candidates
         self.send("context", candidates=candidates)
+
+    def reload_vocabulary(self):
+        self.vocab, self.heard = ttm_context.load_vocabulary(self.language)
+        self.send_context()
+
+    # --- training (DESIGN.md 8.7) ------------------------------------------------------------
+
+    def open_training(self):
+        if self.trainer is None:
+            from talktome.training import TrainingDialog
+            if self.last_candidates is None:
+                try:
+                    self.last_candidates = ttm_context.collect(self.vocab, self.language, self.heard)
+                except Exception as e:
+                    log("collecting the context failed: {}".format(e))
+            self.trainer = TrainingDialog(self, self.mw)
+        self.trainer.show()
+        self.trainer.raise_()
+        self.trainer.activateWindow()
+
+    def start_training(self, candidates):
+        """Transcribe only, with the hints of the trained situation."""
+        self.training_candidates = candidates
+        self.training_restore = self.action.isChecked()
+        self.send("context", candidates=candidates)
+        self.send("train", on=True)
+        if not self.action.isChecked():
+            self.action.setChecked(True)       # starts the service if needed
+        else:
+            self.send("listen", on=True)
+
+    def stop_training(self):
+        self.send("train", on=False)
+        if self.training_restore is False:
+            self.action.setChecked(False)
+        self.training_restore = None
+        self.send_context()
+
+    def remember_miss(self, msg):
+        self.misses = (self.misses + [{"time": time.time(), "text": msg.get("text", ""),
+                                       "alternatives": msg.get("alternatives") or [],
+                                       "candidates": self.last_candidates}])[-MISSES_KEEP:]
 
     def on_toggled(self, checked):
         self.want_listen = checked
@@ -205,6 +263,7 @@ class Controller(QtCore.QObject):
         self.sock.setblocking(False)
         self.decoder = LineDecoder()
         self.send("hello", token=self.token, version=VERSION, language=PARAMS.GetString("Language", "de"))
+        self.send("train", on=self.training())
         self.send_context()
         if self.want_listen:
             self.send("listen", on=True)
@@ -260,9 +319,13 @@ class Controller(QtCore.QObject):
             self.send_context()                # fresh snapshot while the user is speaking
         elif kind == "transcript":
             log("»{}« ({} ms)".format(msg.get("text", ""), msg.get("stt_ms", 0)))
+            if self.training():
+                self.trainer.add_recording(msg.get("text", ""))
         elif kind == "plan":
             self.on_plan(msg)
         elif kind == "not_understood":
+            self.remember_miss(msg)
+            self.ask(msg)
             self.status("not understood: »{}« ({})".format(msg.get("text", ""), msg.get("reason")))
             log("not understood »{}«, reason {}, candidates {}".format(
                 msg.get("text"), msg.get("reason"), msg.get("alternatives")))
@@ -293,9 +356,79 @@ class Controller(QtCore.QObject):
         if len(created) == 1:
             self.created = (utterance_id, doc.Name, created[0].Name)
 
+    # --- question menu (DESIGN.md 8.8) -------------------------------------------------------
+
+    def ask(self, msg):
+        """Offer the likely commands of a not understood utterance next to the mouse pointer."""
+        if not PARAMS.GetBool("AskMenu", True) or not self.last_candidates:
+            return
+        found = options(msg.get("alternatives") or [], self.last_candidates)
+        if not found:
+            return
+        from talktome.ask import AskPopup
+        from talktome.training import describe
+        by_id = {c["id"]: c for c in self.last_candidates}
+        entries = [(describe(by_id[cmd]).split("   (")[0], active) for cmd, active in found]
+        if self.asking is not None:
+            self.asking["popup"].close()
+        popup = AskPopup(self.mw, msg.get("text", ""), entries,
+                         on_pick=lambda i: self.send("result", ok=self.choose(i)[0]),
+                         on_train=self.open_training)
+        self.asking = {"text": msg.get("text", ""), "options": [cmd for cmd, _ in found],
+                       "candidates": self.last_candidates, "popup": popup}
+        popup.destroyed.connect(lambda *a, p=popup: self.asking_closed(p))
+        popup.show()
+
+    def asking_closed(self, popup):
+        if self.asking is not None and self.asking["popup"] is popup:
+            self.asking = None
+
+    def choose(self, index):
+        """Run the command picked in the question menu and learn what was heard for it."""
+        asking = self.asking
+        if asking is None or not 0 <= index < len(asking["options"]):
+            return False, "nothing to pick"
+        asking["popup"].close()
+        command = asking["options"][index]
+        ok, reason, shown = self.run_command(command, {}, None)
+        self.report(asking["text"], shown, ok, reason)
+        if ok and classify(asking["text"], command, asking["candidates"], self.language) == "learn":
+            data = ttm_context.read_custom(self.language)
+            ttm_context.save_custom(self.language, learn(data, command, heard=[asking["text"]]))
+            self.reload_vocabulary()
+            log("learned »{}« for {}".format(asking["text"], command))
+        return ok, reason
+
+    # --- executing ------------------------------------------------------------------------------
+
+    def report(self, text, shown, ok, reason):
+        if ok:
+            self.status("»{}« → {}{}".format(text, shown, "  ({})".format(reason) if reason else ""))
+            App.Console.PrintMessage("Talk to me: »{}« → {}\n".format(text, shown))
+        else:
+            self.status("»{}« → {} failed: {}".format(text, shown, reason))
+            App.Console.PrintWarning("Talk to me: »{}« → {} failed: {}\n".format(text, shown, reason))
+
     def on_plan(self, msg):
         command, text = msg.get("command", ""), msg.get("text", "")
-        args = msg.get("args") or {}
+        if command == "ui:pick":
+            ok, reason = self.choose((msg.get("args") or {}).get("pick", 0) - 1)
+            if not ok:
+                self.report(text, "pick", ok, reason)
+            self.send("result", ok=ok, id=msg.get("id"))
+            return
+        ok, reason, shown = self.run_command(command, msg.get("args") or {}, msg.get("utterance_id"))
+        if ok:
+            # The next step is decided in the new context; a dialog the step opened may ask
+            # for what was said already ("Skizze in der XY-Ebene").
+            self.send_context()
+        if msg.get("via") == "description":
+            shown += " (from help text)"
+        self.report(text, shown, ok, reason)
+        self.send("result", ok=ok, id=msg.get("id"))
+
+    def run_command(self, command, args, utterance_id):
+        """Execute one command. Returns (ok, reason, how to show it)."""
         doc = App.ActiveDocument
         doc_name, before = (doc.Name, {o.Name for o in doc.Objects}) if doc else (None, set())
         if command == "ui:mic_off":
@@ -304,7 +437,7 @@ class Controller(QtCore.QObject):
         elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, "dry run, not executed"
         elif command == "ui:rename":
-            target = self.rename_target(msg.get("utterance_id"))
+            target = self.rename_target(utterance_id)
             if target is None:
                 ok, reason = False, "nothing to rename: select an object"
             else:
@@ -316,23 +449,16 @@ class Controller(QtCore.QObject):
             except Exception as e:
                 ok, reason = False, str(e)
             if ok:
-                self.remember_created(doc_name, before, msg.get("utterance_id"))
-        if ok:
-            # The next step is decided in the new context; a dialog the step opened may ask
-            # for what was said already ("Skizze in der XY-Ebene").
-            self.send_context()
-        if msg.get("via") == "description":
-            command += " (from help text)"
-        if ok:
-            self.status("»{}« → {}{}".format(text, command, "  ({})".format(reason) if reason else ""))
-            App.Console.PrintMessage("Talk to me: »{}« → {}\n".format(text, command))
-        else:
-            self.status("»{}« → {} failed: {}".format(text, command, reason))
-            App.Console.PrintWarning("Talk to me: »{}« → {} failed: {}\n".format(text, command, reason))
-        self.send("result", ok=ok, id=msg.get("id"))
+                self.remember_created(doc_name, before, utterance_id)
+        return ok, reason, command
 
 
 _controller = None
+
+
+def open_training():
+    if _controller is not None:
+        _controller.open_training()
 
 
 def setup():

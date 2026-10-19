@@ -1,0 +1,99 @@
+"""Tests for training: learning how the recognizer hears the user (DESIGN.md 8.7)."""
+
+import json
+import os
+
+from ttm_core.context import build_candidates
+from ttm_core.decision import decide
+from ttm_core.training import classify, learn
+
+DATA = os.path.join(os.path.dirname(__file__), "data")
+with open(os.path.join(DATA, "context_fc114_partdesign_de.json"), encoding="utf-8") as f:
+    PART_DESIGN = json.load(f)
+
+XY, XZ, YZ = ("ui:choose:{}-Ebene (Basis-Ebene)".format(p) for p in ("XY", "XZ", "YZ"))
+
+
+def plane_dialog(heard=None):
+    heard = heard or {}
+    return PART_DESIGN + [
+        {"id": cmd, "level": "dialog", "phrases": [cmd.split(":")[2].split(" (")[0]], "foreign": [],
+         "heard": heard.get(cmd, []), "active": True, "description": ""} for cmd in (XY, XZ, YZ)]
+
+
+# --- classify a recording ------------------------------------------------------------------
+
+def test_already_understood():
+    assert classify("XY-Ebene", XY, plane_dialog(), "de") == "ok"
+
+
+def test_misheard_form_is_learned():
+    assert classify("X-Upsilom-Ebene", XY, plane_dialog(), "de") == "learn"
+
+
+def test_form_of_another_command_is_a_conflict():
+    """Saying XY but hearing "XZ-Ebene" must not teach that XZ means XY."""
+    assert classify("XZ-Ebene", XY, plane_dialog(), "de") == "conflict"
+
+
+def test_nothing_heard():
+    assert classify("", XY, plane_dialog(), "de") == "empty"
+
+
+# --- learned forms in decisions --------------------------------------------------------------
+
+def test_learned_form_and_its_sound_alikes_are_understood():
+    candidates = plane_dialog({XY: ["X-Upsilom-Ebene"]})
+    for text in ("X-Upsilom-Ebene", "X-Upsalon-Ebene", "Mach eine Skizze in der X-Upsalon-Ebene"):
+        d = decide(text, candidates, "de")
+        assert (d.kind, d.command) == ("execute", XY), text
+
+
+def test_learned_forms_stay_apart_from_phrases():
+    cands = build_candidates({"tb": ["PartDesign_Pad"]}, {"PartDesign_Pad": ["Aufpolsterung"]}, {},
+                             heard={"PartDesign_Pad": ["Extrahiere"]})
+    assert cands[0]["phrases"] == ["Aufpolsterung"]          # phrases become hints for Whisper
+    assert cands[0]["heard"] == ["Extrahiere"]               # heard forms don't
+
+
+# --- saving -------------------------------------------------------------------------------------
+
+def test_learn_stores_heard_forms_once():
+    custom = {}
+    learn(custom, XY, heard=["X-Upsilom-Ebene", "x-upsilom-ebene", "Öx Y-Lebenen"])
+    learn(custom, XY, heard=["X-Upsilom-Ebene"])
+    assert custom == {"_heard": {XY: ["X-Upsilom-Ebene", "Öx Y-Lebenen"]}}
+
+
+def test_learn_stores_a_typed_sentence_as_phrase():
+    custom = {"PartDesign_Pad": ["hochziehen"]}
+    learn(custom, "PartDesign_Pad", typed="Zieh das hoch")
+    assert custom["PartDesign_Pad"] == ["hochziehen", "Zieh das hoch"]
+
+
+# --- options of the question menu (DESIGN.md 8.8) ----------------------------------------------
+
+from ttm_core.training import options
+
+
+def test_options_are_the_likely_commands():
+    alternatives = [(XY, 0.79), (YZ, 0.7), (XZ, 0.4)]
+    assert options(alternatives, plane_dialog(), min_score=0.6) == [(XY, True), (YZ, True)]
+
+
+def test_options_show_inactive_commands_as_such():
+    candidates = [dict(c, active=c["id"] != "PartDesign_Pocket") for c in PART_DESIGN]
+    assert options([("PartDesign_Pocket", 0.9)], candidates) == [("PartDesign_Pocket", False)]
+
+
+def test_no_options_for_weak_guesses():
+    assert options([(XY, 0.45)], plane_dialog(), min_score=0.6) == []
+
+
+def test_options_are_limited_and_unique():
+    alternatives = [(XY, 0.9), (XY, 0.8), (YZ, 0.8), (XZ, 0.8), ("PartDesign_Pad", 0.8)]
+    assert [o for o, _ in options(alternatives, plane_dialog(), limit=3)] == [XY, YZ, XZ]
+
+
+def test_options_unknown_in_the_situation_are_left_out():
+    assert options([("Gone_Command", 0.9)], plane_dialog()) == []

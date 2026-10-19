@@ -36,3 +36,17 @@ def test_no_rename(text):
 
 def test_unknown_language():
     assert parse("Den nennen wir Bodenplatte", "xx") is None
+
+
+# --- picking an entry of the question menu ---------------------------------------------------
+
+@pytest.mark.parametrize("text, n", [
+    ("eins", 1), ("Die Erste", 1), ("Nummer zwei", 2), ("die zweite.", 2), ("2", 2), ("drei", 3), ("den dritten", 3),
+])
+def test_pick(text, n):
+    assert parse(text, "de") == ("ui:pick", {"pick": n})
+
+
+@pytest.mark.parametrize("text", ["Fase 2 mm", "zwei Rechtecke", "die Skizze"])
+def test_no_pick(text):
+    assert parse(text, "de") is None or parse(text, "de")[0] != "ui:pick"

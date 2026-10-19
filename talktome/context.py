@@ -9,28 +9,50 @@ import FreeCADGui as Gui
 
 from talktome.qt import QtCore, QtWidgets
 from ttm_core.context import build_candidates
+from ttm_core.training import HEARD
 
 ADDON_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def custom_path(language):
+    """The user's own vocabulary file, also where training stores what it learned."""
+    return os.path.join(App.getUserAppDataDir(), "TalkToMe", "custom.{}.json".format(language))
+
+
+def _read(path):
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError) as e:
+        App.Console.PrintWarning("Talk to me: cannot read {}: {}\n".format(path, e))
+        return {}
+
+
+def read_custom(language):
+    return _read(custom_path(language))
+
+
+def save_custom(language, data):
+    path = custom_path(language)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
 def load_vocabulary(language):
-    """Vocabulary package of the addon, overridden by the user's own file."""
+    """(vocab, heard): phrases of the addon's package, overridden by the user's own file, and
+    the forms learned in training ({command: [texts]})."""
     vocab = {}
-    paths = [os.path.join(ADDON_DIR, "vocab", "{}.json".format(language)),
-             os.path.join(App.getUserAppDataDir(), "TalkToMe", "custom.{}.json".format(language))]
-    for path in paths:
-        if not os.path.exists(path):
-            continue
-        try:
-            with open(path, encoding="utf-8") as f:
-                data = json.load(f)
-        except (OSError, ValueError) as e:
-            App.Console.PrintWarning("Talk to me: cannot read {}: {}\n".format(path, e))
-            continue
+    package = _read(os.path.join(ADDON_DIR, "vocab", "{}.json".format(language)))
+    custom = read_custom(language)
+    for data in (package, custom):
         for cmd, phrases in data.items():
             if not cmd.startswith("_") and isinstance(phrases, list):
                 vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
-    return vocab
+    heard = custom.get(HEARD, {})
+    return vocab, heard if isinstance(heard, dict) else {}
 
 
 def _task_view(widget):
@@ -110,7 +132,7 @@ def _describe(cmd_id, labels, english, active, descriptions):
     return children
 
 
-def collect(vocab, language="de"):
+def collect(vocab, language="de", heard=None):
     """Candidates of the current context, as plain data for the speech service."""
     wb = Gui.activeWorkbench()
     toolbars = {name: list(items) for name, items in wb.getToolbarItems().items()}
@@ -154,4 +176,4 @@ def collect(vocab, language="de"):
     return build_candidates(toolbars, labels, active, edit_prefix=edit_prefix,
                             dialog_open=dialog_open, choices=_choices() if dialog_open else None,
                             workbenches=workbenches, current_workbench=wb.name(), vocab=vocab,
-                            descriptions=descriptions, foreign_labels=english)
+                            descriptions=descriptions, foreign_labels=english, heard=heard)

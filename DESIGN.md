@@ -27,7 +27,6 @@ Bestehende LLM-Addons für FreeCAD (z. B. `ghbalf/freecad-ai`, diverse MCP-Serve
 ### Nicht-Ziele (vorerst)
 
 - Geometrie aus Beschreibungen generieren („Mach mir ein Zahnrad“)
-- Gesprochene Antworten (Sprachausgabe/TTS)
 - Cloud-Dienste jeglicher Art
 - FreeCAD-Versionen vor 1.0
 
@@ -43,7 +42,7 @@ Bestehende LLM-Addons für FreeCAD (z. B. `ghbalf/freecad-ai`, diverse MCP-Serve
 | A4 | **Nur lokal** | Spracherkennung, Embeddings und LLM laufen auf dem eigenen Rechner |
 | A5 | **Feste Sprache pro Nutzer** | Sprache wird eingestellt statt erkannt, was schneller und treffsicherer ist |
 | A6 | **Mikrofon-Schalter statt Push-to-Talk** | Ein Button schaltet das Zuhören ein und aus. Eingeschaltet hört das System ständig zu (Abschnitt 9) |
-| A7 | **Rückmeldung per Ton** | Bestätigungston bei Erfolg, Fehlerton bei Nichtverstehen (Abschnitt 10) |
+| A7 | **Rückmeldung per Ton, Sprache in wichtigen Momenten** | Bestätigungston bei Erfolg, Fehlerton bei Nichtverstehen; kurze Sätze, wo ein Ton zu wenig erklärt (Abschnitt 10) |
 | A8 | **Nur FreeCAD 1.x** | Neuere APIs dürfen genutzt werden, kein Kompatibilitätsballast |
 | A9 | **Mit und ohne Grafikkarte** | GPU-Profil als Normalfall, CPU-Profil als vollwertige Rückfallebene (Abschnitt 12.1) |
 
@@ -404,6 +403,51 @@ Gespeichert wird im Lernmodus immer der **tatsächlich erkannte** Text, nicht de
 - **Bestätigung:** Ein Bestätigungston signalisiert, dass eine neue Zuordnung gespeichert wurde. In der Statusleiste steht „»…« → Befehl“. Rückgängig machen lässt sich das über den Wortschatz-Editor (Phase 5).
 - **Ein- und ausschalten:** Der Lernmodus ist eigenständig schaltbar. Zusätzlich ist er nach einem Fehlerton kurz automatisch aktiv (siehe 9.3).
 
+### 8.7 Training
+
+Nicht jede Fehlerkennung lässt sich mit einer Regel beheben. Wie Whisper eine Stimme hört,
+hängt von Sprecher, Mikrofon und Modell ab (das gesprochene „Ypsilon“ wird bei einem Nutzer zu
+„Upsilom“, „Upsalon“, „Öpsilon“). Statt Sonderregeln lernt das System diese Formen pro Nutzer.
+
+**Trainingsseite** (eigenes, nicht-modales Fenster, Befehl `TalkToMe_Training`):
+
+1. **Was war gemeint?** Aus den zuletzt nicht verstandenen Äußerungen (mit den Kandidaten von
+   damals, denn ein Dialog kann inzwischen geschlossen sein), aus der Befehlsliste mit Filter,
+   oder durch Eintippen des gemeinten Satzes.
+2. **Mehrmals sprechen** (3×). Der Dienst schaltet in den Trainingsmodus (`train`): Er erkennt
+   nur und führt nichts aus. Jede Aufnahme wird eingeordnet: ✓ schon verstanden, ＋ wird
+   gelernt, ⚠ würde einen anderen Befehl treffen (wird nicht gespeichert), – nichts erkannt.
+3. **Speichern** in `custom.<lang>.json`.
+
+**Gelernte Formen** (`_heard` in der Benutzerdatei) zählen beim Vergleich wie Phrasen, mit
+Lautvergleich, sodass auch ähnliche Verhörer passen. Sie gehen aber **nicht als Hinweiswörter**
+an Whisper, sonst würde man es zu „Upsilom“ erziehen. Ein eingetippter Satz wird nur dann als
+Phrase gespeichert, wenn er den Befehl nicht schon trifft.
+
+### 8.8 Rückfrage-Menü bei Unklarheit
+
+Ist eine Äußerung ein Befehlsversuch, aber nicht eindeutig (mehrdeutig, knapp unter der
+Schwelle, Befehl gerade nicht verfügbar), erscheint neben dem Mauszeiger ein kleines Menü mit
+den besten Kandidaten:
+
+- **Nicht blockierend:** ein Feld neben dem Mauszeiger, das weder Maus noch Tastatur fängt; es
+  verschwindet nach einigen Sekunden oder beim Weiterarbeiten. Ein Rechteck im Sketcher wird
+  dadurch nicht unterbrochen.
+- **Nur bei Befehlsversuchen** (nicht bei ignoriertem Gerede) und nur mit Kandidaten über einem
+  Mindestwert.
+- **Per Maus oder Stimme:** Einträge sind nummeriert („eins“, „die zweite“).
+- **Nicht verfügbare Befehle** erscheinen ausgegraut mit Grund („Vertiefung – erst eine Skizze
+  wählen“).
+- **Die Wahl ist Training:** Der gewählte Befehl wird ausgeführt, und der gehörte Text wird als
+  gelernte Form gespeichert. Beim nächsten Mal ist keine Rückfrage mehr nötig. Das ersetzt den
+  Lernmodus per Button-Klick (8.5) für die häufigsten Fälle.
+- **Letzter Eintrag:** „Keins davon – trainieren…“ öffnet die Trainingsseite mit diesem Satz.
+- **In Befehlsfolgen** wartet die Folge auf die Wahl und läuft dann weiter; ohne Wahl bricht sie
+  ab.
+
+Ein Ringmenü (wie das Addon „PieMenu“) wäre mit der Maus schneller; für den Anfang eine kleine
+Liste, die sich auch per Stimme gut bedienen lässt.
+
 ### 8.6 Makros
 
 - **Makros mit Toolbar-Button** sind für FreeCAD normale Befehle mit eigener QAction. Sie werden vom Lernmodus genauso erkannt und über `Gui.runCommand` ausgeführt.
@@ -479,7 +523,27 @@ Nutzer sprechen mehr als Befehle, etwa: „Zeichne ein Rechteck … und zwar von
 - **Fehlerton:** kurz und tiefer, wenn etwas nicht verstanden wurde oder fehlgeschlagen ist.
 - **Erzeugung der Töne:** Der Sprachdienst erzeugt sie synthetisch, z. B. als Sinus mit Hüllkurve, und spielt sie über `sounddevice` ab. Das Addon braucht kein Qt-Multimedia.
 - **Optional: Text in der Statusleiste,** z. B. „Erkannt: ‚Rechteck‘ → Sketcher_CreateRectangle“. Das hilft beim Anlernen und bei der Fehlersuche.
-- **Später** ist ein kleines Overlay mit den Top-3-Kandidaten bei Unsicherheit denkbar. Gesprochene Antworten sind kein Ziel (siehe Nicht-Ziele).
+- **Bei Unsicherheit** das Rückfrage-Menü neben dem Mauszeiger (8.8).
+
+### 10.1 Sprachausgabe
+
+Töne für das Alltägliche, Sprache für die Momente, in denen ein Ton zu wenig erklärt.
+
+| Stufe | Verhalten |
+|---|---|
+| Aus | nur Töne |
+| Wichtiges (Vorgabe) | abgebrochene Folge mit Grund („Vertiefung geht gerade nicht – zuerst eine Skizze wählen“), Rückfrage („Meinst du Vertiefung oder Nut?“), Anleitung im Training („Bitte noch zweimal“), Dienst bereit („Ich höre zu“) |
+| Gesprächig | zusätzlich Bestätigungen („Mache ich“) |
+
+- **Piper** (lokal, schnell auf der CPU). Feste Sätze werden beim Start erzeugt und
+  zwischengespeichert, damit sie ohne Verzögerung kommen.
+- **Im Sprachdienst**, der auch die Töne spielt: Während er spricht, ist das Mikrofon taub
+  (sich nicht selbst hören). Unterbrechen im Satz ist ein späteres Thema.
+- **Die Sätze stehen im Sprachpaket** (`lang/<sprache>/speech.json`, 13.1).
+- **Stimme wählbar:** Mitgeliefert bzw. vorgeschlagen werden nur frei lizenzierte Stimmen (z. B.
+  „Thorsten“, CC0). Andere Piper-Stimmen lädt der Nutzer selbst und wählt die Datei. Stimmen,
+  die aus urheberrechtlich geschütztem Material trainiert sind (z. B. GLaDOS aus „Portal“),
+  dürfen wir nicht mitliefern; die Lizenz jeder Stimme wird in der Auswahl angezeigt.
 
 ---
 
@@ -536,18 +600,46 @@ Das System muss **mit und ohne GPU** funktionieren. Da CAD-Rechner meist eine Gr
 
 ## 13. Einstellungen
 
-Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → Talk to me*:
+Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → Talk to me*
+(`Gui.addPreferencePage`), flach und einfach aufgebaut:
 
-- Sprache (fest)
-- Pfad zum Python-Interpreter des Sprachdienstes
-- Mikrofon (Geräteauswahl)
-- Hardware-Profil: automatisch / GPU / CPU, VRAM-Budget, Modellgröße für die Spracherkennung
-- LLM an/aus, Modellname
-- Schwellenwerte: ausführen / Fehlerton / ignorieren
-- Pausendauer, ab der eine Äußerung als beendet gilt
-- Zuhören pausieren, wenn FreeCAD nicht aktiv ist
-- Lautstärke der Töne
-- Statusleisten-Text an/aus
+| Reiter | Inhalt |
+|---|---|
+| Allgemein | Sprache, Mikrofon (Geräteliste mit Pegelanzeige), Lautstärke der Töne |
+| Erkennung | Modell mit Hinweis auf Größe und Geschwindigkeit, Gerät (automatisch / CPU / GPU) mit Anzeige des gefundenen |
+| Verhalten | Rückfrage-Menü (an/aus, Dauer), Sprachausgabe (Stufe, Stimme), DryRun, Pause bei inaktivem FreeCAD |
+| Sprache | Listen des Sprachpakets bearbeiten (13.1), Knöpfe „Training…“ und „Wortschatz bearbeiten…“ |
+| Experte | Python des Sprachdienstes, Zusatzargumente, Schwellen für Ausführen / Fehlerton / Ignorieren, Pausendauer |
+
+- Sprache, Modell, Gerät, Mikrofon und Stimme wirken erst nach einem Neustart des Dienstes;
+  die Seite startet ihn nach dem Speichern selbst neu.
+- Der **Wortschatz-Editor** ist ein eigenes, größeres Fenster: eigene Phrasen und gelernte
+  Formen ansehen, verschieben, löschen (auch falsch Gelerntes).
+
+### 13.1 Sprachpakete
+
+Alles Sprachabhängige der Erkennung liegt nicht im Code, sondern in einem Paket pro Sprache:
+
+```
+lang/de/  language.json   Füllwörter, Stoppwörter, Zahl- und Einheitswörter, Satzverbinder, Verbpartikel
+          patterns.json   Satzmuster mit Lücke („den nennen wir {label}“)
+          vocab.json      Synonyme, Ausweichwörter
+          speech.json     Sätze der Sprachausgabe
+lang/en/  …
+```
+
+- **Zwei Schichten:** das mitgelieferte Paket (nur lesbar, Verbesserungen als Beitrag ins Repo)
+  und die Änderungen des Nutzers im Benutzerordner, bearbeitbar auf der Einstellungsseite.
+- **Nicht jede Sprache braucht jede Liste:** Fehlt eine (Verbpartikel im Chinesischen), entfällt
+  die Regel.
+- **Code statt Liste**, wo Verfahren sprachabhängig sind: Lautvergleich (Kölner Phonetik für
+  Deutsch, z. B. Metaphone für Englisch; ohne Verfahren nur Schreibweise), Wortstämme (z. B.
+  Snowball). Sprachen ohne Leerzeichen zwischen Wörtern (Chinesisch, Japanisch) brauchen einen
+  Umbau des Abgleichs, der mit Wörtern arbeitet; Arabisch eigene Normalisierung.
+- **Englisch als zweites Paket** von Anfang an, um die Trennung zu prüfen.
+
+Davon getrennt ist die **Übersetzung der Oberfläche** (Knöpfe, Statusleiste) über FreeCADs
+`translate()` und Übersetzungsdateien.
 
 ---
 
@@ -570,6 +662,17 @@ Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → T
 | **3 – Anlernen** | Embeddings (Stufe 2), Lernmodus, `custom`-Dateien | Synonyme und eigene Begriffe |
 | **4 – Parameter & Folgen** | LLM (Stufe 3), Parameterschemata, Undo-Transaktionen, Werkzeug-Ebene mit Folgebefehlen (6.5) | „Schließe den Sketch und polstere 12 mm auf“, „Rechteck … Breite 50, Höhe 30“ |
 | **5 – Pakete & Editor** | Teilbare Workbench-Pakete, grafischer Wortschatz-Editor | Community-Erweiterbarkeit |
+
+**Nächste Schritte (Stand 2026-10-19).** Erledigt sind Phase 0 und 1, Hilfstexte (Stufe 1b),
+Befehlsfolgen, Umbenennen, Auswahl in Dialogen, Mikrofon per Stimme aus, Anzeige der
+System-Stummschaltung. Reihenfolge:
+
+1. Training (8.7) und Rückfrage-Menü (8.8)
+2. Sprachpakete de und en (13.1)
+3. Sprachausgabe (10.1)
+4. Einstellungsseite (13)
+5. Wortschatz-Editor
+6. Übersetzung der Oberfläche
 
 ---
 

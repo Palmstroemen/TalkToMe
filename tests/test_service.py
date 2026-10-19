@@ -527,3 +527,22 @@ def test_a_choice_has_no_follow_up_of_its_own(parts):
         c.wait_for("plan", timeout=0.5)
     c.close()
     s.stop()
+
+
+# --- training: recognize only -----------------------------------------------------------------
+
+def test_training_mode_only_transcribes(parts):
+    parts["transcriber"] = FakeTranscriber("Zeichne ein Rechteck")
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=CANDIDATES)
+    c.send("train", on=True)
+    c.send("listen", on=True)
+    assert c.wait_for("transcript")["text"] == "Zeichne ein Rechteck"
+    for kind in ("plan", "not_understood", "ignored"):
+        with pytest.raises(TimeoutError):
+            c.wait_for(kind, timeout=0.2)
+    assert parts["tones"].played == []
+    c.close()
+    s.stop()

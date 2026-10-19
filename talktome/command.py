@@ -11,8 +11,10 @@ import os
 import FreeCADGui as Gui
 
 NAME = "TalkToMe_Microphone"
-ICON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                    "Resources", "icons", "mic_off.svg")
+TRAINING = "TalkToMe_Training"
+ICON_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "icons")
+ICON = os.path.join(ICON_DIR, "mic_off.svg")
+TRAIN_ICON = os.path.join(ICON_DIR, "train.svg")
 
 
 class MicrophoneCommand:
@@ -38,5 +40,23 @@ def action():
     return actions[0] if actions else None
 
 
+class TrainingCommand:
+    def GetResources(self):
+        return {
+            "Pixmap": TRAIN_ICON,
+            "MenuText": "Talk to me: Training",
+            "ToolTip": "Teach Talk to me how the speech recognition hears you",
+        }
+
+    def IsActive(self):
+        return True
+
+    def Activated(self):
+        import talktome.gui
+        talktome.gui.open_training()
+
+
 if NAME not in Gui.listCommands():
     Gui.addCommand(NAME, MicrophoneCommand())
+if TRAINING not in Gui.listCommands():
+    Gui.addCommand(TRAINING, TrainingCommand())

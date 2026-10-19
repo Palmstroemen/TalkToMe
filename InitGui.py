@@ -12,6 +12,7 @@ def _talktome_init():
     toolbar.SetString("Name", "Talk to me")
     toolbar.SetBool("Active", True)
     toolbar.SetString(talktome.command.NAME, "talktome.command")
+    toolbar.SetString(talktome.command.TRAINING, "talktome.command")
 
     # FreeCAD runs this file with exec() inside a function: module-level names vanish
     # afterwards. The main window as parent keeps the timer alive.

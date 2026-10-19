@@ -141,3 +141,11 @@ def test_vocabulary_adds_phrases_to_choices():
     vocab = {"ui:choose:XY-Ebene (Basis-Ebene)": ["Draufsicht"]}
     c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, choices=PLANES, vocab=vocab))
     assert c["ui:choose:XY-Ebene (Basis-Ebene)"]["phrases"] == ["Draufsicht", "XY-Ebene"]
+
+
+def test_label_for_display_is_freecads_text():
+    vocab = {"ui:choose:XY-Ebene (Basis-Ebene)": ["Draufsicht"], "PartDesign_Pad": ["hochziehen"], "ui:ok": ["OK"]}
+    c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, choices=PLANES, vocab=vocab))
+    assert c["ui:choose:XY-Ebene (Basis-Ebene)"]["label"] == "XY-Ebene"
+    assert c["PartDesign_Pad"]["label"] == "Aufpolsterung"
+    assert c["ui:ok"]["label"] == "OK"                       # no FreeCAD text: first phrase

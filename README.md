@@ -59,6 +59,12 @@ A toolbar "Talk to me" with a microphone button appears in every workbench. To g
 keyboard shortcut (or a foot pedal key), assign one to the command "Talk to me" in
 Tools → Customize → Keyboard. The microphone key of a laptop keyboard mutes the microphone in
 the system; the button then turns orange.
+When something is not clear, a small menu next to the mouse pointer offers the likely commands;
+pick one by mouse or by voice ("die zweite"). The choice is executed and remembered: next time
+the same mishearing is understood. The button "Talk to me: Training" opens a page to teach
+it on purpose: pick what you meant, say it three times. Learned forms are stored in
+`<UserAppDataDir>/TalkToMe/custom.<language>.json`.
+
 Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkToMe`):
 
 | Parameter | Default | Meaning |
@@ -68,6 +74,7 @@ Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkTo
 | `Device` | `auto` | `auto`, `cuda`, `cpu` |
 | `ServicePython` | `service/.venv/bin/python` | Python of the speech service |
 | `DryRun` | `false` | Only show recognized commands, don't execute them |
+| `AskMenu` | `true` | Question menu next to the mouse pointer when not sure |
 
 ## Tests
 

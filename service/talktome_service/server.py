@@ -51,6 +51,7 @@ class Service:
         self._listening = False
         self._hotwords = None
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
+        self._training = False       # training: only transcripts, nothing is decided or executed
         self.language = self.info.get("language")
         self._mute_until = 0.0
         self._zero_frames = 0
@@ -163,6 +164,8 @@ class Service:
             self._set_listening(bool(msg.get("on")))
         elif kind == "context":
             self._set_context(msg)
+        elif kind == "train":
+            self._training = bool(msg.get("on"))
         elif kind == "result":
             self._on_result(msg)
         elif kind == "bye":
@@ -271,7 +274,7 @@ class Service:
                 result.update(audio_ms=int(len(audio) * 1000 / SAMPLE_RATE),
                               speech_ms=utterance.speech_ms, truncated=utterance.truncated)
                 self.send("transcript", **result)
-                if self._candidates is not None:
+                if self._candidates is not None and not self._training:
                     self._decide(result["text"])
             self.send("state", state=self._listen_state())
 

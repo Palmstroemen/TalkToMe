@@ -119,7 +119,7 @@ def explains(text, candidate, language=None, threshold=0.75):
 
 def _phrases(candidate, language, phonetic):
     """(phrase words, sound rule) of a candidate; foreign labels are compared by spelling only."""
-    for p in candidate["phrases"]:
+    for p in candidate["phrases"] + candidate.get("heard", []):
         yield command_words(p, language), phonetic
     for p in candidate.get("foreign", ()):
         yield command_words(p, language), None
