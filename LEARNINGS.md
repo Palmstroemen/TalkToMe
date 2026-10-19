@@ -31,7 +31,10 @@ als zweite; FreeCAD 1.1.4 als AppImage.
   debuggen, sprachneutral.
 - **Die Entscheidungslogik gehört in einen Kern ohne Abhängigkeiten** (`ttm_core`: nur
   Standardbibliothek). Er wird vom Dienst und vom Addon genutzt und ist ohne Mikrofon, Modell oder
-  Anwendung testbar. Das war die Grundlage für über 400 Tests, die in 20 s laufen.
+  Anwendung testbar. Das war die Grundlage für über 500 Tests, die in unter einer Minute laufen.
+- **Dieselbe Funktion für Dienst und Tests:** Die Logik „ganze Äußerung → Schritte“ (Gerede
+  erkennen, exklusive Befehle, Werte für ein laufendes Werkzeug) stand zuerst im Dienst, vermischt
+  mit dem Senden. Herausgezogen als reine Funktion prüfen die Tests genau das, was der Dienst tut.
 - **Der Dienst bekommt alle Hardware als Parameter** (Quelle, VAD, Erkenner, Lautsprecher,
   Stimme). Tests laufen mit Attrappen; ein Werkzeug (`tools/try_talktome.py`) nutzt den echten
   Dienst ohne die Anwendung.
@@ -71,14 +74,30 @@ als zweite; FreeCAD 1.1.4 als AppImage.
     Reste wie Befehlsversuche).
   - Abschnitte nur aus Stoppwörtern treffen keinen Befehl („und“ klang wie „Undo“).
   - Ein Name, der nur einen kleinen Teil des Satzes erklärt, verliert gegen eine Beschreibung,
-    die den ganzen Satz erklärt.
+    die den ganzen Satz erklärt. *Lücke, die erst der Korpus zeigte:* Passte keine Beschreibung,
+    wurde der schwache Namenstreffer doch ausgeführt.
+- **Gespräch und Befehl unterscheiden sich sprachlich, nicht in der Ähnlichkeit.** Gespräch
+  *beschreibt* Bestehendes („**Der** Kreis **ist** zu groß“, „Die Bohrung **sitzt** falsch“, „**Wie**
+  spät ist es“, „**glaube** ich“, „I **made** …“), ein Befehl *will* etwas („Ich brauche hier
+  **einen** Kreis“, „Mach eine Bohrung“). Eine Liste von **Aussagewörtern** im Sprachpaket
+  (Hilfsverben, Zustandsverben, Fragewörter, Meinungsverben) senkte die Fehlauslösungen bei
+  Gesprächen mit Fachwörtern von 10 auf 0, ohne einen der langen, natürlichen Befehle zu
+  verlieren. Ab 3 Wörtern gilt so ein Satz als Gespräch; steht daneben ein Teilsatz mit
+  erkanntem Befehl, gilt nur dieser („Die Skizze ist fertig, Skizze verlassen“). Preis: Befehle
+  in Frageform („Wie wäre es mit einer Fase?“) werden ignoriert.
+- **Zufällige Sicherheit ist keine.** „Symmetrisch“ klang wie „Isometrisch“, wurde aber nie
+  ausgeführt, weil zwei Ansichtsbefehle gleichauf lagen und die Mehrdeutigkeitsprüfung griff.
+  Nachdem ein Fehler in der Kandidatenliste behoben war, blieb nur einer übrig, und er wurde
+  ausgeführt. Korrekturen an einer Stelle können Schutz an einer ganz anderen entfernen; nur ein
+  breiter Korpus zeigt das.
 - **Mehrdeutigkeit erkennen:** Zwei Kandidaten auf derselben Ebene, knapp beieinander → nicht
   raten. Ausnahme: Ist eine Phrase in der anderen enthalten („Part“ vs. „Part Design“), gewinnt
   die längere.
 - **Kontextebenen** (Dialog > Bearbeitung > Arbeitsbereich > global) mit kleinem Bonus. Was im
   offenen Dialog angeboten wird, ist fast immer gemeint.
 - **Nicht verfügbare Befehle** nicht still verwerfen, sondern sagen, *dass* sie gemeint waren
-  („Vertiefung geht gerade nicht“).
+  („Vertiefung geht gerade nicht“). In Tests zählt das als **richtig erkannt**: „Rückgängig“ in
+  einem neuen Dokument ist kein Fehler der Erkennung.
 
 ### 1.4 Wörter vergleichen
 
@@ -97,6 +116,14 @@ als zweite; FreeCAD 1.1.4 als AppImage.
   auch ohne Leerzeichen vergleichen.
 - **Wortstämme** für Beschreibungen („extrudiere“ = „extrudiert“), **trennbare Verben** im
   Deutschen („zieht … ab“ = „abziehen“; der Unterschied zwischen Vertiefung und Aufpolsterung).
+- **Beschriftungen haben gemeinsame Enden, die nichts unterscheiden:** Im Sketcher heißen zehn
+  Befehle „… festlegen“ („Parallel festlegen“), im Englischen „… Constraint“, dazu „… um
+  Mittelpunkt“. Man sagt einfach „Parallel“, und das erklärte nur die Hälfte der Beschriftung.
+  Allgemeine Lösung: Ein Ende, das mindestens 3 Beschriftungen eines Kontexts teilen, ergibt eine
+  **Kurzform** ohne dieses Ende; bei gleichen Kurzformen bekommt sie der erste Befehl (bei Gruppen
+  die Voreinstellung). **Aber:** Im Englischen ist das gemeinsame Ende oft das *Objekt* („Edit
+  **Sketch**“, „Fit **Selection**“), übrig bleibt ein nacktes Verb („Fit“ ≈ „first“). Darum zählen
+  Kurzformen nur als ganze Äußerung oder exakt geschrieben im Satz.
 - **Seltene Wörter gewichten, aber nicht allein entscheiden lassen:** „machen“ kam nur im
   Hilfetext von „Rückgängig“ vor; „mach eine Skizze“ wurde zu Rückgängig. Mindestens zwei
   erklärte Wörter verlangen; generische Verben als Stoppwörter.
@@ -113,6 +140,11 @@ als zweite; FreeCAD 1.1.4 als AppImage.
   „Zeichne ein Rechteck 50 mal 30“, „Aufpolsterung 12 mm“.
 - **Werte, die vor ihrem Feld kommen, festhalten** (das Feld erscheint erst nach dem ersten
   Klick) und dann eintragen.
+- **Wartet ein Werkzeug auf Werte, sind reine Wertangaben immer Werte.** „Breite 50, Höhe 30“
+  wechselte den Arbeitsbereich, weil „Breite“ wie „Part“ klingt. Ein Teilsatz nur aus Zahlen,
+  Wertnamen, Einheiten und Füllwörtern ist dann eine Eingabe, egal wie sehr er nach einem Befehl
+  klingt; mehrere davon hintereinander sind ein Schritt. Kontextwechsel (Arbeitsbereich) werden
+  währenddessen gar nicht angeboten.
 - **Freier Text als Parameter** („Den nennen wir Bodenplatte“) lässt sich nicht unscharf
   vergleichen → **Satzmuster mit Lücke**, pro Sprache.
 - **Zahlen:** Artikel sind auch Zahlwörter („**ein** Rechteck“ ≠ 1) → nur mit Einheit danach oder
@@ -143,6 +175,9 @@ als zweite; FreeCAD 1.1.4 als AppImage.
   Name?“ → `nenndas {label}`.
 - **Ein Editor zum Aufräumen** (löschen, falsch Gelerntes zum richtigen Befehl verschieben) gehört
   dazu.
+- **Ein Knopf genügt.** Ein zweiter Symbolleisten-Knopf für das Training (Mikrofon mit Haken)
+  verwirrte neben dem Mikrofon. Das Training kommt von selbst (Rückfrage-Menü), per Sprache
+  („Lass uns das mal trainieren“) oder aus den Einstellungen.
 
 ### 1.7 Rückmeldung
 
@@ -166,6 +201,13 @@ als zweite; FreeCAD 1.1.4 als AppImage.
   Alles arbeitet mit Wörtern und Wortgruppen.
 - **UI-Übersetzung ist ein anderes Thema** als die gesprochene Sprache und folgt der
   Anwendungssprache.
+- **Varianten und Dialekte erben** von einem Basispaket und enthalten nur Abweichungen
+  (`de` → `de-AT` → Benutzer), mit klaren Mischregeln (Liste ersetzen oder mit `+` ergänzen,
+  Tabellen mischen, Phrasen der Variante zuerst). Die Erkennung bekommt die Basissprache
+  (Whisper kennt `de`, nicht `de-AT`).
+- **Manches hängt am Modell, nicht an der Sprache:** gehörte Formen, was das Modell weglässt
+  oder erfindet, Schreibweisen von Zahlen. Das ist eine zweite Achse neben der Sprache
+  (Modellprofile); gelernte Formen sollten das Modell mitspeichern.
 
 ### 1.9 Entwicklung und Tests
 
@@ -185,6 +227,51 @@ als zweite; FreeCAD 1.1.4 als AppImage.
 - **Den Nutzer schützen:** Testläufe mit einer Kopie seiner Konfiguration; seine Daten und sein
   Mikrofonzustand werden danach wiederhergestellt; nichts ungefragt herunterladen, was er schon
   hat.
+
+### 1.10 Der Wahrheitskorpus
+
+Der wichtigste Baustein der zweiten Hälfte: Sätze mit dem Ergebnis, das sie liefern müssen,
+gespielt in aufgezeichneten Zuständen der Anwendung. Er hat in kurzer Zeit mehr gefunden als
+alle Einzeltests zuvor.
+
+- **Kontexte als Rohdaten aufzeichnen,** ohne Wortschatz. Unsere ersten aufgezeichneten
+  Kontexte enthielten die Synonyme schon; eine Änderung am Wortschatz wäre im Test unsichtbar
+  geblieben. Jeder Lauf baut die Kandidaten aus Rohdaten plus aktuellem Paket.
+- **Ergebnisse nach Schaden ordnen:** richtig < nachgefragt < verpasst < auf Gespräch reagiert <
+  Falsches ausgeführt. Ein „bestanden/durchgefallen“ verdeckt, *wie* schlimm etwas ist.
+- **Bekannte Schwächen markieren** (mit Notiz) statt Tests abzuschalten: Sie stehen in jedem
+  Bericht, brechen die Tests aber nicht. **Und Alarm schlagen, wenn eine bekannte Schwäche
+  plötzlich richtig ist**, damit die Markierung nicht veraltet.
+- **Gesprächssätze sind der wertvollste Teil.** Sätze beim Arbeiten mit Fachwörtern darin („die
+  Kante ist zu scharf“) fanden die meisten Fehlauslösungen. Ebenso wichtig: lange, natürliche
+  Befehle als Gegenprobe, damit eine Verschärfung nichts Nützliches abschneidet.
+- **Der Korpus findet nur, was er an Sätzen hat.** Ein absichtlich schädlicher Vorschlag fiel
+  nicht auf, weil der einzige betroffene Satz schon falsch war.
+- **Vorher/nachher-Vergleich** mit den Korrekturen eines Nutzers prüft, ob ein geteilter
+  Vorschlag etwas verschlechtert, bevor er in ein Paket kommt.
+- **Abdeckung pro Befehl** als Sicht auf den Korpus: Wie viele *verschiedene* Formulierungen
+  (nach bedeutungstragenden Wörtern, „Mach eine Fase“ = „Fase“) werden erkannt, **ohne sich selbst
+  im Wortschatz** (sonst misst man Auswendiglernen), mit welchem Abstand zum nächsten Befehl und
+  **womit verwechselbar**. Daraus eine Ampel; der Name der Anwendung zählt als Grundausstattung.
+- **Neue Kontexte decken Fehler im Einsammeln auf:** Erst die neu aufgezeichneten Kontexte
+  zeigten, dass Gruppen-Buttons nie zerlegt wurden (3.2).
+
+### 1.11 Community
+
+- **Beitragen ohne Code ermöglichen:** Sprachpakete sind Daten, Kontexte nimmt ein Makro auf,
+  der Korpus ist eine Textdatei. Ein Prüfwerkzeug (`check_pack`) sagt Schritt für Schritt, was
+  fehlt, statt eine lange Anleitung vorauszusetzen.
+- **Anleitung mit einem durchgespielten Beispiel** (Französisch von null bis zum Pull Request)
+  und echten Ausgaben, nicht abstrakt.
+- **Issue-Vorlagen fragen nach dem Gehörten**, nicht nur dem Gesagten, plus Sprache, Modell,
+  Version und Zustand der Anwendung. Daraus wird fast unverändert ein Korpus-Fall.
+- **Korrekturen der Nutzer sind der Rohstoff,** aber nie automatisch übernehmen: anzeigen,
+  auswählen lassen, mit dem Korpus prüfen. Datenschutz: Objektnamen im Kontext sind sichtbar
+  und editierbar.
+- **Ideen für Trainingsspiele** (noch nicht gebaut): Karten mit den schlecht abgedeckten Befehlen
+  zuerst, Beispiele anderer erst *nach* dem eigenen Versuch (sonst wird nachgesprochen); und
+  „bedienen und dazu sprechen“: Der Klick auf ein Werkzeug ist die Grundwahrheit für den Satz
+  davor, das System beobachtet nur und führt nichts aus.
 
 ---
 
@@ -231,7 +318,12 @@ Profil wählbar machen (CPU: `base`, GPU: `small`/`medium`) und mit dem Ziel-Mod
 
 - Befehle: `Gui.Command.get(id)`, `.getAction()` (übersetzte Texte), `.getInfo()` (englisch),
   `.isActive()`. **Hilfetexte** stehen übersetzt im `statusTip()` der Aktion.
-- **Gruppenbefehle** enthalten Unteraktionen mit der Eigenschaft `CommandName`.
+- **Gruppenbefehle** (Buttons mit Menü: „Kreis / Ellipse …“) enthalten Unteraktionen. Ältere
+  Versionen trugen den Befehl in der Eigenschaft `CommandName`, **FreeCAD 1.1 in `data()` und
+  `objectName()`** der Aktion. Unser Code suchte nur `CommandName`; die Gruppen wurden nie
+  zerlegt, alle Einträge waren Phrasen des Gruppenbefehls, und der führte seine Voreinstellung
+  aus: „Ellipse“ hätte einen Kreis gezeichnet. Mehrere Quellen probieren und nur Namen
+  akzeptieren, die FreeCAD als Befehl kennt. Im Sketcher sind es danach 153 statt 94 Befehle.
 - `Std_Workbench` trägt die Namen *aller* Arbeitsbereiche → aus den Kandidaten nehmen.
 - **„Umbenennen“ ist kein Befehl**, nur eine Aktion der Baumansicht. Selbst umsetzen (Label in
   einer Transaktion, damit Rückgängig geht).
@@ -317,6 +409,15 @@ aufgezeichneten Kontexten.
   Barrierefreiheits-Aktionen, Kommandozeile. Globale Tastenkürzel fürs Mikrofon ebenso.
 - **Kontext ist das aktive Fenster:** Welche Anwendung, welche Auswahl, welcher Ordner. Ebenen wie
   bei uns: Dialog > Anwendung > System.
+- **Die Beschriftungen aus den Barrierefreiheits-Schnittstellen** werden dieselben Eigenheiten
+  haben wie FreeCADs Befehle: gemeinsame Enden („… öffnen“, „… Settings“), verschachtelte Menüs,
+  die man zerlegen muss, Einträge ohne Text. Kurzformen und das Zerlegen von Gruppen übertragen
+  sich direkt.
+- **Gespräch ist auf Systemebene noch häufiger** (Telefon, Kollegen, Videokonferenz). Die
+  Aussagewörter und ein Korpus mit vielen Gesprächssätzen gehören von Anfang an dazu.
+- **„Bedienen und dazu sprechen“ passt hier besonders gut:** Die Barrierefreiheits-Schnittstellen
+  melden Klicks und Fokuswechsel systemweit; so entstehen beschriftete Sätze aus echter Arbeit,
+  in echten Kontexten, die zugleich als aufgezeichnete Kontexte für den Korpus dienen.
 
 ### 4.3 Vorschlag für den Start
 
@@ -352,3 +453,16 @@ aufgezeichneten Kontexten.
 - [ ] Mit kleinem Modell entwickeln, mit Zielmodell messen; Ausgabelänge begrenzen
 - [ ] Echte Nutzerstimme früh einbeziehen; Kunststimme nur für Abläufe
 - [ ] Bei destruktiven Aktionen bestätigen und Rückgängig ermöglichen
+- [ ] Wahrheitskorpus von Anfang an: Kontexte als Rohdaten, Ergebnisse nach Schaden geordnet,
+      viele Gesprächssätze mit Fachwörtern, lange natürliche Befehle als Gegenprobe, bekannte
+      Schwächen markiert (mit Alarm, wenn behoben)
+- [ ] Aussagewörter (Aussage, Frage, Meinung) gegen Gespräch; nicht auf zufällige
+      Mehrdeutigkeit als Schutz verlassen
+- [ ] Gruppen und Menüs in ihre Einträge zerlegen und das prüfen; Kurzformen aus gemeinsamen
+      Beschriftungsenden, aber nur als ganze Äußerung oder exakt
+- [ ] Wartet ein Werkzeug auf Eingaben, haben reine Wertangaben Vorrang, Kontextwechsel sind
+      gesperrt
+- [ ] Abdeckung pro Befehl messen (verschiedene Formulierungen, ohne sich selbst, Verwechslungen)
+- [ ] Varianten erben vom Basispaket; Modellabhängiges getrennt von Sprachlichem halten
+- [ ] Mitmachen ohne Code: Daten statt Code, Prüfwerkzeug, Anleitung mit echtem Beispiel,
+      Issue-Vorlagen mit dem Gehörten
