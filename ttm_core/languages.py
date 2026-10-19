@@ -48,3 +48,9 @@ STOP_WORDS = {
         "mach", "mache", "machen", "macht", "tu", "tue", "tun",       # say nothing about the command
     },
 }
+
+# Number words as values: "Körper zwei" names the object labelled "Körper002".
+NUMBER_VALUES = {
+    "de": {"null": 0, "ein": 1, "eins": 1, "eine": 1, "zwei": 2, "drei": 3, "vier": 4, "fünf": 5,
+           "sechs": 6, "sieben": 7, "acht": 8, "neun": 9, "zehn": 10, "elf": 11, "zwölf": 12},
+}

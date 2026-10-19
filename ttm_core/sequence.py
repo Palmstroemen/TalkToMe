@@ -23,14 +23,14 @@ def _join(clauses):
     return ", ".join(clauses)
 
 
-def next_step(clauses, candidates, language=None, max_span=3, **decide_args):
+def next_step(clauses, candidates, language=None, max_span=3, patterns=None, **decide_args):
     """(Decision, number of clauses it consumes) for the start of clauses.
 
     A longer span only counts if every clause is part of the command: in "Klaus, Speichern"
     the span finds Save, but so does "Speichern" alone; in "erstelle einen Körper, den nennen wir
     Bodenplatte" the second clause explains nothing more about the body.
     """
-    pattern = parse(clauses[0], language)
+    pattern = parse(clauses[0], language, patterns)
     if pattern is not None:                    # a command with free text: one clause, no rivals
         command, args = pattern
         return Decision("execute", command, score=1.0, level="global", via="pattern",

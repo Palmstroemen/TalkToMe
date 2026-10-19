@@ -105,3 +105,16 @@ def test_unlearn_removes_heard_forms_and_empty_entries():
     unlearn(custom, XY, ["x-upsilom-ebene"])
     unlearn(custom, YZ, ["Öpsel"])
     assert custom == {"_heard": {XY: ["Öx Y-Lebenen"]}}
+
+
+def test_learn_stores_patterns_once():
+    custom = {}
+    learn(custom, "ui:rename", patterns=["nenndas {label}", "nenndas {label}"])
+    assert custom == {"_patterns": {"ui:rename": ["nenndas {label}"]}}
+
+
+def test_unlearn_removes_patterns():
+    from ttm_core.training import unlearn
+    custom = {"_patterns": {"ui:rename": ["nenndas {label}"]}}
+    unlearn(custom, "ui:rename", [], patterns=["nenndas {label}"])
+    assert custom == {"_patterns": {}}

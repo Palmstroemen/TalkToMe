@@ -304,11 +304,28 @@ Parameter (`ttm_core/params.py`): „nenne ihn X“, „benenne ihn um in X“, 
 „gib ihm den Namen X“, „Name X“. Die Muster werden pro Teilsatz vor dem normalen Abgleich
 geprüft; ein Teilsatz mit Muster ist nie Gerede.
 
-Worauf sich „den“, „das“, „ihn“ beziehen, entscheidet das Addon:
-1. ein Objekt, das ein Schritt derselben Äußerung erzeugt hat („erstelle einen Körper, den nennen
+**Mit Namen:** „Benenne doch bitte den Körper2 in Grundplatte um“ nennt das Ziel selbst (Muster
+mit zweiter Lücke `target`). Gesucht wird unter den Labels des Dokuments, so wie man sie im Baum
+liest (`ttm_core/objects.py`): ohne Leerzeichen und Satzzeichen, Zahlwörter als Ziffern, ohne
+führende Nullen („Körper zwei“, „Körper 2“ → „Körper002“), danach unscharf, aber Zahlen müssen
+übereinstimmen („Körper 7“ ist nicht „Körper002“). Nur eindeutige Treffer zählen; sonst
+Fehlerton mit „kein Objekt »…« im Dokument“.
+
+**Ohne Namen:** Worauf sich „den“, „das“, „ihn“ beziehen, entscheidet das Addon (Umbenennen ist in FreeCAD
+kein Befehl, sondern eine Aktion der Baumansicht), in dieser Rangfolge:
+1. ein offener Bemaßungsdialog des Sketchers („Länge eingeben“): der Name kommt in sein Feld
+   „Name“; Wert und OK bleiben beim Nutzer,
+2. im bearbeiteten Sketch genau eine ausgewählte Bemaßung (`renameConstraint`),
+3. ein Objekt, das ein Schritt derselben Äußerung erzeugt hat („erstelle einen Körper, den nennen
    wir Bodenplatte“),
-2. sonst das eine ausgewählte Objekt,
-3. sonst das zuletzt per Sprache erzeugte Objekt (auch aus einer früheren Äußerung).
+4. das eine ausgewählte Objekt,
+5. das Objekt in Bearbeitung (z. B. der offene Sketch),
+6. das zuletzt per Sprache erzeugte Objekt (auch aus einer früheren Äußerung),
+7. der aktive Körper (fett im Baum).
+
+Bemaßungsnamen werden in Ausdrücken verwendet (`Sketch.Constraints.Breite`), deshalb werden
+Leerzeichen dort zu Unterstrichen („Breite links“ → `Breite_links`). Objekte behalten den Namen
+wie gesagt.
 
 Was ein Schritt erzeugt hat, ergibt der Vergleich der Dokumentobjekte vorher und nachher, ohne
 Kinder der neuen Objekte (ein neuer Körper bringt seinen Ursprung mit). Das Label wird in einer
@@ -423,6 +440,14 @@ nach unten, jeweils mit kurzem Hilfetext:
    sofort: den gehörten Satz und die Aufnahmen. Jede Form wird eingeordnet: ＋ gelernt,
    ✓ schon verstanden, ⚠ würde einen anderen Befehl treffen (nicht gespeichert).
    **Forget** nimmt eine Zuweisung zurück.
+
+**Befehle mit Parameter** (z. B. „Umbenennen“, in FreeCAD kein Befehl, sondern eine Aktion
+der Baumansicht) stehen ebenfalls in der Liste. Ihr gehörter Satz enthält jedes Mal einen
+anderen Namen; deshalb fragt die Seite, welcher Teil der Name ist (vorbelegt mit dem letzten
+Wort), und lernt ein **Satzmuster**: „Nenndas Bodenplatte“ → `nenndas {label}` (`_patterns`
+in der Benutzerdatei). Gelernte Muster gehen mit dem Kontext an den Dienst und werden nach den
+eingebauten geprüft; ihr fester Teil darf leicht abweichen (Schreibweise ≥ 0,8 oder gleicher
+Klang).
 
 **Gelernte Formen** (`_heard` in der Benutzerdatei) zählen beim Vergleich wie Phrasen, mit
 Lautvergleich, sodass auch ähnliche Verhörer passen. Sie gehen aber **nicht als Hinweiswörter**

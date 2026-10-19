@@ -546,3 +546,16 @@ def test_training_mode_only_transcribes(parts):
     assert parts["tones"].played == []
     c.close()
     s.stop()
+
+
+def test_learned_patterns_come_with_the_context(parts):
+    parts["transcriber"] = FakeTranscriber("Nenndas Bodenplatte")
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=CANDIDATES, patterns={"ui:rename": ["nenndas {label}"]})
+    c.send("listen", on=True)
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["args"]) == ("ui:rename", {"label": "Bodenplatte"})
+    c.close()
+    s.stop()

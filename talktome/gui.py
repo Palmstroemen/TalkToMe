@@ -19,6 +19,7 @@ from talktome import context as ttm_context
 from talktome import executor
 from talktome.qt import QtCore, QtGui, QtWidgets
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
+from ttm_core.objects import find_object
 from ttm_core.training import classify, learn, options
 
 ADDON_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -73,7 +74,7 @@ class Controller(QtCore.QObject):
         self.action.toggled.connect(self.on_toggled)
 
         self.language = PARAMS.GetString("Language", "de")
-        self.vocab, self.heard = ttm_context.load_vocabulary(self.language)
+        self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
         self.last_candidates = None  # the context sent last; a training situation is taken from it
         self.misses = []             # recent not understood utterances with their situation
         self.miss_count = 0
@@ -115,7 +116,7 @@ class Controller(QtCore.QObject):
         if self.sock is None:
             return
         if self.training():                    # the trained situation stays, for its hints
-            self.send("context", candidates=self.training_candidates)
+            self.send("context", candidates=self.training_candidates, patterns=self.patterns)
             return
         try:
             candidates = ttm_context.collect(self.vocab, self.language, self.heard)
@@ -123,10 +124,10 @@ class Controller(QtCore.QObject):
             log("collecting the context failed: {}".format(e))
             return
         self.last_candidates = candidates
-        self.send("context", candidates=candidates)
+        self.send("context", candidates=candidates, patterns=self.patterns)
 
     def reload_vocabulary(self):
-        self.vocab, self.heard = ttm_context.load_vocabulary(self.language)
+        self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
         self.send_context()
 
     # --- training (DESIGN.md 8.7) ------------------------------------------------------------
@@ -338,19 +339,55 @@ class Controller(QtCore.QObject):
         elif kind == "error":
             App.Console.PrintWarning("Talk to me: {}\n".format(msg.get("message")))
 
-    def rename_target(self, utterance_id):
-        """What "den", "das", "ihn" refer to: an object created in the same utterance, else the
-        single selected object, else the object created last."""
+    def named_object(self, spoken):
+        """("object", obj) for an object named in the sentence, as read from the tree."""
         doc = App.ActiveDocument
+        if doc is None:
+            return None, None
+        label = find_object(spoken, [o.Label for o in doc.Objects], self.language)
+        found = doc.getObjectsByLabel(label) if label else []
+        return ("object", found[0]) if found else (None, None)
+
+    def rename_target(self, utterance_id):
+        """What "den", "das", "ihn" refer to, by priority (DESIGN.md 7, Umbenennen):
+
+        1. an open dimension dialog in the sketcher: its name field     ("dialog", dialog)
+        2. the one dimension selected in the sketch being edited        ("constraint", (sketch, index))
+        3. an object created in the same utterance                      ("object", obj) from here on
+        4. the single selected object
+        5. the object being edited, e.g. the open sketch
+        6. the object created last by voice
+        7. the active body (bold in the tree)
+        """
+        dialog = executor.datum_dialog()
+        if dialog is not None and executor.datum_name_field(dialog) is not None:
+            return "dialog", dialog
+        constraint = executor.selected_constraint()
+        if constraint is not None:
+            return "constraint", constraint
+        doc = App.ActiveDocument
+        if doc is None:
+            return None
         created = None
-        if self.created is not None and doc is not None and self.created[1] == doc.Name:
+        if self.created is not None and self.created[1] == doc.Name:
             created = doc.getObject(self.created[2])
         if created is not None and self.created[0] == utterance_id:
-            return created
+            return "object", created
         selection = Gui.Selection.getSelection()
         if len(selection) == 1:
-            return selection[0]
-        return created
+            return "object", selection[0]
+        in_edit = Gui.ActiveDocument.getInEdit() if Gui.ActiveDocument else None
+        if in_edit is not None:
+            return "object", in_edit.Object
+        if created is not None:
+            return "object", created
+        try:                                   # the active view may be no 3D view (a spreadsheet)
+            body = Gui.ActiveDocument.ActiveView.getActiveObject("pdbody")
+        except Exception:
+            body = None
+        if body is not None:
+            return "object", body
+        return None
 
     def remember_created(self, doc_name, before, utterance_id):
         doc = App.ActiveDocument
@@ -452,11 +489,24 @@ class Controller(QtCore.QObject):
         elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, "dry run, not executed"
         elif command == "ui:rename":
-            target = self.rename_target(utterance_id)
-            if target is None:
-                ok, reason = False, "nothing to rename: select an object"
+            label = args.get("label", "")
+            if args.get("target"):             # "Benenne den Körper2 in Grundplatte um"
+                kind, target = self.named_object(args["target"])
             else:
-                ok, reason = executor.rename(target, args.get("label", ""))
+                kind, target = self.rename_target(utterance_id) or (None, None)
+            if kind is None:
+                ok, reason = False, ("no object »{}« in the document".format(args["target"])
+                                     if args.get("target") else "nothing to rename: select an object")
+            elif kind == "dialog":
+                field = executor.datum_name_field(target)
+                field.setText(executor.constraint_name(label))
+                ok, reason, command = True, "", "dimension name »{}«".format(field.text())
+            elif kind == "constraint":
+                sketch, index = target
+                ok, reason = executor.rename_constraint(sketch, index, label)
+                command = "rename dimension {} to »{}«".format(index + 1, sketch.Constraints[index].Name)
+            else:
+                ok, reason = executor.rename(target, label)
                 command = "rename {} to »{}«".format(target.Name, target.Label)
         else:
             try:

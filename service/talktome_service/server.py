@@ -52,6 +52,7 @@ class Service:
         self._hotwords = None
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
         self._training = False       # training: only transcripts, nothing is decided or executed
+        self._patterns = None        # learned sentence patterns {command: [templates]}
         self.language = self.info.get("language")
         self._mute_until = 0.0
         self._zero_frames = 0
@@ -178,6 +179,8 @@ class Service:
         candidates = msg.get("candidates")
         if candidates is not None:
             self._candidates = candidates
+        if "patterns" in msg:
+            self._patterns = msg["patterns"]
         words = msg.get("hotwords")
         if words is None and candidates is not None:
             order = {level: i for i, level in enumerate(LEVELS)}
@@ -291,7 +294,7 @@ class Service:
             self._steps = 0
             if self._candidates is not None:
                 whole = decide(text, self._candidates, self.language)
-                patterns = any(parse(c, self.language) for c in self._pending)
+                patterns = any(parse(c, self.language, self._patterns) for c in self._pending)
                 if whole.kind == "ignore" and not patterns:   # talk; its clauses alone would look like short attempts
                     self._pending = []
                     self.send("ignored", reason=whole.reason, text=text)
@@ -348,7 +351,7 @@ class Service:
         """
         last = None
         while self._pending and self._candidates is not None:
-            d, n = next_step(self._pending, self._candidates, self.language)
+            d, n = next_step(self._pending, self._candidates, self.language, patterns=self._patterns)
             span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
             last = d
             info = dict(text=span, utterance=self._utterance, utterance_id=self._utterance_id,

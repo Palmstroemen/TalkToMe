@@ -149,3 +149,9 @@ def test_label_for_display_is_freecads_text():
     assert c["ui:choose:XY-Ebene (Basis-Ebene)"]["label"] == "XY-Ebene"
     assert c["PartDesign_Pad"]["label"] == "Aufpolsterung"
     assert c["ui:ok"]["label"] == "OK"                       # no FreeCAD text: first phrase
+
+
+def test_rename_is_never_a_phrase_candidate():
+    """Its vocabulary entry only names it in the training page; it needs a name (pattern)."""
+    c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, vocab={"ui:rename": ["Umbenennen"]}))
+    assert "ui:rename" not in c

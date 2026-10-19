@@ -92,3 +92,9 @@ def test_workbench_switch_is_a_step_of_its_own():
 def test_rename_is_a_step_with_its_label():
     d, n = next_step(split_clauses("den nennen wir Bodenplatte, und mach eine Fase", "de"), PART_DESIGN, "de")
     assert (d.kind, d.command, d.args, n) == ("execute", "ui:rename", {"label": "Bodenplatte"}, 1)
+
+
+def test_learned_pattern_in_a_sequence():
+    clauses = split_clauses("Nenndas Bodenplatte, und mach eine Fase", "de")
+    d, n = next_step(clauses, PART_DESIGN, "de", patterns={"ui:rename": ["nenndas {label}"]})
+    assert (d.command, d.args, n) == ("ui:rename", {"label": "Bodenplatte"}, 1)

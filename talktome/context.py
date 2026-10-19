@@ -9,7 +9,7 @@ import FreeCADGui as Gui
 
 from talktome.qt import QtCore, QtWidgets
 from ttm_core.context import build_candidates
-from ttm_core.training import HEARD
+from ttm_core.training import HEARD, PATTERNS
 
 ADDON_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,8 +42,8 @@ def save_custom(language, data):
 
 
 def load_vocabulary(language):
-    """(vocab, heard): phrases of the addon's package, overridden by the user's own file, and
-    the forms learned in training ({command: [texts]})."""
+    """(vocab, heard, patterns): phrases of the addon's package, overridden by the user's own
+    file; the forms and sentence patterns learned in training ({command: [texts]})."""
     vocab = {}
     package = _read(os.path.join(ADDON_DIR, "vocab", "{}.json".format(language)))
     custom = read_custom(language)
@@ -51,8 +51,8 @@ def load_vocabulary(language):
         for cmd, phrases in data.items():
             if not cmd.startswith("_") and isinstance(phrases, list):
                 vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
-    heard = custom.get(HEARD, {})
-    return vocab, heard if isinstance(heard, dict) else {}
+    heard, patterns = custom.get(HEARD, {}), custom.get(PATTERNS, {})
+    return vocab, heard if isinstance(heard, dict) else {}, patterns if isinstance(patterns, dict) else {}
 
 
 def _task_view(widget):

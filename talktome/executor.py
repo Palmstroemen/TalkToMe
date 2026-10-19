@@ -58,6 +58,45 @@ def choose(text):
     return False, "choice no longer offered"
 
 
+def datum_dialog():
+    """The sketcher's open dimension dialog ("Länge eingeben"), if any. Keep this reference while
+    using its name field (datum_name_field): PySide drops the field's wrapper with the dialog's."""
+    dialog = QtWidgets.QApplication.activeModalWidget()
+    if dialog is None or dialog.objectName() != "SketcherGui__InsertDatum":
+        return None
+    return dialog
+
+
+def datum_name_field(dialog):
+    return dialog.findChild(QtWidgets.QLineEdit, "name")
+
+
+def selected_constraint():
+    """(sketch, index) of the one dimension selected in the sketch being edited, else None."""
+    selection = Gui.Selection.getSelectionEx()
+    if len(selection) != 1 or selection[0].Object.TypeId != "Sketcher::SketchObject":
+        return None
+    names = selection[0].SubElementNames
+    if len(names) != 1 or not names[0].startswith("Constraint"):
+        return None
+    return selection[0].Object, int(names[0][len("Constraint"):]) - 1
+
+
+def constraint_name(label):
+    """Dimension names are used in expressions (Sketch.Constraints.Breite): no spaces."""
+    return "_".join(label.split())
+
+
+def rename_constraint(sketch, index, label):
+    doc = sketch.Document
+    doc.openTransaction("Rename constraint")
+    try:
+        sketch.renameConstraint(index, constraint_name(label))
+    finally:
+        doc.commitTransaction()
+    return True, ""
+
+
 def rename(obj, label):
     """Set an object's label, undoable. Returns (ok, reason); FreeCAD may adapt duplicate labels."""
     doc = obj.Document

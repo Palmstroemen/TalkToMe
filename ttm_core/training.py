@@ -9,6 +9,7 @@ from ttm_core.decision import decide
 from ttm_core.matching import command_words
 
 HEARD = "_heard"          # key in the user's vocabulary file: {command: [heard forms]}
+PATTERNS = "_patterns"    # {command: [learned templates]}, e.g. "nenndas {label}"
 
 
 def classify(text, target, candidates, language):
@@ -36,10 +37,12 @@ def _add(phrases, new):
             phrases.append(p)
 
 
-def learn(custom, command, heard=(), typed=None):
-    """Add heard forms and a typed sentence to the user's vocabulary data (in place)."""
+def learn(custom, command, heard=(), typed=None, patterns=()):
+    """Add heard forms, a typed sentence and learned patterns to the user's vocabulary data (in place)."""
     if heard:
         _add(custom.setdefault(HEARD, {}).setdefault(command, []), heard)
+    if patterns:
+        _add(custom.setdefault(PATTERNS, {}).setdefault(command, []), patterns)
     if typed:
         _add(custom.setdefault(command, []), [typed.strip()])
     return custom
@@ -59,13 +62,14 @@ def options(alternatives, candidates, min_score=0.6, limit=3):
     return result[:limit]
 
 
-def unlearn(custom, command, heard):
-    """Remove heard forms of command again (a wrong assignment in training)."""
-    forms = custom.get(HEARD, {}).get(command)
-    if forms is None:
-        return custom
-    drop = {h.lower() for h in heard}
-    forms[:] = [f for f in forms if f.lower() not in drop]
-    if not forms:
-        del custom[HEARD][command]
+def unlearn(custom, command, heard, patterns=()):
+    """Remove heard forms and learned patterns of command again (a wrong assignment in training)."""
+    for key, drop in ((HEARD, heard), (PATTERNS, patterns)):
+        forms = custom.get(key, {}).get(command)
+        if forms is None:
+            continue
+        drop = {d.lower() for d in drop}
+        forms[:] = [f for f in forms if f.lower() not in drop]
+        if not forms:
+            del custom[key][command]
     return custom

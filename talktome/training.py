@@ -15,10 +15,15 @@ import time
 from talktome import context as ttm_context
 from talktome.qt import QtCore, QtWidgets
 from ttm_core.decision import decide
+from ttm_core.params import make_template, parse
 from ttm_core.training import classify, learn, unlearn
 
 RECORDINGS = 3
 ROLE = QtCore.Qt.ItemDataRole.UserRole
+
+# Commands with a free-text parameter, recognized by sentence patterns, not by phrases. Training
+# them learns a pattern: the heard sentence with the parameter cut out.
+PARAMETER_COMMANDS = {"ui:rename": "Rename"}
 
 
 def describe(candidate):
@@ -40,7 +45,7 @@ class TrainingDialog(QtWidgets.QDialog):
         self.controller = controller
         self.setWindowTitle("Talk to me – Training")
         self.setModal(False)
-        self.candidates = list(controller.last_candidates or [])
+        self.candidates = self.situation(controller.last_candidates)
         self.recordings = []            # texts heard while recording
         self.recording = False
 
@@ -92,9 +97,21 @@ class TrainingDialog(QtWidgets.QDialog):
         self.filter.textChanged.connect(self.fill_commands)
         layout.addWidget(self.filter)
         self.commands = QtWidgets.QListWidget()
-        self.commands.currentItemChanged.connect(self.update_buttons)
+        self.commands.currentItemChanged.connect(self.on_target)
         self.commands.itemDoubleClicked.connect(self.assign)
         layout.addWidget(self.commands)
+
+        self.name_row = QtWidgets.QWidget()
+        row = QtWidgets.QHBoxLayout(self.name_row)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.addWidget(QtWidgets.QLabel("Which part is the name?"))
+        self.name = QtWidgets.QLineEdit()
+        self.name.setToolTip("The words of the sentence that were the name, e.g. »Bodenplatte«. "
+                             "I learn the rest as a sentence pattern.")
+        self.name.textChanged.connect(self.update_buttons)
+        row.addWidget(self.name)
+        self.name_row.setVisible(False)
+        layout.addWidget(self.name_row)
 
         row = QtWidgets.QHBoxLayout()
         self.assign_button = QtWidgets.QPushButton("Assign")
@@ -114,6 +131,16 @@ class TrainingDialog(QtWidgets.QDialog):
         self.fill_commands()
         if self.misses.topLevelItemCount():
             self.misses.setCurrentItem(self.misses.topLevelItem(0))
+
+    def situation(self, candidates):
+        """The commands of a moment, plus those with a parameter (they are no candidates)."""
+        candidates = list(candidates or [])
+        vocab = self.controller.vocab
+        for command, label in PARAMETER_COMMANDS.items():
+            if command not in [c["id"] for c in candidates]:
+                candidates.append({"id": command, "label": (vocab.get(command) or [label])[0],
+                                   "phrases": [], "active": True})
+        return candidates
 
     # --- 1. not understood sentences ---------------------------------------------------------
 
@@ -149,10 +176,11 @@ class TrainingDialog(QtWidgets.QDialog):
         been open then), its likely commands first."""
         self.recordings = []
         self.results.clear()
+        self.name.clear()
         miss = self.miss()
         if miss is None:
             return
-        self.candidates = miss["candidates"] or self.candidates
+        self.candidates = self.situation(miss["candidates"]) if miss["candidates"] else self.candidates
         likely = [cmd for cmd, _ in miss.get("alternatives") or []]
         assigned = miss.get("assigned")
         self.fill_commands(first=([assigned["command"]] if assigned else []) + likely)
@@ -219,11 +247,32 @@ class TrainingDialog(QtWidgets.QDialog):
             self.controller.status("no command found for »{}«, pick one from the list".format(text))
         self.update_buttons()
 
+    def on_target(self, *args):
+        """A command with a parameter asks which part of the sentence the parameter is."""
+        is_parameter = self.target() in PARAMETER_COMMANDS
+        self.name_row.setVisible(is_parameter)
+        if is_parameter and not self.name.text():
+            heard = self.heard_texts()
+            words = heard[0].rstrip(".!?").split() if heard else []
+            self.name.setText(words[-1] if words else "")      # a guess: names come last mostly
+        self.update_buttons()
+
+    def heard_texts(self):
+        """The selected sentence (if not assigned yet) and the recordings, each once."""
+        miss = self.miss()
+        heard = ([miss["text"]] if miss is not None and not miss.get("assigned") else []) + self.recordings
+        unique = {}
+        for text in heard:
+            unique.setdefault(text.lower(), text)
+        return list(unique.values())
+
     def update_buttons(self, *args):
         miss = self.miss()
         open_miss = miss is not None and not miss.get("assigned")
         something = open_miss or bool(self.recordings) or bool(self.typed.text().strip())
-        self.assign_button.setEnabled(self.target() is not None and something and not self.recording)
+        name_needed = self.target() in PARAMETER_COMMANDS and not self.name.text().strip()
+        self.assign_button.setEnabled(self.target() is not None and something and not self.recording
+                                      and not name_needed)
         self.forget_button.setEnabled(miss is not None and bool(miss.get("assigned")) and not self.recording)
 
     def assign(self, *args):
@@ -231,13 +280,12 @@ class TrainingDialog(QtWidgets.QDialog):
         target = self.target()
         if target is None or self.recording:
             return
+        if target in PARAMETER_COMMANDS:
+            self.assign_pattern(target)
+            return
         language = self.controller.language
         miss = self.miss()
-        heard = ([miss["text"]] if miss is not None and not miss.get("assigned") else []) + self.recordings
-        unique = {}
-        for text in heard:                     # each once, in the order heard
-            unique.setdefault(text.lower(), text)
-        heard = list(unique.values())
+        heard = self.heard_texts()
         verdicts = [(text, classify(text, target, self.candidates, language)) for text in heard]
         learned = [text for text, verdict in verdicts if verdict == "learn"]
         conflicts = [text for text, verdict in verdicts if verdict == "conflict"]
@@ -265,6 +313,40 @@ class TrainingDialog(QtWidgets.QDialog):
             len(learned), label, ", {} not stored (another command)".format(len(conflicts)) if conflicts else ""))
         self.update_buttons()
 
+    def assign_pattern(self, target):
+        """Learn sentence patterns: each heard sentence with the name cut out."""
+        language = self.controller.language
+        miss = self.miss()
+        name = self.name.text().strip()
+        templates, marks = [], []
+        for text in self.heard_texts():
+            if parse(text, language, self.controller.patterns) is not None:
+                marks.append("✓ understood already  »{}«".format(text))
+                continue
+            template = make_template(text, name, language)
+            if template is None:
+                marks.append("⚠ »{}« not found in »{}«".format(name, text))
+            else:
+                templates.append(template)
+                marks.append("+ learned  »{}«".format(template.replace("{label}", "…")))
+
+        data = ttm_context.read_custom(language)
+        learn(data, target, patterns=templates)
+        ttm_context.save_custom(language, data)
+        self.controller.reload_vocabulary()
+
+        label = next((c.get("label") or c["id"] for c in self.candidates if c["id"] == target), target)
+        if miss is not None:
+            miss["assigned"] = {"command": target, "label": label, "forms": [], "patterns": templates}
+        self.results.clear()
+        for mark in marks:
+            self.results.addItem(mark)
+        self.recordings = []
+        self.name.clear()
+        self.fill_misses()
+        self.controller.status("learned {} sentence pattern(s) for {}".format(len(templates), label))
+        self.update_buttons()
+
     def forget(self):
         miss = self.miss()
         if miss is None or not miss.get("assigned"):
@@ -272,7 +354,8 @@ class TrainingDialog(QtWidgets.QDialog):
         assigned = miss.pop("assigned")
         language = self.controller.language
         data = ttm_context.read_custom(language)
-        ttm_context.save_custom(language, unlearn(data, assigned["command"], assigned["forms"] + [miss["text"]]))
+        ttm_context.save_custom(language, unlearn(data, assigned["command"], assigned["forms"] + [miss["text"]],
+                                                  patterns=assigned.get("patterns", [])))
         self.controller.reload_vocabulary()
         self.controller.status("forgot »{}« for {}".format(miss["text"], assigned["label"]))
         self.fill_misses()
