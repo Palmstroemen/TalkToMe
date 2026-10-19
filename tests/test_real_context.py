@@ -124,3 +124,15 @@ def test_planes_by_other_words():
                         ("Vorderansicht", "XZ"), ("Seitenansicht", "YZ"), ("auf der Seite", "YZ")]:
         d = decide(text, dialog, "de")
         assert (d.kind, d.command) == ("execute", "ui:choose:{}-Ebene (Basis-Ebene)".format(plane)), text
+
+
+# Transcripts of the user's voice (Whisper base, 2026-10-19): "YZ-Ebene" must never become XY.
+@pytest.mark.parametrize("text", ["Übsilontzeit Ebene", "Öpsel am Set Ebene", "Öpsilontet, Ebene"])
+def test_misheard_yz_plane_is_not_xy(text):
+    planes = ("XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)")
+    dialog = PART_DESIGN + [
+        {"id": "ui:choose:" + p, "level": "dialog", "phrases": VOCAB.get("ui:choose:" + p, []) + [p.split(" (")[0]],
+         "foreign": [], "active": True, "description": ""} for p in planes]
+    d = decide(text, dialog, "de")
+    assert not (d.kind == "execute" and d.command == "ui:choose:XY-Ebene (Basis-Ebene)"), d
+

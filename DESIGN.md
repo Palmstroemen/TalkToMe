@@ -289,9 +289,13 @@ bestätigt (`AUTO_CONFIRM` im Executor, derzeit die Merkmalsauswahl von PartDesi
 FreeCAD blendet Aufgabendialoge mit etwa 300 ms Verzögerung ein; ob ein Element zum Dialog
 gehört, prüft das Addon deshalb mit `isVisibleTo(TaskView)` statt `isVisible()`.
 
-Erkennung: Buchstaben wie „XY“ versteht Whisper schlecht („Exerzielern eben“, „x-Zylanebene“),
-mit Hinweiswörtern teils als die falsche Ebene („XZ“). Deshalb die Ausweichwörter, und
-deshalb wird bei unsicherem Treffer nichts gewählt. Mit echter Stimme noch zu messen.
+Erkennung: Das gesprochene „Ypsilon“ schreibt Whisper (base) jedes Mal anders: „Upsilom“,
+„Upsalon“, „Übsilon“, „Öpsilon“, „Öpsel“. Statt einer Sonderregel dafür soll das Training
+(8.5) solche stimm- und modellabhängigen Verhörer lernen.
+
+Vorsicht bei Ausweichwörtern: Ein einzelnes Wort kann wie ein anderes klingen. „oben“ und
+„Ebene“ haben beide den Code 016, dadurch wurde jede Ebene zur XY-Ebene. Ausweichwörter
+deshalb als Wortgruppe („von oben“).
 
 ### Befehle mit freiem Text: Umbenennen
 

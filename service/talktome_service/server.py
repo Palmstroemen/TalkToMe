@@ -352,7 +352,8 @@ class Service:
                         command=d.command, args=d.args, score=d.score, level=d.level,
                         alternatives=d.alternatives, via=d.via)
             if d.kind == "execute":
-                self._last_span = span
+                # A step may open a dialog asking for what its clause said; a choice is the answer.
+                self._last_span = None if d.command.startswith(CHOOSE) else span
                 self._send_step(d, span)
                 return d                       # the addon executes and answers with "result"
             if d.kind == "not_understood":

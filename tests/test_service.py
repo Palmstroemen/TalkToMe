@@ -510,3 +510,20 @@ def test_no_follow_up_without_a_matching_choice(parts):
         c.wait_for("plan", timeout=0.3)
     c.close()
     s.stop()
+
+
+def test_a_choice_has_no_follow_up_of_its_own(parts):
+    """The clause of a choice step must not be matched against the choices once more."""
+    parts["transcriber"] = FakeTranscriber("XY-Ebene")
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=PLANE_DIALOG)
+    c.send("listen", on=True)
+    first = c.wait_for("plan")
+    c.send("context", candidates=PLANE_DIALOG)          # e.g. a dialog that stays open
+    c.send("result", ok=True, id=first["id"])
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.5)
+    c.close()
+    s.stop()
