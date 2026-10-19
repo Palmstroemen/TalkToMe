@@ -761,10 +761,127 @@ System-Stummschaltung. Reihenfolge:
 4. ~~Einstellungsseite (13)~~
 5. ~~Wortschatz-Editor~~
 6. ~~Übersetzung der Oberfläche~~ (Deutsch; `translations/`, siehe README)
+7. Community: Sprachen und Verbesserungen (16), Reihenfolge in 16.6
 
 ---
 
-## 16. Risiken und offene Fragen
+## 16. Community: Sprachen und Verbesserungen
+
+Ziel: Neue Sprachen und Verbesserungen kommen von Nutzern, möglichst ohne Python-Kenntnisse,
+und werden geprüft, bevor sie ins Repo kommen. Gehostet wird auf GitHub.
+
+### 16.1 Anleitung für Beitragende
+
+`docs/ADDING_A_LANGUAGE.md`, auf Englisch, verlinkt aus README und `CONTRIBUTING.md`. Ein
+durchgespieltes Beispiel (Französisch von null bis zum Pull Request) statt abstrakter
+Beschreibung. Inhalt:
+
+1. **What a language pack is:** die vier Dateien, je mit echtem Ausschnitt.
+2. **What you get for free:** Befehlsnamen und Hilfetexte aus FreeCADs eigener Übersetzung,
+   Spracherkennungsmodell und Stimme zum Herunterladen.
+3. **Step by step:** Vorlage kopieren, Füllwörter, Zahlwörter, Einheiten, Satzmuster eintragen,
+   `tools/check_pack.py fr`, Kontext aufnehmen, Testsätze schreiben, Pull Request.
+4. **What happens automatically:** CI prüft Format, Testsätze und Konflikte (16.5).
+5. **Ways to help without code:** Testsätze, gehörte Formen, Fehlerberichte, Übersetzung der
+   Oberfläche (Qt Linguist).
+6. **Variants and dialects** (16.3).
+
+Dazu `CONTRIBUTING.md` mit drei Wegen (ohne Code, Qt Linguist, Python), Issue-Vorlagen
+(„Wurde nicht verstanden“, „Falscher Befehl ausgeführt“, „Neue Sprache“, „Paket-Verbesserung“,
+jeweils mit Sprache, Modell, FreeCAD-Version), GitHub Discussions für Ideen und pro Sprache
+eine Betreuerin oder ein Betreuer in `CODEOWNERS`.
+
+**Neue Sprache ohne Code:** Lautvergleich und Stammformen sind heute Python pro Sprache
+(Cologne, Metaphone, `stem_de`, `stem_en`). Damit eine Sprache ohne Code möglich ist:
+ein sprachneutraler Rückfall-Lautvergleich und Stammformen als Endungsliste in
+`language.json`. Ein eigenes Verfahren kann später als Code dazukommen.
+
+### 16.2 Sprachen gezielt auswählen
+
+Gewicht pro Sprache: Paket 10–30 KB, Übersetzung ca. 10 KB, Spracherkennungsmodell ab 50 MB,
+Stimme ca. 60 MB. Modell und Stimme werden schon heute nur für die gewählte Sprache geladen.
+Trotzdem werden Pakete getrennt, damit sie sich unabhängig vom Addon weiterentwickeln:
+
+- Das Addon bringt nur Englisch (Rückfall) und Deutsch mit.
+- Alle Pakete liegen in einem eigenen Repo `TalkToMe-languages` mit `index.json`: Code,
+  Anzeigename, Version, `base`, Spracherkennungsmodell, Stimme.
+- **Die Sprachauswahl auf der Einstellungsseite zeigt alle Sprachen aus dem Index**, die
+  installierten zuerst. Die Wahl einer neuen Sprache lädt Paket, Modell und Stimme in einem
+  Schritt in den Benutzerordner (`<UserAppData>/TalkToMe/lang/<lc>/`, wie die Überlagerung).
+- Pakete lassen sich auf Wunsch aktualisieren, unabhängig von Addon-Releases.
+- Ohne Netz: die installierten Sprachen, der Index wird zwischengespeichert.
+
+### 16.3 Varianten und Dialekte
+
+Österreichisch, Schweizerdeutsch, Sächsisch sind eigene Pakete, die von einem Basispaket
+erben. Kette: `de` → `de-AT` → Benutzer-Überlagerung (die gibt es heute schon).
+
+- Ein Variantenpaket enthält nur Abweichungen: `"base": "de"` in `language.json` plus Phrasen
+  und gehörte Formen.
+- Codes nach BCP 47: `de-AT`, `de-CH`; ohne offiziellen Code die private Erweiterung,
+  z. B. `de-x-saxon`.
+- Die Auswahl „Deutsch (Österreich)“ lädt `de` und `de-AT`.
+- Das Spracherkennungsmodell schreibt auch bei Dialekt Hochdeutsch, so gut es kann. Ein
+  Variantenpaket besteht deshalb vor allem aus **gehörten Formen**, und die sind
+  modellabhängig: Sie tragen das Modell als Markierung.
+- Konfliktprüfung innerhalb der ganzen Kette: Ein Eintrag in `de-AT` darf in `de-AT` nichts
+  Falsches auslösen; andere Varianten berührt er nicht.
+
+### 16.4 Korrekturen mit der Community teilen
+
+Gelernte Formen und Satzmuster (`custom.<lc>.json`) sind der wertvollste Rohstoff.
+
+- **Wortschatz-Editor, „Als Vorschlag teilen…“:** zeigt die eigenen Einträge, die vom Paket
+  abweichen; man wählt aus, was geteilt wird. Ergebnis: ein vorausgefülltes GitHub-Issue
+  (Browser) oder eine Datei zum Anhängen. Nichts wird automatisch gesendet.
+- **Dezenter Hinweis** ab einer Schwelle, z. B. 40 Korrekturen: „Sie haben bereits über 40
+  Korrekturen vorgenommen, um das Sprachverständnis zu verbessern. Wollen Sie diese mit der
+  Community teilen, damit diese Verbesserungen auch anderen zugutekommen?“ Einmalig in der
+  Statusleiste oder auf der Trainingsseite, nicht als Dialog; „Nicht mehr fragen“; erneut
+  erst nach weiteren 40 neuen Korrekturen.
+- **„Problem melden…“ auf der Trainingsseite:** gehörter Satz, gemeinter Befehl, Kontext,
+  Sprache, Variante, Modell, FreeCAD-Version. Wird fast unverändert zum Testfall (16.5).
+- **Datenschutz:** Der Kontext enthält Objektnamen aus dem Dokument. Alles ist vor dem
+  Absenden lesbar und editierbar.
+- Jeder Vorschlag trägt Sprache, Variante und Modell, z. B. `de-x-saxon`, `vosk-small-de-0.15`.
+  Er landet zuerst im spezifischsten Paket. Taucht dieselbe Form in mehreren Varianten auf,
+  schlägt ein Skript vor, sie ins Basispaket zu befördern.
+
+### 16.5 Wahrheitskorpus: generisches Testmodul
+
+Ein Testmodul, das Hunderte bis Tausende Sätze mit einer festgelegten Wahrheit (Ground Truth)
+vergleicht, pro Sprache und Variante. Damit lassen sich Vorschläge prüfen, bevor sie ins Repo
+kommen.
+
+- **Format:** Datei pro Paket, z. B. `lang/<lc>/corpus.jsonl`, eine Zeile pro Fall:
+  Satz, Kontext (Verweis auf eine aufgenommene Kontextdatei), erwartete Schritte
+  (`[["execute", "PartDesign_Pad"], ["execute", "ui:rename"]]`, `ignore`, `not_understood`),
+  optional Argumente und das Modell, für das ein gehörter Satz gilt.
+- **Quellen:** handgeschriebene Fälle, Fehlerberichte (16.4), Testsätze aus Pull Requests,
+  bewusst auch Gesprächssätze, die nichts auslösen dürfen.
+- **Auswertung:** nicht nur bestanden/durchgefallen, sondern eine Übersicht: richtig, falsch
+  ausgeführt (am schlimmsten), unnötig nicht verstanden, Fehlauslösung bei Gesprächen; pro
+  Befehl und als Vergleich vorher/nachher.
+- **Vorschlag prüfen:** `tools/check_proposal.py vorschlag.json` spielt den Korpus der
+  betroffenen Kette ohne und mit dem Vorschlag durch. Aufgenommen wird nur, was nichts
+  verschlechtert; neue Fehlauslösungen sind ein Ausschlussgrund.
+- **CI:** läuft bei jedem Pull Request für alle Pakete, auch für Codeänderungen. So bleiben
+  Sprachen heil, die das Kernteam nicht spricht.
+- Für die Betriebssystem-Idee (LEARNINGS.md 4) übertragbar: dasselbe Format ohne
+  FreeCAD-Kontext.
+
+### 16.6 Reihenfolge
+
+1. Vererbungskette `base` im Code (Architekturfrage, baut auf der Überlagerung auf).
+2. Wahrheitskorpus und Testmodul (16.5), zuerst mit den vorhandenen Testsätzen für de und en.
+3. Anleitung, `CONTRIBUTING.md`, Issue-Vorlagen, `check_pack.py`, Kontext-Aufnahme.
+4. Rückfall-Lautvergleich und Stammformen als Daten.
+5. Paket-Repo mit Index, Sprachauswahl aus dem Index.
+6. „Als Vorschlag teilen…“, Hinweis ab 40 Korrekturen, „Problem melden…“, `check_proposal.py`.
+
+---
+
+## 17. Risiken und offene Fragen
 
 | Thema | Risiko / Frage | Gegenmaßnahme / nächster Schritt |
 |---|---|---|
