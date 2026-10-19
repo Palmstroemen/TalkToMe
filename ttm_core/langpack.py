@@ -98,6 +98,32 @@ def pack(language):
     return _cache[language]
 
 
+# Word lists a user may change on the settings page (DESIGN.md 13).
+EDITABLE_LISTS = ("filler_words", "stop_words", "parameter_words", "clause_words", "particles")
+
+
+def pack_list(language, key):
+    """A word list as the pack ships it, without the user's changes."""
+    return sorted(_read(LANG_DIR, language, "language.json").get(key, []))
+
+
+def save_list(language, key, words):
+    """Store a changed word list in the user's folder; a list equal to the pack's is removed there."""
+    if _user_dir is None:
+        raise RuntimeError("no user folder configured")
+    path = os.path.join(_user_dir, "lang", language, "language.json")
+    data = _read(os.path.join(_user_dir, "lang"), language, "language.json")
+    words = sorted({w.strip().lower() for w in words if w.strip()})
+    if words == pack_list(language, key):
+        data.pop(key, None)
+    else:
+        data[key] = words
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    _cache.pop(language, None)
+
+
 class View:
     """One field of all packs, as a read-only mapping language → value: FILLER_WORDS.get("de").
     An empty value counts as missing."""

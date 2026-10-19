@@ -651,6 +651,11 @@ Die Einstellungsseite liegt in FreeCAD unter *Bearbeiten → Einstellungen → T
 
 - Sprache, Modell, Gerät, Mikrofon und Stimme wirken erst nach einem Neustart des Dienstes;
   die Seite startet ihn nach dem Speichern selbst neu.
+- **Umgesetzt (2026-10-19)** in `talktome/preferences.py`. Mikrofone, CUDA-Geräte und ob Piper
+  installiert ist, fragt die Seite beim Dienst ab (`--probe`, mit dessen Python, ~0,4 s).
+  Wortlisten werden als Abweichung vom Paket im Benutzerordner gespeichert. Die Trainingsseite
+  öffnet sich von hier aus als Kind des modalen Einstellungsdialogs. Noch nicht: Pegelanzeige
+  des Mikrofons, Schwellenwerte, Pause bei inaktivem FreeCAD.
 - Der **Wortschatz-Editor** ist ein eigenes, größeres Fenster: eigene Phrasen und gelernte
   Formen ansehen, verschieben, löschen (auch falsch Gelerntes).
 
@@ -715,7 +720,7 @@ System-Stummschaltung. Reihenfolge:
 1. ~~Training (8.7) und Rückfrage-Menü (8.8)~~
 2. ~~Sprachpakete de und en (13.1)~~
 3. ~~Sprachausgabe (10.1)~~
-4. Einstellungsseite (13)
+4. ~~Einstellungsseite (13)~~
 5. Wortschatz-Editor
 6. Übersetzung der Oberfläche
 

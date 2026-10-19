@@ -68,11 +68,15 @@ the same mishearing is understood. The button "Talk to me: Training" opens a pag
 it on purpose: pick what you meant, say it three times. Learned forms are stored in
 `<UserAppDataDir>/TalkToMe/custom.<language>.json`.
 
-Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkToMe`):
+Settings: Edit → Preferences → Talk to me (language, microphone, volume, model, GPU/CPU, question
+menu, speech output and voice, word lists of the language, training). Changes the speech service
+needs restart it. The page writes these parameters (`BaseApp/Preferences/Mod/TalkToMe`):
 
 | Parameter | Default | Meaning |
 |---|---|---|
 | `Language` | `de` | Spoken language: `de` or `en` (a folder in `lang/`) |
+| `Microphone` | system default | Input device name |
+| `Volume` | `40` | Volume of tones and voice in percent |
 | `Model` | by hardware | `tiny`, `base`, `small`, ... |
 | `Device` | `auto` | `auto`, `cuda`, `cpu` |
 | `ServicePython` | `service/.venv/bin/python` | Python of the speech service |

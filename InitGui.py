@@ -5,6 +5,9 @@ def _talktome_init():
     from PySide import QtCore
 
     import talktome.command
+    import talktome.preferences
+
+    FreeCADGui.addPreferencePage(talktome.preferences.PreferencesPage, "Talk to me")
 
     # A global toolbar shown in every workbench, created by FreeCAD from this parameter group.
     # The value names the module that registers the command.

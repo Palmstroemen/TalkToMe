@@ -8,6 +8,7 @@ The service prints "TTM_PORT=<port>" on stdout once it accepts connections.
 """
 
 import argparse
+import json
 import os
 import sys
 
@@ -16,6 +17,31 @@ from talktome_service.profiles import DEVICES, select_profile
 
 def log(*args):
     print("[talktome]", *args, file=sys.stderr, flush=True)
+
+
+def probe():
+    """What the settings page can offer: input devices, CUDA devices, speech output."""
+    result = {"microphones": [], "default_microphone": None, "cuda_devices": 0, "speech": False}
+    try:
+        import sounddevice as sd
+        default_input = sd.default.device[0]
+        for index, device in enumerate(sd.query_devices()):
+            if device["max_input_channels"] > 0:
+                result["microphones"].append({"index": index, "name": device["name"]})
+        result["default_microphone"] = default_input if default_input is not None and default_input >= 0 else None
+    except Exception as e:
+        result["error"] = str(e)
+    try:
+        from talktome_service.stt import cuda_device_count
+        result["cuda_devices"] = cuda_device_count()
+    except Exception:
+        pass
+    try:
+        import piper  # noqa: F401
+        result["speech"] = True
+    except ImportError:
+        pass
+    return result
 
 
 def main(argv=None):
@@ -35,7 +61,13 @@ def main(argv=None):
     ap.add_argument("--voice", help="Piper voice name (downloaded on first use) or path to an .onnx file "
                                     "(default: the language pack's voice)")
     ap.add_argument("--list-devices", action="store_true")
+    ap.add_argument("--probe", action="store_true",
+                    help="print microphones, CUDA devices and voice support as JSON (for the settings page)")
     args = ap.parse_args(argv)
+
+    if args.probe:
+        print(json.dumps(probe()))
+        return 0
 
     if args.list_devices:
         import sounddevice as sd

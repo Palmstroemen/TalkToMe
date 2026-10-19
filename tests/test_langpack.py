@@ -65,3 +65,36 @@ def test_user_changes_replace_lists_and_add_patterns(tmp_path):
     assert "mm" in de.parameter_words                      # untouched lists stay
     assert de.patterns[0] == ("ui:rename", "taufe (?P<label>.+)")
     assert len(de.patterns) > 1                             # the pack's patterns follow
+
+
+# --- editing lists on the settings page ------------------------------------------------------------
+
+def test_editable_lists():
+    assert "filler_words" in langpack.EDITABLE_LISTS
+    assert "stop_words" in langpack.EDITABLE_LISTS
+
+
+def test_save_list_stores_only_differences(tmp_path):
+    langpack.configure(str(tmp_path))
+    pack_fillers = langpack.pack_list("de", "filler_words")
+    langpack.save_list("de", "filler_words", pack_fillers + ["sozusagen"])
+    assert "sozusagen" in langpack.pack("de").filler_words
+    saved = json.loads((tmp_path / "lang" / "de" / "language.json").read_text(encoding="utf-8"))
+    assert "sozusagen" in saved["filler_words"]
+
+    langpack.save_list("de", "filler_words", pack_fillers)          # back to the pack's list
+    saved = json.loads((tmp_path / "lang" / "de" / "language.json").read_text(encoding="utf-8"))
+    assert "filler_words" not in saved
+    assert "sozusagen" not in langpack.pack("de").filler_words
+
+
+def test_pack_list_ignores_user_changes(tmp_path):
+    langpack.configure(str(tmp_path))
+    langpack.save_list("de", "filler_words", ["nur", "das"])
+    assert "und" in langpack.pack_list("de", "filler_words")
+    assert langpack.pack("de").filler_words == {"nur", "das"}
+
+
+def test_save_list_needs_a_user_dir():
+    with pytest.raises(RuntimeError):
+        langpack.save_list("de", "filler_words", ["x"])

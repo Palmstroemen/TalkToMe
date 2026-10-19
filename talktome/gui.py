@@ -5,6 +5,7 @@ The addon sends the command candidates of the current context, the service decid
 and the addon executes the resulting plan (Phase 1: single commands).
 """
 
+import json
 import os
 import secrets
 import socket
@@ -52,6 +53,39 @@ TOOLTIPS = {
     "processing": "Talk to me: recognizing ...",
     "error":      "Talk to me: speech service not available",
 }
+
+
+def service_environment():
+    """Environment for the service's Python: without the variables of FreeCAD's own Python."""
+    env = QtCore.QProcessEnvironment.systemEnvironment()
+    for name in FOREIGN_ENV:
+        env.remove(name)
+    env.insert("TTM_USER_DIR", ttm_context.user_dir())
+    env.insert("PYTHONPATH", os.pathsep.join([ADDON_DIR, SERVICE_DIR]))
+    env.insert("PYTHONIOENCODING", "utf-8")
+    return env
+
+
+def probe_service(timeout_ms=5000):
+    """What the service's Python finds: microphones, CUDA devices, speech output. {} if not available."""
+    python = service_python()
+    if not os.path.exists(python):
+        return {}
+    process = QtCore.QProcess()
+    process.setProcessEnvironment(service_environment())
+    process.setWorkingDirectory(SERVICE_DIR)
+    process.start(python, ["-m", "talktome_service", "--probe"])
+    if not process.waitForFinished(timeout_ms):
+        process.kill()
+        return {}
+    try:
+        return json.loads(process.readAllStandardOutput().data().decode("utf-8", "replace"))
+    except ValueError:
+        return {}
+
+
+def service_python():
+    return PARAMS.GetString("ServicePython", "") or default_python()
 
 
 def default_python():
@@ -132,7 +166,10 @@ class Controller(QtCore.QObject):
 
     # --- training (DESIGN.md 8.7) ------------------------------------------------------------
 
-    def open_training(self):
+    def open_training(self, parent=None):
+        """parent: a modal window it is opened from (the preferences); it blocks all others."""
+        if parent is not None and self.trainer is not None and self.trainer.parent() is not parent:
+            self.trainer.close()
         if self.trainer is None:
             from talktome.training import TrainingDialog
             if self.last_candidates is None:
@@ -140,7 +177,9 @@ class Controller(QtCore.QObject):
                     self.last_candidates = ttm_context.collect(self.vocab, self.language, self.heard)
                 except Exception as e:
                     log("collecting the context failed: {}".format(e))
-            self.trainer = TrainingDialog(self, self.mw)
+            self.trainer = TrainingDialog(self, parent or self.mw)
+            if parent is not None:
+                self.trainer.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
         self.trainer.show()
         self.trainer.raise_()
         self.trainer.activateWindow()
@@ -196,11 +235,12 @@ class Controller(QtCore.QObject):
     def start_service(self):
         if self.process is not None and self.process.state() != QtCore.QProcess.ProcessState.NotRunning:
             return True
-        python = PARAMS.GetString("ServicePython", "") or default_python()
+        python = service_python()
         if not os.path.exists(python):
             self.fail("speech service not installed ({} not found), see README".format(python))
             return False
         args = ["-m", "talktome_service",
+                "--volume", str(PARAMS.GetInt("Volume", 40) / 100.0),
                 "--language", PARAMS.GetString("Language", "de"),
                 "--device", PARAMS.GetString("Device", "auto")]
         model = PARAMS.GetString("Model", "")
@@ -210,15 +250,13 @@ class Controller(QtCore.QObject):
         voice = PARAMS.GetString("Voice", "")
         if voice:
             args += ["--voice", voice]
+        microphone = PARAMS.GetString("Microphone", "")
+        if microphone:
+            args += ["--mic", microphone]
         args += PARAMS.GetString("ExtraArgs", "").split()
 
-        env = QtCore.QProcessEnvironment.systemEnvironment()
-        for name in FOREIGN_ENV:
-            env.remove(name)
+        env = service_environment()
         env.insert("TTM_TOKEN", self.token)
-        env.insert("TTM_USER_DIR", ttm_context.user_dir())
-        env.insert("PYTHONPATH", os.pathsep.join([ADDON_DIR, SERVICE_DIR]))
-        env.insert("PYTHONIOENCODING", "utf-8")
         self.stderr_tail = []
         self.process = QtCore.QProcess(self)
         self.process.setProcessEnvironment(env)
@@ -251,6 +289,20 @@ class Controller(QtCore.QObject):
                 App.Console.PrintWarning("Talk to me: speech service output:\n  {}\n".format(
                     "\n  ".join(self.stderr_tail)))
             self.fail("speech service stopped, see Report view for details")
+
+    def restart_service(self):
+        """Apply changed settings: language and vocabulary now, the service on its next start;
+        a running service is restarted, listening again if it was."""
+        self.language = PARAMS.GetString("Language", "de")
+        self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
+        if self.process is None:
+            return
+        listening = self.action.isChecked()
+        self.shutdown()
+        self.set_state("off")
+        if listening:
+            self.want_listen = True
+            self.start_service()
 
     def shutdown(self):
         self.send("bye")
@@ -528,9 +580,14 @@ class Controller(QtCore.QObject):
 _controller = None
 
 
-def open_training():
+def restart_service():
     if _controller is not None:
-        _controller.open_training()
+        _controller.restart_service()
+
+
+def open_training(parent=None):
+    if _controller is not None:
+        _controller.open_training(parent)
 
 
 def setup():
