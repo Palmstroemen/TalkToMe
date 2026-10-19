@@ -399,3 +399,21 @@ def test_skipped_clause_is_reported(parts):
     assert parts["tones"].played == ["ok"]
     c.close()
     s.stop()
+
+
+def test_microphone_off_wins_over_the_rest_of_the_utterance(parts):
+    """ "Ok, kurze Pause" in a dialog must not press OK first."""
+    candidates = [
+        {"id": "ui:ok", "level": "dialog", "phrases": ["OK"], "active": True},
+        {"id": "ui:mic_off", "level": "global", "phrases": ["kurze Pause", "Ok kurze Pause"], "active": True},
+    ]
+    parts["transcriber"] = FakeTranscriber("Ok, kurze Pause.")
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=candidates)
+    c.send("listen", on=True)
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["more"]) == ("ui:mic_off", False)
+    c.close()
+    s.stop()

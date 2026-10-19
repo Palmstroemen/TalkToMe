@@ -21,7 +21,7 @@ from ttm_core.context import LEVELS
 from ttm_core.decision import decide
 from ttm_core.matching import hotwords
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
-from ttm_core.sequence import next_step
+from ttm_core.sequence import EXCLUSIVE, next_step
 
 SAMPLE_RATE = 16000
 FRAME = 512
@@ -265,6 +265,8 @@ class Service:
                     self._pending = []
                     self.send("ignored", reason=whole.reason, text=text)
                     return
+                if whole.kind == "execute" and whole.command in EXCLUSIVE:
+                    self._pending = [text]     # one step, decided as a whole below
             self._advance()
 
     def _on_result(self, msg):

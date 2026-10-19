@@ -4,9 +4,12 @@ Only German is supported so far (Cologne phonetics). Other languages need their 
 algorithm, e.g. Metaphone for English; without one, sound-alike matching is skipped.
 """
 
+from functools import lru_cache
+
 VOWELS = set("aeijouyäöü")
 
 
+@lru_cache(maxsize=50_000)
 def cologne(word):
     """Kölner Phonetik: "Rechteck" and "Richtig" both become "7424"."""
     w = [c for c in word.lower().replace("ß", "s") if c.isalpha()]

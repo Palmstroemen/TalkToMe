@@ -377,6 +377,20 @@ Gespeichert wird im Lernmodus immer der **tatsächlich erkannte** Text, nicht de
 - **Ein Toolbar-Button** mit Mikrofon-Symbol schaltet das Zuhören ein und aus (umschaltbar). Optional kann der Button zusätzlich ein Tastenkürzel bekommen.
 - **Der Zustand ist deutlich sichtbar:** Das Symbol unterscheidet die Zustände aus, hört zu, verarbeitet gerade und Dienst nicht erreichbar.
 - **Optional:** Das Zuhören pausiert automatisch, solange FreeCAD nicht das aktive Fenster ist. Das ist nützlich bei Videokonferenzen.
+- **Ausschalten per Sprache:** „Mikro aus“, „kurze Pause“, „Stoppe mal die Aufnahme“, „Höre nicht mehr zu“ (`ui:mic_off`, immer verfügbar). Steckt der Befehl in einer Äußerung, wird nur er ausgeführt: „Ok, kurze Pause“ drückt in einem Dialog nicht erst OK. Ein Fehlalarm ist harmlos, das Mikrofon ist dann aus. Zum Einschalten gibt es bewusst keinen Sprachbefehl, dafür ist der Button da.
+
+#### Betriebsart Sprechtaste (geplant)
+
+Für laute Umgebungen oder Großraumbüros ist das Mikrofon wahlweise eine Sprechtaste (Push-to-Talk) statt eines Schalters (Einstellung `Mode`: `toggle` / `push`):
+
+- **Auslöser:** eine Taste der Tastatur. Fußpedale melden sich meist als Tastatur und senden eine einstellbare Taste (oft F13–F24, die auf normalen Tastaturen fehlen und nicht mit FreeCAD-Kürzeln kollidieren). Gedrückt halten des Buttons mit der Maus geht ebenso.
+- **Technik:** Ein Ereignisfilter auf der FreeCAD-Anwendung fängt Drücken und Loslassen der Taste ab. Automatische Tastenwiederholung wird ignoriert. Er wirkt nur, solange FreeCAD das aktive Fenster ist; systemweite Tasten bräuchten betriebssystemabhängigen Code.
+- **Ablauf:** Drücken = Aufnahme an. Loslassen = Äußerung sofort beenden und erkennen, nicht auf die Pause der VAD warten (neue Nachricht `listen` mit `flush`). Was zwischen Drücken und Loslassen gesagt wird, ist eine Äußerung; Gerede-Erkennung und Ignorieren entfallen weitgehend, denn wer die Taste drückt, meint einen Befehl.
+- **Vorteil neben der Ruhe:** Die Antwort kommt schneller, weil die Wartezeit auf das Ende der Äußerung (etwa 0,6 s) entfällt.
+
+#### Hintergrundgeräusche
+
+Die VAD (Silero) unterscheidet Sprache von Geräuschen wie Lüftern, Tastatur oder Maschinen; die bleiben schon heute draußen. Stimmen im Hintergrund sind für sie aber Sprache. Mit einem Headset ist die eigene Stimme deutlich lauter als alles andere. Eine einstellbare Mindestlautstärke (`MinLevel`, mit Kalibrierung: einmal still sein, einmal sprechen) lässt dann nur noch die eigene Stimme durch.
 
 ### 9.2 Von Audio zu Äußerungen
 

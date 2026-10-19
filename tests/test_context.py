@@ -111,3 +111,10 @@ def test_foreign_labels_are_kept_apart():
 def test_foreign_labels_alone_make_a_candidate():
     cands = build_candidates({"tb": ["Std_Open"]}, {}, {}, foreign_labels={"Std_Open": ["Open"]})
     assert cands[0]["phrases"] == [] and cands[0]["foreign"] == ["Open"]
+
+
+def test_microphone_off_is_always_offered():
+    vocab = {"ui:mic_off": ["Mikro aus"]}
+    for dialog_open in (False, True):
+        c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=dialog_open, vocab=vocab))
+        assert c["ui:mic_off"]["level"] == "global"

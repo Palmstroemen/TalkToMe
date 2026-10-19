@@ -82,3 +82,17 @@ def test_plane_is_not_open():
     """ "Ebene" sounds like the English label "Open" in German phonetics."""
     d = decide("und mach eine Skizze in der XY-Ebene", PART_DESIGN, "de")
     assert d.command != "Std_Open"
+
+
+VOCAB = load(os.path.join("..", "..", "vocab", "de.json"))
+MIC_OFF = {"id": "ui:mic_off", "level": "global", "phrases": VOCAB["ui:mic_off"], "foreign": [],
+           "active": True, "description": ""}
+
+
+@pytest.mark.parametrize("text", [
+    "Ok kurze Pause", "Kurze Pause", "Stoppe mal die Aufnahme", "Mach mal das Mikro zu",
+    "Höre nicht mehr zu", "Mikro aus", "Mikrofon aus", "Hör auf zuzuhören",
+])
+def test_microphone_off(text):
+    d = decide(text, PART_DESIGN + [MIC_OFF], "de")
+    assert (d.kind, d.command) == ("execute", "ui:mic_off")

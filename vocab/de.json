@@ -31,6 +31,10 @@
 
     "ui:cancel":                ["Abbrechen", "Abbruch", "Stopp"],
     "ui:ok":                    ["OK", "Okay", "Bestätigen", "Fertig"],
+    "ui:mic_off":               ["Mikro aus", "Mikrofon aus", "Micro aus", "kurze Pause", "Ok kurze Pause",
+                                 "Pause machen", "Stoppe die Aufnahme", "Aufnahme stoppen", "Aufnahme aus",
+                                 "Mach das Mikro zu", "Mikro zu", "Höre nicht mehr zu", "Hör auf zuzuhören",
+                                 "nicht mehr zuhören"],
 
     "workbench:PartDesignWorkbench": ["Part Design", "Wechsle zu Part Design"],
     "workbench:SketcherWorkbench":   ["Wechsle zum Sketcher"],

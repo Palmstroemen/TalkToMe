@@ -6,7 +6,7 @@ turns it into a list of candidates, each with a priority level:
     dialog     an open task dialog: OK / cancel
     edit       commands belonging to the object being edited (e.g. Sketcher_* in a sketch)
     workbench  the other commands of the active workbench
-    global     Std_* commands, switching workbenches, cancel
+    global     Std_* commands, switching workbenches, cancel, microphone off
 """
 
 from ttm_core.vocabulary import merge_phrases
@@ -64,6 +64,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
             add(cmd, level, merge_phrases(vocab.get(cmd), labels.get(cmd)), active.get(cmd, True))
 
     add("ui:cancel", "global", merge_phrases(vocab.get("ui:cancel")))
+    add("ui:mic_off", "global", merge_phrases(vocab.get("ui:mic_off")))
     for wb, names in (workbenches or {}).items():
         if wb != current_workbench:
             wb_id = "workbench:" + wb

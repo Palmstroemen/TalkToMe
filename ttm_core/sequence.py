@@ -13,6 +13,9 @@ from ttm_core.decision import decide, explains
 # Steps that change the candidates; what follows them is decided in the new context.
 CONTEXT_CHANGING = ("workbench:",)
 
+# Commands that replace everything else said with them: "Ok, kurze Pause" must not press OK.
+EXCLUSIVE = ("ui:mic_off",)
+
 
 def _join(clauses):
     return ", ".join(clauses)

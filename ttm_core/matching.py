@@ -9,6 +9,7 @@ language has a phonetic algorithm, by sound ("Richtig" sounds like "Rechteck").
 
 import re
 from difflib import SequenceMatcher
+from functools import lru_cache
 
 from ttm_core.languages import PARAMETER_WORDS, STOP_WORDS
 from ttm_core.phonetics import PHONETICS
@@ -19,6 +20,12 @@ SOUND = 0.9          # same sound, different spelling: good, but below an exact 
 SHORT_CODE = 2       # sound codes this short ("Fase" = 38) only count if they make up the whole sentence
 
 NUMBER = re.compile(r"^\d+([.,]\d+)?$")
+
+
+@lru_cache(maxsize=100_000)
+def _ratio(a, b):
+    """Spelling similarity, cached: a sequence decides overlapping parts of one sentence many times."""
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def command_words(text, language=None):
@@ -44,7 +51,7 @@ def phrase_score(text_words, phrase_words, phonetic=None, stop=frozenset()):
         partial = len(window) < len(text_words)
         if partial and all(w in stop for w in window):
             continue
-        score = SequenceMatcher(None, " ".join(window), phrase).ratio()
+        score = _ratio(" ".join(window), phrase)
         if phrase_codes and all(phrase_codes) and len(window) == n:
             same_sound = [phonetic(w) for w in window] == phrase_codes
             too_short = partial and len("".join(phrase_codes)) <= SHORT_CODE
@@ -64,7 +71,7 @@ def phrase_score(text_words, phrase_words, phonetic=None, stop=frozenset()):
             window = text_words[i:i + size]
             if size < len(text_words) and all(w in stop for w in window):
                 continue
-            score = SequenceMatcher(None, "".join(window), compact).ratio()
+            score = _ratio("".join(window), compact)
             if size < len(text_words):
                 score *= PARTIAL
             best = max(best, score)

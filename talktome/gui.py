@@ -279,7 +279,10 @@ class Controller(QtCore.QObject):
 
     def on_plan(self, msg):
         command, text = msg.get("command", ""), msg.get("text", "")
-        if PARAMS.GetBool("DryRun", False):
+        if command == "ui:mic_off":
+            self.action.setChecked(False)      # switching on again is the button's job
+            ok, reason = True, ""
+        elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, "dry run, not executed"
         else:
             try:
