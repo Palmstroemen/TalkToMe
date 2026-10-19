@@ -2,6 +2,10 @@
  "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
  "context": {
   "active": {
+   "Part_CoordinateSystem": true,
+   "Part_DatumLine": true,
+   "Part_DatumPlane": true,
+   "Part_DatumPoint": true,
    "Part_Datums": true,
    "Part_SelectFilter": true,
    "Sketcher_ArcOverlay": true,
@@ -24,17 +28,58 @@
    "Sketcher_CompModifyKnotMultiplicity": false,
    "Sketcher_CompSlot": true,
    "Sketcher_CompToggleConstraints": true,
+   "Sketcher_ConstrainAngle": true,
    "Sketcher_ConstrainBlock": true,
    "Sketcher_ConstrainCoincidentUnified": true,
+   "Sketcher_ConstrainDiameter": true,
+   "Sketcher_ConstrainDistance": true,
+   "Sketcher_ConstrainDistanceX": true,
+   "Sketcher_ConstrainDistanceY": true,
    "Sketcher_ConstrainEqual": true,
+   "Sketcher_ConstrainHorVer": true,
+   "Sketcher_ConstrainHorizontal": true,
+   "Sketcher_ConstrainLock": true,
    "Sketcher_ConstrainParallel": true,
    "Sketcher_ConstrainPerpendicular": true,
+   "Sketcher_ConstrainRadiam": true,
+   "Sketcher_ConstrainRadius": true,
    "Sketcher_ConstrainSymmetric": true,
    "Sketcher_ConstrainTangent": true,
+   "Sketcher_ConstrainVertical": true,
+   "Sketcher_Create3PointArc": true,
+   "Sketcher_Create3PointCircle": true,
+   "Sketcher_CreateArc": true,
+   "Sketcher_CreateArcOfEllipse": true,
+   "Sketcher_CreateArcOfHyperbola": true,
+   "Sketcher_CreateArcOfParabola": true,
+   "Sketcher_CreateArcSlot": true,
+   "Sketcher_CreateBSpline": true,
+   "Sketcher_CreateBSplineByInterpolation": true,
+   "Sketcher_CreateChamfer": true,
+   "Sketcher_CreateCircle": true,
+   "Sketcher_CreateEllipseBy3Points": true,
+   "Sketcher_CreateEllipseByCenter": true,
+   "Sketcher_CreateFillet": true,
+   "Sketcher_CreateHeptagon": true,
+   "Sketcher_CreateHexagon": true,
    "Sketcher_CreateLine": true,
+   "Sketcher_CreateOblong": true,
+   "Sketcher_CreateOctagon": true,
+   "Sketcher_CreatePentagon": true,
+   "Sketcher_CreatePeriodicBSpline": true,
+   "Sketcher_CreatePeriodicBSplineByInterpolation": true,
    "Sketcher_CreatePoint": true,
    "Sketcher_CreatePolyline": true,
+   "Sketcher_CreateRectangle": true,
+   "Sketcher_CreateRectangle_Center": true,
+   "Sketcher_CreateRegularPolygon": true,
+   "Sketcher_CreateSlot": true,
+   "Sketcher_CreateSquare": true,
+   "Sketcher_CreateTriangle": true,
+   "Sketcher_Dimension": true,
    "Sketcher_EditSketch": false,
+   "Sketcher_Extend": true,
+   "Sketcher_Intersection": true,
    "Sketcher_JoinCurves": false,
    "Sketcher_LeaveSketch": true,
    "Sketcher_MapSketch": false,
@@ -42,6 +87,7 @@
    "Sketcher_MirrorSketch": false,
    "Sketcher_NewSketch": true,
    "Sketcher_Offset": false,
+   "Sketcher_Projection": true,
    "Sketcher_RemoveAxesAlignment": false,
    "Sketcher_ReorientSketch": false,
    "Sketcher_RestoreInternalAlignmentGeometry": false,
@@ -49,10 +95,14 @@
    "Sketcher_Scale": false,
    "Sketcher_SelectConstraints": false,
    "Sketcher_SelectElementsAssociatedWithConstraints": false,
+   "Sketcher_Split": true,
    "Sketcher_SwitchVirtualSpace": true,
    "Sketcher_Symmetry": false,
+   "Sketcher_ToggleActiveConstraint": false,
    "Sketcher_ToggleConstruction": true,
+   "Sketcher_ToggleDrivingConstraint": true,
    "Sketcher_Translate": false,
+   "Sketcher_Trimming": true,
    "Sketcher_ValidateSketch": false,
    "Sketcher_ViewSection": true,
    "Sketcher_ViewSketch": true,
@@ -65,6 +115,12 @@
    "Std_DrawStyle": true,
    "Std_Group": true,
    "Std_LinkActions": true,
+   "Std_LinkImport": false,
+   "Std_LinkImportAll": false,
+   "Std_LinkMake": true,
+   "Std_LinkMakeRelative": false,
+   "Std_LinkReplace": false,
+   "Std_LinkUnlink": false,
    "Std_Measure": false,
    "Std_New": true,
    "Std_Open": true,
@@ -73,6 +129,18 @@
    "Std_Redo": false,
    "Std_Refresh": false,
    "Std_Save": true,
+   "Std_SelBack": false,
+   "Std_SelForward": false,
+   "Std_TreeCollapseDocument": true,
+   "Std_TreeDrag": true,
+   "Std_TreeMultiDocument": true,
+   "Std_TreePreSelection": true,
+   "Std_TreeRecordSelection": true,
+   "Std_TreeSelection": true,
+   "Std_TreeSingleDocument": true,
+   "Std_TreeSyncPlacement": true,
+   "Std_TreeSyncSelection": true,
+   "Std_TreeSyncView": true,
    "Std_TreeViewActions": true,
    "Std_Undo": false,
    "Std_VarSet": true,
@@ -93,7 +161,10 @@
   "choices": [],
   "current_workbench": "SketcherWorkbench",
   "descriptions": {
-   "Part_Datums": "Creates a coordinate system that can be attached to other objects",
+   "Part_CoordinateSystem": "Creates a coordinate system that can be attached to other objects",
+   "Part_DatumLine": "Creates a datum line that can be attached to other objects",
+   "Part_DatumPlane": "Creates a datum plane that can be attached to other objects",
+   "Part_DatumPoint": "Creates a datum point that can be attached to other objects",
    "Part_SelectFilter": "Only allows the selection of vertices",
    "Sketcher_ArcOverlay": "Toggles the visibility of the circular helpers for all arcs",
    "Sketcher_BSplineConvertToNURBS": "Converts the selected geometry to B-splines",
@@ -102,30 +173,60 @@
    "Sketcher_BSplineInsertKnot": "Inserts a knot at a given parameter. If a knot already exists at that parameter, its multiplicity is increased by 1.",
    "Sketcher_CarbonCopy": "Copies the geometry of another sketch",
    "Sketcher_CompBSplineShowHideGeometryInformation": "Toggles the visibility of the degree for all B-splines",
-   "Sketcher_CompCreateArc": "Creates an arc defined by a center point and an end point",
-   "Sketcher_CompCreateBSpline": "Creates a B-spline curve defined by control points",
-   "Sketcher_CompCreateConic": "Creates a circle from a center and rim point",
-   "Sketcher_CompCreateFillets": "Creates a fillet between 2 selected lines or at coincident points",
-   "Sketcher_CompCreateRectangles": "Creates a rectangle from 2 corner points",
-   "Sketcher_CompCreateRegularPolygon": "Creates an equilateral triangle from a center and corner point",
-   "Sketcher_CompCurveEdition": "Trims an edge with respect to the selected position",
-   "Sketcher_CompDimensionTools": "Constrains contextually based on the selection. The type can be changed with the M key.",
-   "Sketcher_CompExternal": "Creates the projection of external geometry in the sketch plane",
-   "Sketcher_CompHorVer": "Constrains the selected elements either horizontally or vertically, based on their closest alignment",
+   "Sketcher_CompDimensionTools": "",
    "Sketcher_CompModifyKnotMultiplicity": "Increases the multiplicity of the selected knot of a B-spline",
-   "Sketcher_CompSlot": "Creates a slot",
-   "Sketcher_CompToggleConstraints": "Toggles between driving and reference mode of the selected constraints and commands",
+   "Sketcher_ConstrainAngle": "Constrains the angle between two straight lines or between one line and the X-axis of the sketch if only one is selected",
    "Sketcher_ConstrainBlock": "Constrains the selected edges as fixed",
    "Sketcher_ConstrainCoincidentUnified": "Constrains the selected elements to be coincident",
+   "Sketcher_ConstrainDiameter": "Constrains the diameter of the selected circle or arc",
+   "Sketcher_ConstrainDistance": "Constrains the vertical distance between two points, or from a point to the origin if one is selected",
+   "Sketcher_ConstrainDistanceX": "Constrains the horizontal distance between two points, or from a point to the origin if only one is selected",
+   "Sketcher_ConstrainDistanceY": "Constrains the vertical distance between the selected elements",
    "Sketcher_ConstrainEqual": "Constrains the selected edges or circles to be equal",
+   "Sketcher_ConstrainHorVer": "Constrains the selected elements either horizontally or vertically, based on their closest alignment",
+   "Sketcher_ConstrainHorizontal": "Constrains the selected elements horizontally",
+   "Sketcher_ConstrainLock": "Constrains the selected vertices by adding horizontal and vertical distance constraints",
    "Sketcher_ConstrainParallel": "Constrains the selected lines to be parallel",
    "Sketcher_ConstrainPerpendicular": "Constrains the selected lines to be perpendicular",
+   "Sketcher_ConstrainRadiam": "Constrains the radius of the selected arc or the diameter of the selected circle",
+   "Sketcher_ConstrainRadius": "Constrains the radius of the selected circle or arc",
    "Sketcher_ConstrainSymmetric": "Constrains the selected elements to be symmetric",
    "Sketcher_ConstrainTangent": "Constrains the selected elements to be tangent or collinear",
+   "Sketcher_ConstrainVertical": "Constrains the selected elements vertically",
+   "Sketcher_Create3PointArc": "Creates an arc defined by 2 end points and 1 point on the arc",
+   "Sketcher_Create3PointCircle": "Creates a circle from 3 perimeter points",
+   "Sketcher_CreateArc": "Creates an arc defined by a center point and an end point",
+   "Sketcher_CreateArcOfEllipse": "Creates an elliptical arc",
+   "Sketcher_CreateArcOfHyperbola": "Creates a hyperbolic arc",
+   "Sketcher_CreateArcOfParabola": "Creates a parabolic arc",
+   "Sketcher_CreateArcSlot": "Creates an arc slot",
+   "Sketcher_CreateBSpline": "Creates a B-spline curve defined by control points",
+   "Sketcher_CreateBSplineByInterpolation": "Creates a B-spline from knots, i.e. from interpolation",
+   "Sketcher_CreateChamfer": "Creates a chamfer between 2 selected lines or at coincident points",
+   "Sketcher_CreateCircle": "Creates a circle from a center and rim point",
+   "Sketcher_CreateEllipseBy3Points": "Creates an ellipse from 3 points on its perimeter",
+   "Sketcher_CreateEllipseByCenter": "Creates an ellipse from a center and rim point",
+   "Sketcher_CreateFillet": "Creates a fillet between 2 selected lines or at coincident points",
+   "Sketcher_CreateHeptagon": "Creates a heptagon from a center and corner point",
+   "Sketcher_CreateHexagon": "Creates a hexagon from a center and corner point",
    "Sketcher_CreateLine": "Creates a line",
+   "Sketcher_CreateOblong": "Creates a rounded rectangle from 2 corner points",
+   "Sketcher_CreateOctagon": "Creates an octagon from a center and corner point",
+   "Sketcher_CreatePentagon": "Creates a pentagon from a center and corner point",
+   "Sketcher_CreatePeriodicBSpline": "Creates a periodic B-spline curve defined by control points",
+   "Sketcher_CreatePeriodicBSplineByInterpolation": "Creates a periodic B-spline defined by knots using interpolation",
    "Sketcher_CreatePoint": "Creates a point",
    "Sketcher_CreatePolyline": "Creates a continuous polyline. Press the 'M' key to switch segment modes",
+   "Sketcher_CreateRectangle": "Creates a rectangle from 2 corner points",
+   "Sketcher_CreateRectangle_Center": "Creates a centered rectangle from a center and a corner point",
+   "Sketcher_CreateRegularPolygon": "Creates a regular polygon from a center and corner point",
+   "Sketcher_CreateSlot": "Creates a slot",
+   "Sketcher_CreateSquare": "Creates a square from a center and corner point",
+   "Sketcher_CreateTriangle": "Creates an equilateral triangle from a center and corner point",
+   "Sketcher_Dimension": "Constrains contextually based on the selection. The type can be changed with the M key.",
    "Sketcher_EditSketch": "Opens the selected sketch for editing",
+   "Sketcher_Extend": "Extends an edge with respect to the selected position",
+   "Sketcher_Intersection": "Creates the intersection of external geometry with the sketch plane",
    "Sketcher_JoinCurves": "Joins 2 curves at selected end points",
    "Sketcher_LeaveSketch": "Exits the active sketch",
    "Sketcher_MapSketch": "Attaches a sketch to the selected geometry element",
@@ -133,6 +234,7 @@
    "Sketcher_MirrorSketch": "Creates a new mirrored sketch for each selected sketch\nby using the X or Y axes, or the origin point,\nas mirroring reference",
    "Sketcher_NewSketch": "Creates a new sketch",
    "Sketcher_Offset": "Adds an equidistant closed contour around selected geometry: positive values offset outward, negative values inward",
+   "Sketcher_Projection": "Creates the projection of external geometry in the sketch plane",
    "Sketcher_RemoveAxesAlignment": "Modifies the constraints to remove axes alignment while trying to preserve the constraint relationship of the selection",
    "Sketcher_ReorientSketch": "Places the selected sketch on one of the global coordinate planes.\nThis will clear the AttachmentSupport property.",
    "Sketcher_RestoreInternalAlignmentGeometry": "Toggles the visibility of all internal geometry",
@@ -140,10 +242,14 @@
    "Sketcher_Scale": "Scales the selected geometries",
    "Sketcher_SelectConstraints": "Selects the constraints associated with the selected geometrical elements",
    "Sketcher_SelectElementsAssociatedWithConstraints": "Selects the geometrical elements associated with the selected constraints",
+   "Sketcher_Split": "Splits an edge into 2 segments while preserving constraints",
    "Sketcher_SwitchVirtualSpace": "Switches the selected constraints or the view to the other virtual space",
    "Sketcher_Symmetry": "Creates a mirrored copy of the selected geometry",
+   "Sketcher_ToggleActiveConstraint": "Toggles the state of the selected constraints",
    "Sketcher_ToggleConstruction": "Toggles between defining geometry and construction geometry modes",
+   "Sketcher_ToggleDrivingConstraint": "Toggles between driving and reference mode of the selected constraints and commands",
    "Sketcher_Translate": "Translates the selected geometries and enables the creation of 'i' * 'j' copies",
+   "Sketcher_Trimming": "Trims an edge with respect to the selected position",
    "Sketcher_ValidateSketch": "Validates a sketch by checking for missing coincidences,\ninvalid constraints, and degenerate geometry",
    "Sketcher_ViewSection": "Toggles between section view and full view",
    "Sketcher_ViewSketch": "Aligns the camera orientation perpendicular to the active sketch plane",
@@ -155,7 +261,12 @@
    "Std_DlgMacroRecord": "Opens a dialog to record a macro",
    "Std_DrawStyle": "",
    "Std_Group": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model.",
-   "Std_LinkActions": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_LinkImport": "Imports selected external links",
+   "Std_LinkImportAll": "Imports all links of the active document",
+   "Std_LinkMake": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_LinkMakeRelative": "Creates a sub-object or sub-element link",
+   "Std_LinkReplace": "Replaces the selected objects with links",
+   "Std_LinkUnlink": "Unlinks the object by placing it directly in the container",
    "Std_Measure": "Measure a feature",
    "Std_New": "Creates a new empty document",
    "Std_Open": "Opens a document or imports files",
@@ -164,14 +275,25 @@
    "Std_Redo": "Redoes a previously undone action",
    "Std_Refresh": "Recomputes the active document",
    "Std_Save": "Saves the active document",
-   "Std_TreeViewActions": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_SelBack": "<p>Restores the previous tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_SelForward": "<p>Restores the next tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_TreeCollapseDocument": "Expands the active document and collapses all others",
+   "Std_TreeDrag": "Initiates dragging of the currently selected tree items",
+   "Std_TreeMultiDocument": "Displays all documents in the tree view",
+   "Std_TreePreSelection": "Preselects the object in 3D view when hovering the cursor over the tree item",
+   "Std_TreeRecordSelection": "Records the selection in the tree view in order to go back/forward using the navigation buttons",
+   "Std_TreeSelection": "Scrolls to the first selected item",
+   "Std_TreeSingleDocument": "Displays only the active document in the tree view",
+   "Std_TreeSyncPlacement": "Adjusts the placement on drag-and-drop of objects across coordinate systems (e.g. in part containers)",
+   "Std_TreeSyncSelection": "Expands the tree item when the corresponding object is selected in the 3D view",
+   "Std_TreeSyncView": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_TreeViewActions": "",
    "Std_Undo": "Undoes the previous action",
    "Std_VarSet": "Creates a variable set, which is an object that maintains a set of properties to be used as variables",
    "Std_ViewBottom": "Sets the camera to the bottom view",
    "Std_ViewFitAll": "Fits all content into the 3D view",
    "Std_ViewFitSelection": "Fits the selected content into the 3D view",
    "Std_ViewFront": "Sets the camera to the front view",
-   "Std_ViewGroup": "Sets the camera to the isometric view",
    "Std_ViewIsometric": "Sets the camera to the isometric view",
    "Std_ViewLeft": "Sets the camera to the left view",
    "Std_ViewRear": "Sets the camera to the rear view",
@@ -185,11 +307,27 @@
   "edit_prefix": "Sketcher_",
   "foreign_labels": {},
   "labels": {
-   "Part_Datums": [
+   "Part_CoordinateSystem": [
     "Coordinate System",
-    "Datum Plane",
+    "Coordinate System",
+    "Coordinate System"
+   ],
+   "Part_DatumLine": [
     "Datum Line",
+    "Datum Line",
+    "Datum Line"
+   ],
+   "Part_DatumPlane": [
+    "Datum Plane",
+    "Datum Plane",
+    "Datum Plane"
+   ],
+   "Part_DatumPoint": [
     "Datum Point",
+    "Datum Point",
+    "Datum Point"
+   ],
+   "Part_Datums": [
     "Datums"
    ],
    "Part_SelectFilter": [
@@ -232,76 +370,34 @@
     "Toggle B-Spline Information Layer"
    ],
    "Sketcher_CompCreateArc": [
-    "Arc From Center",
-    "Arc From 3 Points",
-    "Elliptical Arc",
-    "Hyperbolic Arc",
-    "Parabolic Arc",
     "Arc"
    ],
    "Sketcher_CompCreateBSpline": [
-    "B-Spline",
-    "Periodic B-Spline",
-    "B-Spline From Knots",
-    "Periodic B-Spline From Knots",
     "B-Spline"
    ],
    "Sketcher_CompCreateConic": [
-    "Circle From Center",
-    "Circle From 3 Points",
-    "Ellipse From Center",
-    "Ellipse From 3 Points",
     "Conic"
    ],
    "Sketcher_CompCreateFillets": [
-    "Fillet",
-    "Chamfer",
     "Fillet/Chamfer"
    ],
    "Sketcher_CompCreateRectangles": [
-    "Rectangle",
-    "Centered Rectangle",
-    "Rounded Rectangle",
     "Rectangle"
    ],
    "Sketcher_CompCreateRegularPolygon": [
-    "Triangle",
-    "Square",
-    "Pentagon",
-    "Hexagon",
-    "Heptagon",
-    "Octagon",
-    "Polygon",
     "Polygon"
    ],
    "Sketcher_CompCurveEdition": [
-    "Trim Edge",
-    "Split Edge",
-    "Extend Edge",
     "Edit Edges"
    ],
    "Sketcher_CompDimensionTools": [
-    "Dimension",
     "",
-    "Horizontal Dimension",
-    "Vertical Dimension",
-    "Distance Dimension",
-    "Radius/Diameter Dimension",
-    "Radius Dimension",
-    "Diameter Dimension",
-    "Angle Dimension",
-    "Lock Position",
     "Dimension"
    ],
    "Sketcher_CompExternal": [
-    "External Projection",
-    "External Intersection",
     "External Geometry"
    ],
    "Sketcher_CompHorVer": [
-    "Horizontal/Vertical Constraint",
-    "Horizontal Constraint",
-    "Vertical Constraint",
     "Horizontal/Vertical Constraint"
    ],
    "Sketcher_CompModifyKnotMultiplicity": [
@@ -310,14 +406,15 @@
     "Modify Knot Multiplicity"
    ],
    "Sketcher_CompSlot": [
-    "Slot",
-    "Arc Slot",
     "Slot"
    ],
    "Sketcher_CompToggleConstraints": [
-    "Toggle Driving/Reference Constraints",
-    "Toggle Constraints",
     "Toggle Constraints"
+   ],
+   "Sketcher_ConstrainAngle": [
+    "Angle Dimension",
+    "Angle Dimension",
+    "Angle Dimension"
    ],
    "Sketcher_ConstrainBlock": [
     "Block Constraint",
@@ -327,9 +424,44 @@
     "Coincident Constraint",
     "Coincident Constraint"
    ],
+   "Sketcher_ConstrainDiameter": [
+    "Diameter Dimension",
+    "Diameter Dimension",
+    "Diameter Dimension"
+   ],
+   "Sketcher_ConstrainDistance": [
+    "Distance Dimension",
+    "Distance Dimension",
+    "Distance Dimension"
+   ],
+   "Sketcher_ConstrainDistanceX": [
+    "Horizontal Dimension",
+    "Horizontal Dimension",
+    "Horizontal Dimension"
+   ],
+   "Sketcher_ConstrainDistanceY": [
+    "Vertical Dimension",
+    "Vertical Dimension",
+    "Vertical Dimension"
+   ],
    "Sketcher_ConstrainEqual": [
     "Equal Constraint",
     "Equal Constraint"
+   ],
+   "Sketcher_ConstrainHorVer": [
+    "Horizontal/Vertical Constraint",
+    "Horizontal/Vertical Constraint",
+    "Horizontal/Vertical Constraint"
+   ],
+   "Sketcher_ConstrainHorizontal": [
+    "Horizontal Constraint",
+    "Horizontal Constraint",
+    "Horizontal Constraint"
+   ],
+   "Sketcher_ConstrainLock": [
+    "Lock Position",
+    "Lock Position",
+    "Lock Position"
    ],
    "Sketcher_ConstrainParallel": [
     "Parallel Constraint",
@@ -339,6 +471,16 @@
     "Perpendicular Constraint",
     "Perpendicular Constraint"
    ],
+   "Sketcher_ConstrainRadiam": [
+    "Radius/Diameter Dimension",
+    "Radius/Diameter Dimension",
+    "Radius/Diameter Dimension"
+   ],
+   "Sketcher_ConstrainRadius": [
+    "Radius Dimension",
+    "Radius Dimension",
+    "Radius Dimension"
+   ],
    "Sketcher_ConstrainSymmetric": [
     "Symmetric Constraint",
     "Symmetric Constraint"
@@ -347,9 +489,119 @@
     "Tangent/Collinear Constraint",
     "Tangent/Collinear Constraint"
    ],
+   "Sketcher_ConstrainVertical": [
+    "Vertical Constraint",
+    "Vertical Constraint",
+    "Vertical Constraint"
+   ],
+   "Sketcher_Create3PointArc": [
+    "Arc From 3 Points",
+    "Arc From 3 Points",
+    "Arc From 3 Points"
+   ],
+   "Sketcher_Create3PointCircle": [
+    "Circle From 3 Points",
+    "Circle From 3 Points",
+    "Circle From 3 Points"
+   ],
+   "Sketcher_CreateArc": [
+    "Arc From Center",
+    "Arc From Center",
+    "Arc From Center"
+   ],
+   "Sketcher_CreateArcOfEllipse": [
+    "Elliptical Arc",
+    "Elliptical Arc",
+    "Elliptical Arc"
+   ],
+   "Sketcher_CreateArcOfHyperbola": [
+    "Hyperbolic Arc",
+    "Hyperbolic Arc",
+    "Hyperbolic Arc"
+   ],
+   "Sketcher_CreateArcOfParabola": [
+    "Parabolic Arc",
+    "Parabolic Arc",
+    "Parabolic Arc"
+   ],
+   "Sketcher_CreateArcSlot": [
+    "Arc Slot",
+    "Arc Slot",
+    "Arc Slot"
+   ],
+   "Sketcher_CreateBSpline": [
+    "B-Spline",
+    "B-Spline",
+    "B-Spline"
+   ],
+   "Sketcher_CreateBSplineByInterpolation": [
+    "B-Spline From Knots",
+    "B-Spline From Knots",
+    "B-Spline From Knots"
+   ],
+   "Sketcher_CreateChamfer": [
+    "Chamfer",
+    "Chamfer",
+    "Chamfer"
+   ],
+   "Sketcher_CreateCircle": [
+    "Circle From Center",
+    "Circle From Center",
+    "Circle From Center"
+   ],
+   "Sketcher_CreateEllipseBy3Points": [
+    "Ellipse From 3 Points",
+    "Ellipse From 3 Points",
+    "Ellipse From 3 Points"
+   ],
+   "Sketcher_CreateEllipseByCenter": [
+    "Ellipse From Center",
+    "Ellipse From Center",
+    "Ellipse From Center"
+   ],
+   "Sketcher_CreateFillet": [
+    "Fillet",
+    "Fillet",
+    "Fillet"
+   ],
+   "Sketcher_CreateHeptagon": [
+    "Heptagon",
+    "Heptagon",
+    "Heptagon"
+   ],
+   "Sketcher_CreateHexagon": [
+    "Hexagon",
+    "Hexagon",
+    "Hexagon"
+   ],
    "Sketcher_CreateLine": [
     "Line",
     "Line"
+   ],
+   "Sketcher_CreateOblong": [
+    "Rounded Rectangle",
+    "Rounded Rectangle",
+    "Rounded Rectangle"
+   ],
+   "Sketcher_CreateOctagon": [
+    "Octagon",
+    "Octagon",
+    "Octagon"
+   ],
+   "Sketcher_CreatePentagon": [
+    "Pentagon",
+    "Pentagon",
+    "Pentagon"
+   ],
+   "Sketcher_CreatePeriodicBSpline": [
+    "Periodic B-Spline",
+    "Periodic B-Spline",
+    "Periodic B-Spline"
+   ],
+   "Sketcher_CreatePeriodicBSplineByInterpolation": [
+    "Periodic B-Spline From Knots",
+    "Periodic B-Spline From Knots",
+    "Periodic B-Spline From Knots"
    ],
    "Sketcher_CreatePoint": [
     "Point",
@@ -359,9 +611,54 @@
     "Polyline",
     "Polyline"
    ],
+   "Sketcher_CreateRectangle": [
+    "Rectangle",
+    "Rectangle",
+    "Rectangle"
+   ],
+   "Sketcher_CreateRectangle_Center": [
+    "Centered Rectangle",
+    "Centered Rectangle",
+    "Centered Rectangle"
+   ],
+   "Sketcher_CreateRegularPolygon": [
+    "Polygon",
+    "Polygon",
+    "Polygon"
+   ],
+   "Sketcher_CreateSlot": [
+    "Slot",
+    "Slot",
+    "Slot"
+   ],
+   "Sketcher_CreateSquare": [
+    "Square",
+    "Square",
+    "Square"
+   ],
+   "Sketcher_CreateTriangle": [
+    "Triangle",
+    "Triangle",
+    "Triangle"
+   ],
+   "Sketcher_Dimension": [
+    "Dimension",
+    "Dimension",
+    "Dimension"
+   ],
    "Sketcher_EditSketch": [
     "Edit Sketch",
     "Edit Sketch"
+   ],
+   "Sketcher_Extend": [
+    "Extend Edge",
+    "Extend Edge",
+    "Extend Edge"
+   ],
+   "Sketcher_Intersection": [
+    "External Intersection",
+    "External Intersection",
+    "External Intersection"
    ],
    "Sketcher_JoinCurves": [
     "Join Curves",
@@ -391,6 +688,11 @@
     "Offset",
     "Offset"
    ],
+   "Sketcher_Projection": [
+    "External Projection",
+    "External Projection",
+    "External Projection"
+   ],
    "Sketcher_RemoveAxesAlignment": [
     "Remove Axes Alignment",
     "Remove Axes Alignment"
@@ -419,6 +721,11 @@
     "Select Associated Geometry",
     "Select Associated Geometry"
    ],
+   "Sketcher_Split": [
+    "Split Edge",
+    "Split Edge",
+    "Split Edge"
+   ],
    "Sketcher_SwitchVirtualSpace": [
     "Switch Virtual Space",
     "Switch Virtual Space"
@@ -427,13 +734,28 @@
     "Mirror",
     "Mirror"
    ],
+   "Sketcher_ToggleActiveConstraint": [
+    "Toggle Constraints",
+    "Toggle Constraints",
+    "Toggle Constraints"
+   ],
    "Sketcher_ToggleConstruction": [
     "Toggle Construction Geometry",
     "Toggle Construction Geometry"
    ],
+   "Sketcher_ToggleDrivingConstraint": [
+    "Toggle Driving/Reference Constraints",
+    "Toggle Driving/Reference Constraints",
+    "Toggle Driving/Reference Constraints"
+   ],
    "Sketcher_Translate": [
     "Move / Array Transform",
     "Move / Array Transform"
+   ],
+   "Sketcher_Trimming": [
+    "Trim Edge",
+    "Trim Edge",
+    "Trim Edge"
    ],
    "Sketcher_ValidateSketch": [
     "Validate Sketch",
@@ -486,13 +808,37 @@
     "New Group"
    ],
    "Std_LinkActions": [
-    "Make Link",
-    "Make Sub-Link",
-    "Replace With Link",
-    "Unlink",
-    "Import Links",
-    "Import All Links",
     "Link Actions"
+   ],
+   "Std_LinkImport": [
+    "Import Links",
+    "Import Links",
+    "Import Links"
+   ],
+   "Std_LinkImportAll": [
+    "Import All Links",
+    "Import All Links",
+    "Import All Links"
+   ],
+   "Std_LinkMake": [
+    "Make Link",
+    "Make Link",
+    "Make Link"
+   ],
+   "Std_LinkMakeRelative": [
+    "Make Sub-Link",
+    "Make Sub-Link",
+    "Make Sub-Link"
+   ],
+   "Std_LinkReplace": [
+    "Replace With Link",
+    "Replace With Link",
+    "Replace With Link"
+   ],
+   "Std_LinkUnlink": [
+    "Unlink",
+    "Unlink",
+    "Unlink"
    ],
    "Std_Measure": [
     "&Measure",
@@ -526,22 +872,70 @@
     "&Save",
     "&Save"
    ],
-   "Std_TreeViewActions": [
-    "&1 Sync View",
-    "&2 Sync Selection",
-    "&3 Sync Placement",
-    "&4 Preselection",
-    "&5 Record Selection",
-    "",
-    "&Single Document",
-    "&Multi Document",
-    "Collapse/E&xpand",
-    "",
-    "Initiate &Dragging",
-    "&Go to Selection",
-    "",
+   "Std_SelBack": [
     "Selection &Back",
+    "Selection &Back",
+    "Selection &Back"
+   ],
+   "Std_SelForward": [
     "Selection &Forward",
+    "Selection &Forward",
+    "Selection &Forward"
+   ],
+   "Std_TreeCollapseDocument": [
+    "Collapse/E&xpand",
+    "Collapse/E&xpand",
+    "Collapse/E&xpand"
+   ],
+   "Std_TreeDrag": [
+    "Initiate &Dragging",
+    "Initiate &Dragging",
+    "Initiate &Dragging"
+   ],
+   "Std_TreeMultiDocument": [
+    "&Multi Document",
+    "&Multi Document",
+    "&Multi Document"
+   ],
+   "Std_TreePreSelection": [
+    "&4 Preselection",
+    "&4 Preselection",
+    "&4 Preselection"
+   ],
+   "Std_TreeRecordSelection": [
+    "&5 Record Selection",
+    "&5 Record Selection",
+    "&5 Record Selection"
+   ],
+   "Std_TreeSelection": [
+    "&Go to Selection",
+    "&Go to Selection",
+    "&Go to Selection"
+   ],
+   "Std_TreeSingleDocument": [
+    "&Single Document",
+    "&Single Document",
+    "&Single Document"
+   ],
+   "Std_TreeSyncPlacement": [
+    "&3 Sync Placement",
+    "&3 Sync Placement",
+    "&3 Sync Placement"
+   ],
+   "Std_TreeSyncSelection": [
+    "&2 Sync Selection",
+    "&2 Sync Selection",
+    "&2 Sync Selection"
+   ],
+   "Std_TreeSyncView": [
+    "&1 Sync View",
+    "&1 Sync View",
+    "&1 Sync View"
+   ],
+   "Std_TreeViewActions": [
+    "",
+    "",
+    "",
     "Tree View Actions"
    ],
    "Std_Undo": [
@@ -553,6 +947,9 @@
     "Variable Set"
    ],
    "Std_ViewBottom": [
+    "&5 Bottom",
+    "&5 Bottom",
+    "&5 Bottom",
     "&5 Bottom",
     "&5 Bottom"
    ],
@@ -566,35 +963,46 @@
    ],
    "Std_ViewFront": [
     "&1 Front",
+    "&1 Front",
+    "&1 Front",
+    "&1 Front",
     "&1 Front"
    ],
    "Std_ViewGroup": [
-    "&Isometric",
-    "&1 Front",
-    "&2 Top",
-    "&3 Right",
-    "&4 Rear",
-    "&5 Bottom",
-    "&6 Left",
     "Standard &Views"
    ],
    "Std_ViewIsometric": [
+    "&Isometric",
+    "&Isometric",
+    "&Isometric",
     "&Isometric",
     "&Isometric"
    ],
    "Std_ViewLeft": [
     "&6 Left",
+    "&6 Left",
+    "&6 Left",
+    "&6 Left",
     "&6 Left"
    ],
    "Std_ViewRear": [
+    "&4 Rear",
+    "&4 Rear",
+    "&4 Rear",
     "&4 Rear",
     "&4 Rear"
    ],
    "Std_ViewRight": [
     "&3 Right",
+    "&3 Right",
+    "&3 Right",
+    "&3 Right",
     "&3 Right"
    ],
    "Std_ViewTop": [
+    "&2 Top",
+    "&2 Top",
+    "&2 Top",
     "&2 Top",
     "&2 Top"
    ],
@@ -645,10 +1053,20 @@
     "Std_Paste"
    ],
    "Constraints": [
-    "Sketcher_CompDimensionTools",
+    "Sketcher_Dimension",
+    "Sketcher_ConstrainDistanceX",
+    "Sketcher_ConstrainDistanceY",
+    "Sketcher_ConstrainDistance",
+    "Sketcher_ConstrainRadiam",
+    "Sketcher_ConstrainRadius",
+    "Sketcher_ConstrainDiameter",
+    "Sketcher_ConstrainAngle",
+    "Sketcher_ConstrainLock",
     "Separator",
     "Sketcher_ConstrainCoincidentUnified",
-    "Sketcher_CompHorVer",
+    "Sketcher_ConstrainHorVer",
+    "Sketcher_ConstrainHorizontal",
+    "Sketcher_ConstrainVertical",
     "Sketcher_ConstrainParallel",
     "Sketcher_ConstrainPerpendicular",
     "Sketcher_ConstrainTangent",
@@ -656,7 +1074,8 @@
     "Sketcher_ConstrainSymmetric",
     "Sketcher_ConstrainBlock",
     "Separator",
-    "Sketcher_CompToggleConstraints"
+    "Sketcher_ToggleDrivingConstraint",
+    "Sketcher_ToggleActiveConstraint"
    ],
    "Edit": [
     "Std_Undo",
@@ -678,12 +1097,31 @@
     "Sketcher_CreatePoint",
     "Sketcher_CreatePolyline",
     "Sketcher_CreateLine",
-    "Sketcher_CompCreateArc",
-    "Sketcher_CompCreateConic",
-    "Sketcher_CompCreateRectangles",
-    "Sketcher_CompCreateRegularPolygon",
-    "Sketcher_CompSlot",
-    "Sketcher_CompCreateBSpline",
+    "Sketcher_CreateArc",
+    "Sketcher_Create3PointArc",
+    "Sketcher_CreateArcOfEllipse",
+    "Sketcher_CreateArcOfHyperbola",
+    "Sketcher_CreateArcOfParabola",
+    "Sketcher_CreateCircle",
+    "Sketcher_Create3PointCircle",
+    "Sketcher_CreateEllipseByCenter",
+    "Sketcher_CreateEllipseBy3Points",
+    "Sketcher_CreateRectangle",
+    "Sketcher_CreateRectangle_Center",
+    "Sketcher_CreateOblong",
+    "Sketcher_CreateTriangle",
+    "Sketcher_CreateSquare",
+    "Sketcher_CreatePentagon",
+    "Sketcher_CreateHexagon",
+    "Sketcher_CreateHeptagon",
+    "Sketcher_CreateOctagon",
+    "Sketcher_CreateRegularPolygon",
+    "Sketcher_CreateSlot",
+    "Sketcher_CreateArcSlot",
+    "Sketcher_CreateBSpline",
+    "Sketcher_CreatePeriodicBSpline",
+    "Sketcher_CreateBSplineByInterpolation",
+    "Sketcher_CreatePeriodicBSplineByInterpolation",
     "Separator",
     "Sketcher_ToggleConstruction"
    ],
@@ -714,9 +1152,13 @@
     "Sketcher_MirrorSketch"
    ],
    "Sketcher Tools": [
-    "Sketcher_CompCreateFillets",
-    "Sketcher_CompCurveEdition",
-    "Sketcher_CompExternal",
+    "Sketcher_CreateFillet",
+    "Sketcher_CreateChamfer",
+    "Sketcher_Trimming",
+    "Sketcher_Split",
+    "Sketcher_Extend",
+    "Sketcher_Projection",
+    "Sketcher_Intersection",
     "Sketcher_CarbonCopy",
     "Separator",
     "Sketcher_Translate",
@@ -728,9 +1170,17 @@
    ],
    "Structure": [
     "Std_Part",
-    "Part_Datums",
+    "Part_CoordinateSystem",
+    "Part_DatumPlane",
+    "Part_DatumLine",
+    "Part_DatumPoint",
     "Std_Group",
-    "Std_LinkActions",
+    "Std_LinkMake",
+    "Std_LinkMakeRelative",
+    "Std_LinkReplace",
+    "Std_LinkUnlink",
+    "Std_LinkImport",
+    "Std_LinkImportAll",
     "Std_VarSet"
    ],
    "Talk to me": [
@@ -739,12 +1189,29 @@
    "View": [
     "Std_ViewFitAll",
     "Std_ViewFitSelection",
-    "Std_ViewGroup",
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft",
     "Std_AlignToSelection",
     "Separator",
     "Std_DrawStyle",
     "Part_SelectFilter",
-    "Std_TreeViewActions",
+    "Std_TreeSyncView",
+    "Std_TreeSyncSelection",
+    "Std_TreeSyncPlacement",
+    "Std_TreePreSelection",
+    "Std_TreeRecordSelection",
+    "Std_TreeSingleDocument",
+    "Std_TreeMultiDocument",
+    "Std_TreeCollapseDocument",
+    "Std_TreeDrag",
+    "Std_TreeSelection",
+    "Std_SelBack",
+    "Std_SelForward",
     "Std_Measure"
    ],
    "Visual Helpers": [

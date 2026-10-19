@@ -19,6 +19,7 @@
    "PartDesign_LinearPattern": true,
    "PartDesign_Mirrored": true,
    "PartDesign_MultiTransform": true,
+   "PartDesign_NewSketch": true,
    "PartDesign_Pad": true,
    "PartDesign_Pocket": true,
    "PartDesign_PolarPattern": true,
@@ -29,8 +30,14 @@
    "PartDesign_SubtractivePipe": true,
    "PartDesign_Thickness": true,
    "Part_CheckGeometry": false,
+   "Part_CoordinateSystem": true,
+   "Part_DatumLine": true,
+   "Part_DatumPlane": true,
+   "Part_DatumPoint": true,
    "Part_Datums": true,
    "Part_SelectFilter": true,
+   "Sketcher_EditSketch": false,
+   "Sketcher_MapSketch": false,
    "Sketcher_ValidateSketch": false,
    "Std_AlignToSelection": true,
    "Std_Copy": false,
@@ -41,6 +48,12 @@
    "Std_DrawStyle": true,
    "Std_Group": true,
    "Std_LinkActions": true,
+   "Std_LinkImport": false,
+   "Std_LinkImportAll": false,
+   "Std_LinkMake": true,
+   "Std_LinkMakeRelative": false,
+   "Std_LinkReplace": false,
+   "Std_LinkUnlink": false,
    "Std_Measure": true,
    "Std_New": true,
    "Std_Open": true,
@@ -49,6 +62,18 @@
    "Std_Redo": false,
    "Std_Refresh": false,
    "Std_Save": true,
+   "Std_SelBack": false,
+   "Std_SelForward": false,
+   "Std_TreeCollapseDocument": true,
+   "Std_TreeDrag": true,
+   "Std_TreeMultiDocument": true,
+   "Std_TreePreSelection": true,
+   "Std_TreeRecordSelection": true,
+   "Std_TreeSelection": true,
+   "Std_TreeSingleDocument": true,
+   "Std_TreeSyncPlacement": true,
+   "Std_TreeSyncSelection": true,
+   "Std_TreeSyncView": true,
    "Std_TreeViewActions": true,
    "Std_Undo": false,
    "Std_VarSet": true,
@@ -78,7 +103,6 @@
    "PartDesign_Clone": "Kopiert ein Festkörperobjekt parametrisch als Basis-Element in einen neuen Körper",
    "PartDesign_CompPrimitiveAdditive": "Erstellt einen hinzufügenden Quader durch Angabe von Breite, Höhe und Länge",
    "PartDesign_CompPrimitiveSubtractive": "Erstellt einen abziehenden Quader durch Angabe von Breite, Höhe und Länge",
-   "PartDesign_CompSketches": "Erstellt eine neue Skizze",
    "PartDesign_Draft": "Versieht die ausgewählten Flächen mit einer Formschräge",
    "PartDesign_Fillet": "Versieht die ausgewählten Kanten mit einer Verrundung",
    "PartDesign_Groove": "Dreht die Skizze oder das Profil um eine Linie oder Achse herum und zieht das Ergebnis von dem Körper ab",
@@ -86,6 +110,7 @@
    "PartDesign_LinearPattern": "Dupliziert und ordnet die ausgewählten Formelemente oder den aktiven Körper in einem linearen Muster an",
    "PartDesign_Mirrored": "Spiegelt die ausgewählten Formelemente oder den aktiven Körper",
    "PartDesign_MultiTransform": "Führt mehrere Transformationen mit den ausgewählten Formelementen oder dem aktiven Körper durch",
+   "PartDesign_NewSketch": "Erstellt eine neue Skizze",
    "PartDesign_Pad": "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und fügt das Ergebnis dem Körper hinzu",
    "PartDesign_Pocket": "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und zieht das Ergebnis von dem Körper ab",
    "PartDesign_PolarPattern": "Dupliziert und ordnet die ausgewählten Formelemente oder den aktiven Körper in einem kreisförmigen Muster an",
@@ -96,8 +121,13 @@
    "PartDesign_SubtractivePipe": "Trägt die ausgewählte Skizze oder das ausgewählte Profil entlang einer Spine-Kurve aus und zieht das Ergebnis von dem Körper ab",
    "PartDesign_Thickness": "Versieht das Objekt mit einer konstanten Wandstärke und entfernt die ausgewählten Flächen",
    "Part_CheckGeometry": "Analysiert die ausgewählten Formen auf Fehler",
-   "Part_Datums": "Erstellt ein Koordinatensystem, das an anderen Objekten befestigt werden kann",
+   "Part_CoordinateSystem": "Erstellt ein Koordinatensystem, das an anderen Objekten befestigt werden kann",
+   "Part_DatumLine": "Erstellt eine Bezugslinie, die an anderen Objekten befestigt werden kann",
+   "Part_DatumPlane": "Erstellt eine Bezugsebene, die an anderen Objekten befestigt werden kann",
+   "Part_DatumPoint": "Erstellt eine Bezugspunkt, der an anderen Objekten befestigt werden kann",
    "Part_SelectFilter": "Lässt nur die Auswahl von Knoten zu",
+   "Sketcher_EditSketch": "Öffnet die ausgewählte Skizze zum Bearbeiten",
+   "Sketcher_MapSketch": "Befestigt eine Skizze an dem ausgewählten Geometrieelement",
    "Sketcher_ValidateSketch": "Überprüft eine Skizze durch die Suche nach fehlenden Koinzident-Festlegungen,\nungültigen Randbedingungen und degenerierter Geometrie",
    "Std_AlignToSelection": "Richtet die Kameraansicht auf die in der 3D-Ansicht ausgewählten Elemente aus",
    "Std_Copy": "Kopiert die Auswahl in die Zwischenablage",
@@ -107,7 +137,12 @@
    "Std_DlgMacroRecord": "Öffnet einen Dialog zum Aufzeichnen eines Makros",
    "Std_DrawStyle": "",
    "Std_Group": "Erstellt eine Gruppe, die als universeller Container dient, um Objekte in der Baumansicht unabhängig von ihrem Datentyp zu gruppieren. Es handelt sich um einen einfachen Ordner, um die Objekte in einem Modell zu organisieren.",
-   "Std_LinkActions": "Ein Link ist ein Objekt, das auf ein anderes Objekt innerhalb desselben oder eines anderen Dokuments verweist. Im Gegensatz zu Klonen verweisen Links direkt auf die ursprüngliche Form, wodurch sie speichereffizienter sind, was bei der Erstellung komplexer Baugruppen hilfreich ist.",
+   "Std_LinkImport": "Importiert ausgewählte externe Verknüpfungen",
+   "Std_LinkImportAll": "Importiert alle Verknüpfungen des aktiven Dokuments",
+   "Std_LinkMake": "Ein Link ist ein Objekt, das auf ein anderes Objekt innerhalb desselben oder eines anderen Dokuments verweist. Im Gegensatz zu Klonen verweisen Links direkt auf die ursprüngliche Form, wodurch sie speichereffizienter sind, was bei der Erstellung komplexer Baugruppen hilfreich ist.",
+   "Std_LinkMakeRelative": "Erstellt eine Unterobjekt- oder eine Unterelement-Verknüpfung",
+   "Std_LinkReplace": "Ersetzt die ausgewählten Objekte durch Verknüpfungen",
+   "Std_LinkUnlink": "Entkoppelt das Objekt, indem es direkt in den Container verschoben wird",
    "Std_Measure": "Formelement messen",
    "Std_New": "Erstellt ein neues leeres Dokument",
    "Std_Open": "Öffnet ein Dokument oder importiert Dateien",
@@ -116,14 +151,25 @@
    "Std_Redo": "Zuletzt rückgängig gemachte Aktion wiederherstellen",
    "Std_Refresh": "Berechnet das aktive Dokument neu",
    "Std_Save": "Speichert das aktive Dokument",
-   "Std_TreeViewActions": "Wechselt zu der 3D-Ansicht, die das in der Baumansicht ausgewählte Objekt enthält",
+   "Std_SelBack": "<p>Restores the previous tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_SelForward": "<p>Restores the next tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_TreeCollapseDocument": "Klappt das aktive Dokument aus und die anderen ein",
+   "Std_TreeDrag": "Initiates dragging of the currently selected tree items",
+   "Std_TreeMultiDocument": "Alle Dokumente in der Baumansicht anzeigen",
+   "Std_TreePreSelection": "Wählt das Objekt in der 3D-Ansicht vor, wenn der Mauszeiger über das Baumelement bewegt wird",
+   "Std_TreeRecordSelection": "Zeichnet die Auswahl in der Baumansicht auf, um mit den Navigationstasten vor- und zurückzugehen",
+   "Std_TreeSelection": "Scrollt zum ersten ausgewählten Element",
+   "Std_TreeSingleDocument": "Nur das aktive Dokument in der Baumansicht anzeigen",
+   "Std_TreeSyncPlacement": "Passt die Positionierung beim Ziehen und Ablegen von Objekten über Koordinatensysteme hinweg an (z. B. in Part Containern)",
+   "Std_TreeSyncSelection": "Klappt das Baumobjekt auf, wenn das zugehörige Objekt in der 3D-Ansicht ausgewählt wird",
+   "Std_TreeSyncView": "Wechselt zu der 3D-Ansicht, die das in der Baumansicht ausgewählte Objekt enthält",
+   "Std_TreeViewActions": "",
    "Std_Undo": "Die vorherige Aktion rückgängig machen",
    "Std_VarSet": "Ein Variablensatz ist ein Objekt, das einen Satz von Eigenschaften verwaltet, die als Variablen verwendet werden können",
    "Std_ViewBottom": "Wechselt die Kamera auf die Ansicht von unten",
    "Std_ViewFitAll": "Passt den gesamten Inhalt in die 3D-Ansicht ein",
    "Std_ViewFitSelection": "Passt den ausgewählten Inhalt in die 3D-Ansicht ein",
    "Std_ViewFront": "Wechselt die Kamera auf die Ansicht von vorne",
-   "Std_ViewGroup": "Wechselt die Kamera auf die isometrische Ansicht",
    "Std_ViewIsometric": "Wechselt die Kamera auf die isometrische Ansicht",
    "Std_ViewLeft": "Wechselt die Kamera auf die Ansicht von links",
    "Std_ViewRear": "Wechselt die Kamera auf die Ansicht von hinten",
@@ -187,6 +233,9 @@
    "PartDesign_MultiTransform": [
     "Multi-Transform"
    ],
+   "PartDesign_NewSketch": [
+    "New Sketch"
+   ],
    "PartDesign_Pad": [
     "Pad"
    ],
@@ -217,11 +266,29 @@
    "Part_CheckGeometry": [
     "Check Geometry"
    ],
+   "Part_CoordinateSystem": [
+    "Coordinate System"
+   ],
+   "Part_DatumLine": [
+    "Datum Line"
+   ],
+   "Part_DatumPlane": [
+    "Datum Plane"
+   ],
+   "Part_DatumPoint": [
+    "Datum Point"
+   ],
    "Part_Datums": [
     "Datums"
    ],
    "Part_SelectFilter": [
     "Selection Filter"
+   ],
+   "Sketcher_EditSketch": [
+    "Edit Sketch"
+   ],
+   "Sketcher_MapSketch": [
+    "Attach Sketch"
    ],
    "Sketcher_ValidateSketch": [
     "Validate Sketch"
@@ -253,6 +320,24 @@
    "Std_LinkActions": [
     "Link Actions"
    ],
+   "Std_LinkImport": [
+    "Import Links"
+   ],
+   "Std_LinkImportAll": [
+    "Import All Links"
+   ],
+   "Std_LinkMake": [
+    "Make Link"
+   ],
+   "Std_LinkMakeRelative": [
+    "Make Sub-Link"
+   ],
+   "Std_LinkReplace": [
+    "Replace With Link"
+   ],
+   "Std_LinkUnlink": [
+    "Unlink"
+   ],
    "Std_Measure": [
     "&Measure"
    ],
@@ -277,6 +362,42 @@
    "Std_Save": [
     "&Save"
    ],
+   "Std_SelBack": [
+    "Selection &Back"
+   ],
+   "Std_SelForward": [
+    "Selection &Forward"
+   ],
+   "Std_TreeCollapseDocument": [
+    "Collapse/E&xpand"
+   ],
+   "Std_TreeDrag": [
+    "Initiate &Dragging"
+   ],
+   "Std_TreeMultiDocument": [
+    "&Multi Document"
+   ],
+   "Std_TreePreSelection": [
+    "&4 Preselection"
+   ],
+   "Std_TreeRecordSelection": [
+    "&5 Record Selection"
+   ],
+   "Std_TreeSelection": [
+    "&Go to Selection"
+   ],
+   "Std_TreeSingleDocument": [
+    "&Single Document"
+   ],
+   "Std_TreeSyncPlacement": [
+    "&3 Sync Placement"
+   ],
+   "Std_TreeSyncSelection": [
+    "&2 Sync Selection"
+   ],
+   "Std_TreeSyncView": [
+    "&1 Sync View"
+   ],
    "Std_TreeViewActions": [
     "Tree View Actions"
    ],
@@ -287,6 +408,7 @@
     "Variable Set"
    ],
    "Std_ViewBottom": [
+    "&5 Bottom",
     "&5 Bottom"
    ],
    "Std_ViewFitAll": [
@@ -296,24 +418,30 @@
     "Fit &Selection"
    ],
    "Std_ViewFront": [
+    "&1 Front",
     "&1 Front"
    ],
    "Std_ViewGroup": [
     "Standard &Views"
    ],
    "Std_ViewIsometric": [
+    "&Isometric",
     "&Isometric"
    ],
    "Std_ViewLeft": [
+    "&6 Left",
     "&6 Left"
    ],
    "Std_ViewRear": [
+    "&4 Rear",
     "&4 Rear"
    ],
    "Std_ViewRight": [
+    "&3 Right",
     "&3 Right"
    ],
    "Std_ViewTop": [
+    "&2 Top",
     "&2 Top"
    ],
    "Std_WhatsThis": [
@@ -428,11 +556,7 @@
     "Prisma",
     "Keil"
    ],
-   "PartDesign_CompSketches": [
-    "Neue Skizze",
-    "Skizze befestigen",
-    "Skizze bearbeiten"
-   ],
+   "PartDesign_CompSketches": [],
    "PartDesign_Draft": [
     "Formschräge"
    ],
@@ -453,6 +577,10 @@
    ],
    "PartDesign_MultiTransform": [
     "Mehrfach-Transformation"
+   ],
+   "PartDesign_NewSketch": [
+    "Neue Skizze",
+    "Neue Skizze"
    ],
    "PartDesign_Pad": [
     "Aufpolsterung"
@@ -484,17 +612,36 @@
    "Part_CheckGeometry": [
     "Geometrie überprüfen"
    ],
-   "Part_Datums": [
+   "Part_CoordinateSystem": [
     "Koordinatensystem",
-    "Bezugsebene",
+    "Koordinatensystem"
+   ],
+   "Part_DatumLine": [
     "Bezugslinie",
+    "Bezugslinie"
+   ],
+   "Part_DatumPlane": [
+    "Bezugsebene",
+    "Bezugsebene"
+   ],
+   "Part_DatumPoint": [
+    "Bezugspunkt",
     "Bezugspunkt"
    ],
+   "Part_Datums": [],
    "Part_SelectFilter": [
     "Knotenauswahl",
     "Kantenauswahl",
     "Flächenauswahl",
     "Keine Auswahlfilter"
+   ],
+   "Sketcher_EditSketch": [
+    "Skizze bearbeiten",
+    "Skizze bearbeiten"
+   ],
+   "Sketcher_MapSketch": [
+    "Skizze befestigen",
+    "Skizze befestigen"
    ],
    "Sketcher_ValidateSketch": [
     "Skizze überprüfen"
@@ -529,13 +676,30 @@
    "Std_Group": [
     "Neue Gruppe"
    ],
-   "Std_LinkActions": [
-    "Verknüpfung erstellen",
-    "Unterverknüpfung erstellen",
-    "Durch Verknüpfung ersetzen",
-    "Verknüpfung auflösen",
+   "Std_LinkActions": [],
+   "Std_LinkImport": [
     "Verknüpfungen importieren",
+    "Verknüpfungen importieren"
+   ],
+   "Std_LinkImportAll": [
+    "Alle Verknüpfungen importieren",
     "Alle Verknüpfungen importieren"
+   ],
+   "Std_LinkMake": [
+    "Verknüpfung erstellen",
+    "Verknüpfung erstellen"
+   ],
+   "Std_LinkMakeRelative": [
+    "Unterverknüpfung erstellen",
+    "Unterverknüpfung erstellen"
+   ],
+   "Std_LinkReplace": [
+    "Durch Verknüpfung ersetzen",
+    "Durch Verknüpfung ersetzen"
+   ],
+   "Std_LinkUnlink": [
+    "Verknüpfung auflösen",
+    "Verknüpfung auflösen"
    ],
    "Std_Measure": [
     "&Messen"
@@ -561,22 +725,58 @@
    "Std_Save": [
     "&Speichern"
    ],
-   "Std_TreeViewActions": [
-    "&1 Ansicht synchronisieren",
-    "&2 Auswahl synchronisieren",
-    "&3 Positionierung synchronisieren",
-    "&4 Vorauswahl",
-    "&5 Auswahl aufzeichnen",
-    "",
-    "&Einzelnes Dokument",
-    "&Mehrfach-Dokument",
-    "Reduzieren/Er&weitern",
-    "",
-    "&Ziehen initiieren",
-    "&Zur Auswahl gehen",
-    "",
+   "Std_SelBack": [
     "Auswahl &Rückwärts",
+    "Auswahl &Rückwärts"
+   ],
+   "Std_SelForward": [
+    "Auswahl &Vorwärts",
     "Auswahl &Vorwärts"
+   ],
+   "Std_TreeCollapseDocument": [
+    "Reduzieren/Er&weitern",
+    "Reduzieren/Er&weitern"
+   ],
+   "Std_TreeDrag": [
+    "&Ziehen initiieren",
+    "&Ziehen initiieren"
+   ],
+   "Std_TreeMultiDocument": [
+    "&Mehrfach-Dokument",
+    "&Mehrfach-Dokument"
+   ],
+   "Std_TreePreSelection": [
+    "&4 Vorauswahl",
+    "&4 Vorauswahl"
+   ],
+   "Std_TreeRecordSelection": [
+    "&5 Auswahl aufzeichnen",
+    "&5 Auswahl aufzeichnen"
+   ],
+   "Std_TreeSelection": [
+    "&Zur Auswahl gehen",
+    "&Zur Auswahl gehen"
+   ],
+   "Std_TreeSingleDocument": [
+    "&Einzelnes Dokument",
+    "&Einzelnes Dokument"
+   ],
+   "Std_TreeSyncPlacement": [
+    "&3 Positionierung synchronisieren",
+    "&3 Positionierung synchronisieren"
+   ],
+   "Std_TreeSyncSelection": [
+    "&2 Auswahl synchronisieren",
+    "&2 Auswahl synchronisieren"
+   ],
+   "Std_TreeSyncView": [
+    "&1 Ansicht synchronisieren",
+    "&1 Ansicht synchronisieren"
+   ],
+   "Std_TreeViewActions": [
+    "",
+    "",
+    ""
    ],
    "Std_Undo": [
     "&Rückgängig"
@@ -585,6 +785,8 @@
     "Variablensatz"
    ],
    "Std_ViewBottom": [
+    "&5 Untersicht",
+    "&5 Untersicht",
     "&5 Untersicht"
    ],
    "Std_ViewFitAll": [
@@ -594,30 +796,34 @@
     "Au&swahl einpassen"
    ],
    "Std_ViewFront": [
+    "&1 Vorderansicht",
+    "&1 Vorderansicht",
     "&1 Vorderansicht"
    ],
-   "Std_ViewGroup": [
-    "&Isometrisch",
-    "&1 Vorderansicht",
-    "&2 Draufsicht",
-    "&3 Seitenansicht von rechts",
-    "&4 Rückansicht",
-    "&5 Untersicht",
-    "&6 Seitenansicht von links"
-   ],
+   "Std_ViewGroup": [],
    "Std_ViewIsometric": [
+    "&Isometrisch",
+    "&Isometrisch",
     "&Isometrisch"
    ],
    "Std_ViewLeft": [
+    "&6 Seitenansicht von links",
+    "&6 Seitenansicht von links",
     "&6 Seitenansicht von links"
    ],
    "Std_ViewRear": [
+    "&4 Rückansicht",
+    "&4 Rückansicht",
     "&4 Rückansicht"
    ],
    "Std_ViewRight": [
+    "&3 Seitenansicht von rechts",
+    "&3 Seitenansicht von rechts",
     "&3 Seitenansicht von rechts"
    ],
    "Std_ViewTop": [
+    "&2 Draufsicht",
+    "&2 Draufsicht",
     "&2 Draufsicht"
    ],
    "Std_WhatsThis": [
@@ -691,7 +897,9 @@
    ],
    "Part Design Helper Features": [
     "PartDesign_Body",
-    "PartDesign_CompSketches",
+    "PartDesign_NewSketch",
+    "Sketcher_MapSketch",
+    "Sketcher_EditSketch",
     "Sketcher_ValidateSketch",
     "Part_CheckGeometry",
     "PartDesign_SubShapeBinder",
@@ -723,9 +931,17 @@
    ],
    "Structure": [
     "Std_Part",
-    "Part_Datums",
+    "Part_CoordinateSystem",
+    "Part_DatumPlane",
+    "Part_DatumLine",
+    "Part_DatumPoint",
     "Std_Group",
-    "Std_LinkActions",
+    "Std_LinkMake",
+    "Std_LinkMakeRelative",
+    "Std_LinkReplace",
+    "Std_LinkUnlink",
+    "Std_LinkImport",
+    "Std_LinkImportAll",
     "Std_VarSet"
    ],
    "Talk to me": [
@@ -734,12 +950,29 @@
    "View": [
     "Std_ViewFitAll",
     "Std_ViewFitSelection",
-    "Std_ViewGroup",
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft",
     "Std_AlignToSelection",
     "Separator",
     "Std_DrawStyle",
     "Part_SelectFilter",
-    "Std_TreeViewActions",
+    "Std_TreeSyncView",
+    "Std_TreeSyncSelection",
+    "Std_TreeSyncPlacement",
+    "Std_TreePreSelection",
+    "Std_TreeRecordSelection",
+    "Std_TreeSingleDocument",
+    "Std_TreeMultiDocument",
+    "Std_TreeCollapseDocument",
+    "Std_TreeDrag",
+    "Std_TreeSelection",
+    "Std_SelBack",
+    "Std_SelForward",
     "Std_Measure"
    ],
    "Workbench": [

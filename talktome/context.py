@@ -119,14 +119,20 @@ def _choices():
     return texts
 
 
-def _command_name(action):
-    """Sub-entries of group buttons carry their command in the property "CommandName"."""
-    value = action.property("CommandName")
-    if not value:
-        return ""
+def _text(value):
     if hasattr(value, "data"):
         value = value.data()
-    return value.decode() if isinstance(value, bytes) else str(value)
+    return value.decode() if isinstance(value, bytes) else str(value or "")
+
+
+def _command_name(action):
+    """The command of a group button's entry: in the property "CommandName" (older FreeCAD),
+    in the action's data or object name (FreeCAD 1.1). Only names of real commands count."""
+    for value in (action.property("CommandName"), action.data(), action.objectName()):
+        name = _text(value)
+        if name and Gui.Command.get(name) is not None:
+            return name
+    return ""
 
 
 def _describe(cmd_id, labels, english, active, descriptions):
@@ -165,7 +171,7 @@ def _describe(cmd_id, labels, english, active, descriptions):
 
 def collect(vocab, language="de", heard=None):
     """Candidates of the current context, as plain data for the speech service."""
-    return from_snapshot(snapshot(language), vocab, heard)
+    return from_snapshot(snapshot(language), vocab, heard, language)
 
 
 def snapshot(language="de"):

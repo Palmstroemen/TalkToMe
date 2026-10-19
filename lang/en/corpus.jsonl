@@ -9,7 +9,7 @@
 {"text": "Save the document", "context": "fc114_partdesign", "expect": ["Std_Save"]}
 {"text": "Undo that", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
 {"text": "Create a new body", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
-{"text": "New sketch", "context": "fc114_partdesign", "expect": ["PartDesign_CompSketches"]}
+{"text": "New sketch", "context": "fc114_partdesign", "expect": ["PartDesign_NewSketch"]}
 {"text": "Pad it 12 mm", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
 {"text": "Hole", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
 {"text": "Mirror", "context": "fc114_partdesign", "expect": ["PartDesign_Mirrored"]}
@@ -49,7 +49,7 @@
 {"text": "Open the training window", "context": "fc114_partdesign", "expect": ["ui:train"]}
 
 # --- Sequences and renaming
-{"text": "Create a new body, call it base plate, and then a new sketch", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Base plate"}}, "PartDesign_CompSketches"]}
+{"text": "Create a new body, call it base plate, and then a new sketch", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Base plate"}}, "PartDesign_NewSketch"]}
 {"text": "Call it base plate", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Base plate"}}]}
 {"text": "Let's call it lid", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Lid"}}]}
 {"text": "Name it Bracket", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bracket"}}]}
@@ -63,11 +63,19 @@
 {"text": "Cancel", "context": "fc114_sketch_plane", "expect": ["ui:cancel"]}
 
 # --- Sketcher
-{"text": "Rectangle", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateRectangles"]}
+{"text": "Rectangle", "context": "fc114_sketcher", "expect": ["Sketcher_CreateRectangle"]}
 {"text": "Draw a line", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
 {"text": "Polyline", "context": "fc114_sketcher", "expect": ["Sketcher_CreatePolyline"]}
 {"text": "Leave sketch", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
 {"text": "Parallel constraint", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Perpendicular", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainPerpendicular"]}
+{"text": "Symmetric", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainSymmetric"]}
+{"text": "Circle", "context": "fc114_sketcher", "expect": ["Sketcher_CreateCircle"]}
+{"text": "Ellipse", "context": "fc114_sketcher", "expect": ["Sketcher_CreateEllipseByCenter"]}
+{"text": "Make it parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "These lines look parallel to me now", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: the help text of Parallel Constraint explains 'lines' and 'parallel'"}
+{"text": "Let me get a coffee first", "context": "fc114_sketcher", "expect": "ignore"}
 
 # --- Values for a running tool
 {"text": "50 by 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}

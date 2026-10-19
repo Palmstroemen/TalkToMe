@@ -60,10 +60,11 @@ def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
     phonetic = PHONETICS.get(language)
     stop = STOP_WORDS.get(language, frozenset())
 
+    meaningful = [w for w in words if w not in stop] or words
     best_per_command = {}
     for c in candidates:
-        score, size = max(((phrase_score(words, pw, sound, stop), len(pw))
-                           for pw, sound in _phrases(c, language, phonetic)),
+        score, size = max(((_score(words, meaningful, pw, sound, stop, whole), len(pw))
+                           for pw, sound, whole in _phrases(c, language, phonetic)),
                           default=(0.0, 0))
         ranked = (score + LEVEL_BONUS.get(c["level"], 0.0), score, c, size)
         if c["id"] not in best_per_command or _key(ranked) > _key(best_per_command[c["id"]]):
@@ -74,7 +75,6 @@ def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
     ranking = sorted(best_per_command.values(), key=_key, reverse=True)
     alternatives = [(c["id"], round(score, 3)) for _, score, c, _ in ranking[:3]]
     adjusted, score, best, size = ranking[0]
-    meaningful = [w for w in words if w not in stop] or words
     explained = min(size, len(meaningful))
     result = dict(command=best["id"], score=round(score, 3), level=best["level"],
                   alternatives=alternatives, via="name", words=explained)
@@ -108,8 +108,8 @@ def explains(text, candidate, language=None, threshold=0.75):
     stop = STOP_WORDS.get(language, frozenset())
     meaningful = [w for w in words if w not in stop] or words
     phonetic = PHONETICS.get(language)
-    by_name = max((len(pw) for pw, sound in _phrases(candidate, language, phonetic)
-                   if phrase_score(words, pw, sound, stop) >= threshold), default=0)
+    by_name = max((len(pw) for pw, sound, whole in _phrases(candidate, language, phonetic)
+                   if _score(words, meaningful, pw, sound, stop, whole) >= threshold), default=0)
     by_description = 0
     if candidate.get("description"):
         index = DescriptionIndex({candidate["id"]: candidate["description"]}, language)
@@ -118,11 +118,23 @@ def explains(text, candidate, language=None, threshold=0.75):
 
 
 def _phrases(candidate, language, phonetic):
-    """(phrase words, sound rule) of a candidate; foreign labels are compared by spelling only."""
+    """(phrase words, sound rule, whole only) of a candidate. Foreign labels are compared by
+    spelling only; short forms of labels ("Parallel" for "Parallel festlegen") only count as the
+    whole utterance: a single word inside a long sentence must not hit them."""
     for p in candidate["phrases"] + candidate.get("heard", []):
-        yield command_words(p, language), phonetic
+        yield command_words(p, language), phonetic, False
+    for p in candidate.get("short", ()):
+        yield command_words(p, language), phonetic, True
     for p in candidate.get("foreign", ()):
-        yield command_words(p, language), None
+        yield command_words(p, language), None, False
+
+
+def _score(words, meaningful, phrase_words, sound, stop, whole):
+    if whole:
+        if len(meaningful) != len(phrase_words):
+            return 0.0
+        return phrase_score(meaningful, phrase_words, sound, stop)
+    return phrase_score(words, phrase_words, sound, stop)
 
 
 def _key(ranked):

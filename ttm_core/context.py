@@ -9,6 +9,11 @@ turns it into a list of candidates, each with a priority level:
     global     Std_* commands, switching workbenches, cancel, microphone off
 """
 
+import re
+from collections import Counter
+
+from ttm_core.languages import STOP_WORDS
+from ttm_core.text import normalize
 from ttm_core.vocabulary import clean_label, merge_phrases
 
 LEVELS = ("dialog", "edit", "workbench", "global")
@@ -21,7 +26,7 @@ CHOOSE = "ui:choose:"
 
 def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_open=False,
                      workbenches=None, current_workbench=None, vocab=None, descriptions=None,
-                     foreign_labels=None, choices=None, heard=None):
+                     foreign_labels=None, choices=None, heard=None, language=None):
     """
     toolbar_items      {toolbar name: [command ids]} of the active workbench
     labels             {command id: [button texts]} in the user's language
@@ -37,9 +42,12 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     choices            entries of the lists in the open task dialog; command "ui:choose:<text>"
     heard              {command id: [texts]} learned in training: how the recognizer hears the
                        user; compared like phrases, but no hints for the recognizer
+    language           for the stop words of the short forms (short_forms)
     """
     heard = heard or {}
     vocab = vocab or {}
+    toolbar_commands = [cmd for commands in toolbar_items.values() for cmd in commands if cmd != SEPARATOR]
+    short = short_forms([(cmd, (labels.get(cmd) or [""])[0]) for cmd in toolbar_commands], language)
     descriptions = descriptions or {}
     foreign_labels = foreign_labels or {}
     candidates, seen = [], set()
@@ -52,6 +60,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
             seen.add(id_)
             label = clean_label(shown) if shown else (phrases or foreign)[0]
             candidates.append({"id": id_, "level": level, "label": label, "phrases": phrases, "foreign": foreign,
+                               "short": [short[id_]] if id_ in short else [],
                                "heard": list(heard.get(id_, [])), "active": is_active,
                                "description": descriptions.get(id_, "")})
 
@@ -84,12 +93,43 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     return candidates
 
 
+# Label endings shared by this many labels of a context say nothing about the command:
+# "Parallel festlegen", "Kreis um Mittelpunkt", "Parallel Constraint".
+MIN_SHARED = 3
+NUMBER = re.compile(r"^\d+([.,]\d+)?$")
+
+
+def short_forms(labels, language=None):
+    """{command: short form} for [(command, label)] in toolbar order: the label without an ending
+    of one or two words that at least MIN_SHARED labels share ("Parallel festlegen" → "Parallel").
+    Where two labels give the same short form, the first one gets it (a group's default entry:
+    "Kreis um Mittelpunkt" before "Kreis durch 3 Punkte"); none equals a whole label."""
+    stop = STOP_WORDS.get(language, frozenset())
+    items = []
+    for command, label in labels:
+        words = [w for w in clean_label(label or "").split() if normalize(w) and not NUMBER.match(normalize(w))]
+        items.append((command, words, tuple(normalize(w) for w in words)))
+    endings = Counter(keys[-k:] for _, _, keys in items for k in (1, 2) if len(keys) > k)
+    taken = {" ".join(keys) for _, _, keys in items}
+    result = {}
+    for command, words, keys in items:
+        for k in (2, 1):
+            if len(keys) > k and endings[keys[-k:]] >= MIN_SHARED:
+                rest = keys[:-k]
+                key = " ".join(rest)
+                if key not in taken and any(w not in stop for w in rest):
+                    result[command] = " ".join(words[:-k])
+                    taken.add(key)
+                break
+    return result
+
+
 SNAPSHOT_KEYS = ("toolbar_items", "labels", "active", "edit_prefix", "dialog_open", "choices",
                  "workbenches", "current_workbench", "descriptions", "foreign_labels")
 
 
-def from_snapshot(snapshot, vocab=None, heard=None):
+def from_snapshot(snapshot, vocab=None, heard=None, language=None):
     """Candidates of a raw context (talktome.context.snapshot), with the current vocabulary."""
     raw = {k: snapshot.get(k) for k in SNAPSHOT_KEYS if snapshot.get(k) is not None}
     return build_candidates(raw.pop("toolbar_items", {}), raw.pop("labels", {}), raw.pop("active", {}),
-                            vocab=vocab, heard=heard, **raw)
+                            vocab=vocab, heard=heard, language=language, **raw)

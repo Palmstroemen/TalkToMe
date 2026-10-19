@@ -10,7 +10,7 @@
 {"text": "speichern", "context": "fc114_partdesign", "expect": ["Std_Save"]}
 {"text": "Rückgängig", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
 {"text": "Erstelle einen neuen Körper", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
-{"text": "Neue Skizze", "context": "fc114_partdesign", "expect": ["PartDesign_CompSketches"]}
+{"text": "Neue Skizze", "context": "fc114_partdesign", "expect": ["PartDesign_NewSketch"]}
 {"text": "Bohrung", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
 {"text": "Spiegeln", "context": "fc114_partdesign", "expect": ["PartDesign_Mirrored"]}
 {"text": "Lineares Muster", "context": "fc114_partdesign", "expect": ["PartDesign_LinearPattern"]}
@@ -59,7 +59,7 @@
 {"text": "Öffne das Training", "context": "fc114_partdesign", "expect": ["ui:train"]}
 
 # --- Folgen und Umbenennen
-{"text": "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene.", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Bodenplatte"}}, "PartDesign_CompSketches"]}
+{"text": "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene.", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Bodenplatte"}}, "PartDesign_NewSketch"]}
 {"text": "erstelle einen neuen Körper, den nennen wir Bodenplatte", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
 {"text": "Mach eine Fase und dann eine Verrundung", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer", "PartDesign_Fillet"]}
 {"text": "Den nennen wir Bodenplatte", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
@@ -84,16 +84,28 @@
 {"text": "Abbrechen", "context": "fc114_sketch_plane", "expect": ["ui:cancel"]}
 
 # --- Sketcher
-{"text": "Rechteck", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateRectangles"]}
+{"text": "Rechteck", "context": "fc114_sketcher", "expect": ["Sketcher_CreateRectangle"]}
 {"text": "Zeichne eine Linie", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
-{"text": "Kreis", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateConic"], "known": true, "note": "label is 'Kreis um Mittelpunkt' (group button): one of three words"}
+{"text": "Kreis", "context": "fc114_sketcher", "expect": ["Sketcher_CreateCircle"]}
 {"text": "Linienzug", "context": "fc114_sketcher", "expect": ["Sketcher_CreatePolyline"]}
-{"text": "Parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"], "known": true, "note": "label 'Parallel festlegen': one of two words is below the threshold"}
-{"text": "Rechtwinklig", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainPerpendicular"], "known": true, "note": "label 'Rechtwinklig festlegen': one of two words is below the threshold"}
-{"text": "Symmetrisch", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainSymmetric"], "known": true, "note": "ambiguous with 'Isometrisch' (view) by sound"}
+{"text": "Parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Rechtwinklig", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainPerpendicular"]}
+{"text": "Symmetrisch", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainSymmetric"]}
 {"text": "Skizze verlassen", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
 {"text": "Hilfsgeometrie umschalten", "context": "fc114_sketcher", "expect": ["Sketcher_ToggleConstruction"]}
 {"text": "Das sieht schon ganz gut aus, finde ich", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Ellipse", "context": "fc114_sketcher", "expect": ["Sketcher_CreateEllipseByCenter"]}
+{"text": "Kreisbogen", "context": "fc114_sketcher", "expect": ["Sketcher_CreateArc"]}
+{"text": "Zentriertes Rechteck", "context": "fc114_sketcher", "expect": ["Sketcher_CreateRectangle_Center"]}
+{"text": "Kreis durch 3 Punkte", "context": "fc114_sketcher", "expect": ["Sketcher_Create3PointCircle"]}
+{"text": "Horizontal", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainHorizontal"]}
+{"text": "Vertikal", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainVertical"]}
+{"text": "Gleichwertig", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainEqual"]}
+{"text": "Koinzident", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainCoincidentUnified"]}
+{"text": "Mach das parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Parallel festlegen", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Die Linien sind jetzt parallel, oder?", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: 'Linien' ≈ 'Linie' explains 1 of 3 words, still executed (name below NAME_EXPLAINS falls through when no help text fits)"}
+{"text": "Das ist noch nicht ganz symmetrisch, finde ich", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: 'symmetrisch' ≈ 'Isometrisch' inside a sentence, executed although it explains little"}
 
 # --- Werte für ein laufendes Werkzeug
 {"text": "50 mal 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}

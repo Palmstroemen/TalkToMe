@@ -159,10 +159,9 @@ def test_coverage_leave_one_out():
 
 
 def test_coverage_names_the_closest_rival():
-    row = corpus.coverage("de", [case("Symmetrisch", "Sketcher_ConstrainSymmetric", "fc114_sketcher")])[
-        "Sketcher_ConstrainSymmetric"]
+    row = corpus.coverage("de", [case("Aushöhlung", "PartDesign_Thickness")])["PartDesign_Thickness"]
     assert row.recognized == 0
-    assert row.rivals and row.rivals[0] in ("Std_ViewIsometric", "Std_ViewGroup")
+    assert row.rivals and row.rivals[0] in ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft")
     assert row.light == "red"
 
 

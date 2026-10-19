@@ -941,7 +941,27 @@ laufendem Werkzeug zur Part-Werkbank („Breite“ ≈ „Part“); einzelne Wö
 Wertnamen, Einheiten, Füllwörter: „Breite 50“, „und die Höhe 30 mm“), immer eine Werteingabe,
 auch wenn er wie ein Befehl klingt (`values.only_values`); aufeinanderfolgende solche
 Teilsätze sind ein Schritt. Ein Befehlsname daneben bleibt Befehl („Mach eine Fase, 2 mm“).
-Werkbankwechsel werden bei laufendem Werkzeug nicht angeboten. Offen: Zahlwörter enden bei
+Werkbankwechsel werden bei laufendem Werkzeug nicht angeboten.
+
+**Behoben (Sketcher):**
+- *Gruppen-Buttons* wurden in FreeCAD 1.1 nicht zerlegt: Der Befehl eines Eintrags steht dort
+  in `data()`/`objectName()` der Aktion, nicht mehr in der Eigenschaft `CommandName`. Alle
+  Einträge („Kreis um Mittelpunkt“, „Ellipse durch 3 Punkte“) waren Phrasen des
+  Gruppenbefehls, der seine Voreinstellung ausführte; „Ellipse“ hätte einen Kreis gestartet.
+  Jetzt ist jeder Eintrag ein eigener Kandidat (Sketcher: 153 statt 94 Befehle).
+- *Kurzformen der Beschriftungen* (`context.short_forms`): Ein Ende aus ein oder zwei
+  Wörtern, das mindestens 3 Beschriftungen eines Kontexts teilen („… festlegen“, „… um
+  Mittelpunkt“, „… Constraint“), unterscheidet nichts; die Beschriftung ohne es ist eine
+  Kurzform („Parallel“, „Kreis“). Gleiche Kurzformen bekommt nur der erste Befehl (bei Gruppen
+  die Voreinstellung). Kurzformen zählen **nur als ganze Äußerung** (ohne Füllwörter), sonst
+  träfe „Fit“ (aus „Fit Selection“) das „first“ in einem Gesprächssatz; beim Leave-one-out
+  bleiben sie wie FreeCADs Name erhalten.
+
+**Neu gefunden, offen (allgemein):** Ein Namenstreffer, der weniger als die Hälfte eines
+Satzes erklärt, wird ausgeführt, wenn auch kein Hilfetext passt („Die Linien sind jetzt
+parallel, oder?“ → Linie). Ebenso reicht ein Hilfetext mit zwei Wörtern („These lines look
+parallel to me now“). Die Grenze zwischen Befehl und Gespräch ist neu abzuwägen; der Korpus
+mit mehr Gesprächssätzen ist dafür der Prüfstein. Offen: Zahlwörter enden bei
 „zwölf“; „zwanzig“, „dreiundzwanzig“ fehlen (Whisper schreibt sie meist als Ziffern).
 
 ### 16.7 Abdeckung und Trainingsspiele

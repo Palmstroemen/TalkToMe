@@ -14,9 +14,13 @@
    "Part_CompOffset": false,
    "Part_CompSplitFeatures": true,
    "Part_Cone": true,
+   "Part_CoordinateSystem": true,
    "Part_CrossSections": false,
    "Part_Cut": false,
    "Part_Cylinder": true,
+   "Part_DatumLine": true,
+   "Part_DatumPlane": true,
+   "Part_DatumPoint": true,
    "Part_Datums": true,
    "Part_Defeaturing": false,
    "Part_Extrude": true,
@@ -47,6 +51,12 @@
    "Std_DrawStyle": true,
    "Std_Group": true,
    "Std_LinkActions": true,
+   "Std_LinkImport": false,
+   "Std_LinkImportAll": false,
+   "Std_LinkMake": true,
+   "Std_LinkMakeRelative": false,
+   "Std_LinkReplace": false,
+   "Std_LinkUnlink": false,
    "Std_Measure": false,
    "Std_New": true,
    "Std_Open": true,
@@ -55,6 +65,18 @@
    "Std_Redo": false,
    "Std_Refresh": false,
    "Std_Save": true,
+   "Std_SelBack": false,
+   "Std_SelForward": false,
+   "Std_TreeCollapseDocument": true,
+   "Std_TreeDrag": true,
+   "Std_TreeMultiDocument": true,
+   "Std_TreePreSelection": true,
+   "Std_TreeRecordSelection": true,
+   "Std_TreeSelection": true,
+   "Std_TreeSingleDocument": true,
+   "Std_TreeSyncPlacement": true,
+   "Std_TreeSyncSelection": true,
+   "Std_TreeSyncView": true,
    "Std_TreeViewActions": true,
    "Std_Undo": false,
    "Std_VarSet": true,
@@ -87,10 +109,13 @@
    "Part_CompOffset": "Offsets shapes in 3D",
    "Part_CompSplitFeatures": "",
    "Part_Cone": "Creates a solid cone",
+   "Part_CoordinateSystem": "Creates a coordinate system that can be attached to other objects",
    "Part_CrossSections": "Creates cross-sections",
    "Part_Cut": "Cuts 2 selected shapes",
    "Part_Cylinder": "Creates a solid cylinder",
-   "Part_Datums": "Creates a coordinate system that can be attached to other objects",
+   "Part_DatumLine": "Creates a datum line that can be attached to other objects",
+   "Part_DatumPlane": "Creates a datum plane that can be attached to other objects",
+   "Part_DatumPoint": "Creates a datum point that can be attached to other objects",
    "Part_Defeaturing": "Removes the selected features from a shape",
    "Part_Extrude": "Extrudes the selected sketch or profile",
    "Part_Fillet": "Fillets the selected edges of a shape",
@@ -119,7 +144,12 @@
    "Std_DlgMacroRecord": "Opens a dialog to record a macro",
    "Std_DrawStyle": "",
    "Std_Group": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model.",
-   "Std_LinkActions": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_LinkImport": "Imports selected external links",
+   "Std_LinkImportAll": "Imports all links of the active document",
+   "Std_LinkMake": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_LinkMakeRelative": "Creates a sub-object or sub-element link",
+   "Std_LinkReplace": "Replaces the selected objects with links",
+   "Std_LinkUnlink": "Unlinks the object by placing it directly in the container",
    "Std_Measure": "Measure a feature",
    "Std_New": "Creates a new empty document",
    "Std_Open": "Opens a document or imports files",
@@ -128,14 +158,25 @@
    "Std_Redo": "Redoes a previously undone action",
    "Std_Refresh": "Recomputes the active document",
    "Std_Save": "Saves the active document",
-   "Std_TreeViewActions": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_SelBack": "<p>Restores the previous tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_SelForward": "<p>Restores the next tree view selection. Only works if tree RecordSelection mode is switched on.</p>",
+   "Std_TreeCollapseDocument": "Expands the active document and collapses all others",
+   "Std_TreeDrag": "Initiates dragging of the currently selected tree items",
+   "Std_TreeMultiDocument": "Displays all documents in the tree view",
+   "Std_TreePreSelection": "Preselects the object in 3D view when hovering the cursor over the tree item",
+   "Std_TreeRecordSelection": "Records the selection in the tree view in order to go back/forward using the navigation buttons",
+   "Std_TreeSelection": "Scrolls to the first selected item",
+   "Std_TreeSingleDocument": "Displays only the active document in the tree view",
+   "Std_TreeSyncPlacement": "Adjusts the placement on drag-and-drop of objects across coordinate systems (e.g. in part containers)",
+   "Std_TreeSyncSelection": "Expands the tree item when the corresponding object is selected in the 3D view",
+   "Std_TreeSyncView": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_TreeViewActions": "",
    "Std_Undo": "Undoes the previous action",
    "Std_VarSet": "Creates a variable set, which is an object that maintains a set of properties to be used as variables",
    "Std_ViewBottom": "Sets the camera to the bottom view",
    "Std_ViewFitAll": "Fits all content into the 3D view",
    "Std_ViewFitSelection": "Fits the selected content into the 3D view",
    "Std_ViewFront": "Sets the camera to the front view",
-   "Std_ViewGroup": "Sets the camera to the isometric view",
    "Std_ViewIsometric": "Sets the camera to the isometric view",
    "Std_ViewLeft": "Sets the camera to the left view",
    "Std_ViewRear": "Sets the camera to the rear view",
@@ -205,6 +246,11 @@
     "Cone",
     "Cone"
    ],
+   "Part_CoordinateSystem": [
+    "Coordinate System",
+    "Coordinate System",
+    "Coordinate System"
+   ],
    "Part_CrossSections": [
     "Cross-Sections",
     "Cross-Sections"
@@ -217,11 +263,22 @@
     "Cylinder",
     "Cylinder"
    ],
-   "Part_Datums": [
-    "Coordinate System",
-    "Datum Plane",
+   "Part_DatumLine": [
     "Datum Line",
+    "Datum Line",
+    "Datum Line"
+   ],
+   "Part_DatumPlane": [
+    "Datum Plane",
+    "Datum Plane",
+    "Datum Plane"
+   ],
+   "Part_DatumPoint": [
     "Datum Point",
+    "Datum Point",
+    "Datum Point"
+   ],
+   "Part_Datums": [
     "Datums"
    ],
    "Part_Defeaturing": [
@@ -346,13 +403,37 @@
     "New Group"
    ],
    "Std_LinkActions": [
-    "Make Link",
-    "Make Sub-Link",
-    "Replace With Link",
-    "Unlink",
-    "Import Links",
-    "Import All Links",
     "Link Actions"
+   ],
+   "Std_LinkImport": [
+    "Import Links",
+    "Import Links",
+    "Import Links"
+   ],
+   "Std_LinkImportAll": [
+    "Import All Links",
+    "Import All Links",
+    "Import All Links"
+   ],
+   "Std_LinkMake": [
+    "Make Link",
+    "Make Link",
+    "Make Link"
+   ],
+   "Std_LinkMakeRelative": [
+    "Make Sub-Link",
+    "Make Sub-Link",
+    "Make Sub-Link"
+   ],
+   "Std_LinkReplace": [
+    "Replace With Link",
+    "Replace With Link",
+    "Replace With Link"
+   ],
+   "Std_LinkUnlink": [
+    "Unlink",
+    "Unlink",
+    "Unlink"
    ],
    "Std_Measure": [
     "&Measure",
@@ -386,22 +467,70 @@
     "&Save",
     "&Save"
    ],
-   "Std_TreeViewActions": [
-    "&1 Sync View",
-    "&2 Sync Selection",
-    "&3 Sync Placement",
-    "&4 Preselection",
-    "&5 Record Selection",
-    "",
-    "&Single Document",
-    "&Multi Document",
-    "Collapse/E&xpand",
-    "",
-    "Initiate &Dragging",
-    "&Go to Selection",
-    "",
+   "Std_SelBack": [
     "Selection &Back",
+    "Selection &Back",
+    "Selection &Back"
+   ],
+   "Std_SelForward": [
     "Selection &Forward",
+    "Selection &Forward",
+    "Selection &Forward"
+   ],
+   "Std_TreeCollapseDocument": [
+    "Collapse/E&xpand",
+    "Collapse/E&xpand",
+    "Collapse/E&xpand"
+   ],
+   "Std_TreeDrag": [
+    "Initiate &Dragging",
+    "Initiate &Dragging",
+    "Initiate &Dragging"
+   ],
+   "Std_TreeMultiDocument": [
+    "&Multi Document",
+    "&Multi Document",
+    "&Multi Document"
+   ],
+   "Std_TreePreSelection": [
+    "&4 Preselection",
+    "&4 Preselection",
+    "&4 Preselection"
+   ],
+   "Std_TreeRecordSelection": [
+    "&5 Record Selection",
+    "&5 Record Selection",
+    "&5 Record Selection"
+   ],
+   "Std_TreeSelection": [
+    "&Go to Selection",
+    "&Go to Selection",
+    "&Go to Selection"
+   ],
+   "Std_TreeSingleDocument": [
+    "&Single Document",
+    "&Single Document",
+    "&Single Document"
+   ],
+   "Std_TreeSyncPlacement": [
+    "&3 Sync Placement",
+    "&3 Sync Placement",
+    "&3 Sync Placement"
+   ],
+   "Std_TreeSyncSelection": [
+    "&2 Sync Selection",
+    "&2 Sync Selection",
+    "&2 Sync Selection"
+   ],
+   "Std_TreeSyncView": [
+    "&1 Sync View",
+    "&1 Sync View",
+    "&1 Sync View"
+   ],
+   "Std_TreeViewActions": [
+    "",
+    "",
+    "",
     "Tree View Actions"
    ],
    "Std_Undo": [
@@ -413,6 +542,9 @@
     "Variable Set"
    ],
    "Std_ViewBottom": [
+    "&5 Bottom",
+    "&5 Bottom",
+    "&5 Bottom",
     "&5 Bottom",
     "&5 Bottom"
    ],
@@ -426,35 +558,46 @@
    ],
    "Std_ViewFront": [
     "&1 Front",
+    "&1 Front",
+    "&1 Front",
+    "&1 Front",
     "&1 Front"
    ],
    "Std_ViewGroup": [
-    "&Isometric",
-    "&1 Front",
-    "&2 Top",
-    "&3 Right",
-    "&4 Rear",
-    "&5 Bottom",
-    "&6 Left",
     "Standard &Views"
    ],
    "Std_ViewIsometric": [
+    "&Isometric",
+    "&Isometric",
+    "&Isometric",
     "&Isometric",
     "&Isometric"
    ],
    "Std_ViewLeft": [
     "&6 Left",
+    "&6 Left",
+    "&6 Left",
+    "&6 Left",
     "&6 Left"
    ],
    "Std_ViewRear": [
+    "&4 Rear",
+    "&4 Rear",
+    "&4 Rear",
     "&4 Rear",
     "&4 Rear"
    ],
    "Std_ViewRight": [
     "&3 Right",
+    "&3 Right",
+    "&3 Right",
+    "&3 Right",
     "&3 Right"
    ],
    "Std_ViewTop": [
+    "&2 Top",
+    "&2 Top",
+    "&2 Top",
     "&2 Top",
     "&2 Top"
    ],
@@ -566,9 +709,17 @@
    ],
    "Structure": [
     "Std_Part",
-    "Part_Datums",
+    "Part_CoordinateSystem",
+    "Part_DatumPlane",
+    "Part_DatumLine",
+    "Part_DatumPoint",
     "Std_Group",
-    "Std_LinkActions",
+    "Std_LinkMake",
+    "Std_LinkMakeRelative",
+    "Std_LinkReplace",
+    "Std_LinkUnlink",
+    "Std_LinkImport",
+    "Std_LinkImportAll",
     "Std_VarSet"
    ],
    "Talk to me": [
@@ -577,12 +728,29 @@
    "View": [
     "Std_ViewFitAll",
     "Std_ViewFitSelection",
-    "Std_ViewGroup",
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft",
     "Std_AlignToSelection",
     "Separator",
     "Std_DrawStyle",
     "Part_SelectFilter",
-    "Std_TreeViewActions",
+    "Std_TreeSyncView",
+    "Std_TreeSyncSelection",
+    "Std_TreeSyncPlacement",
+    "Std_TreePreSelection",
+    "Std_TreeRecordSelection",
+    "Std_TreeSingleDocument",
+    "Std_TreeMultiDocument",
+    "Std_TreeCollapseDocument",
+    "Std_TreeDrag",
+    "Std_TreeSelection",
+    "Std_SelBack",
+    "Std_SelForward",
     "Std_Measure"
    ],
    "Workbench": [

@@ -175,3 +175,53 @@ def test_snapshot_gets_the_current_vocabulary():
     assert "ui:train" in with_vocab
     assert by_id(from_snapshot(snap)).keys() <= with_vocab.keys()
     assert from_snapshot(snap) == build_candidates(TOOLBARS, LABELS, ACTIVE)
+
+
+# --- short forms: label words that many labels share say nothing ----------------------------------
+
+from ttm_core.context import short_forms   # noqa: E402
+
+CONSTRAINTS = {"Sketcher_ConstrainParallel": "Parallel festlegen", "Sketcher_ConstrainPerpendicular": "Rechtwinklig festlegen",
+               "Sketcher_ConstrainSymmetric": "Symmetrisch festlegen", "Sketcher_ConstrainEqual": "Gleichwertig festlegen",
+               "Sketcher_CreateCircle": "Kreis um Mittelpunkt", "Sketcher_Create3PointCircle": "Kreis durch 3 Punkte",
+               "Sketcher_CreateEllipseByCenter": "Ellipse um Mittelpunkt", "Sketcher_CreateArc": "Kreisbogen um Mittelpunkt",
+               "Sketcher_CreateEllipseBy3Points": "Ellipse durch 3 Punkte", "Sketcher_Create3PointArc": "Kreisbogen durch 3 Punkte",
+               "Sketcher_CreateLine": "Linie", "Sketcher_LeaveSketch": "Skizze verlassen"}
+
+
+def test_shared_last_word_is_left_out():
+    short = short_forms(list(CONSTRAINTS.items()), "de")
+    assert short["Sketcher_ConstrainParallel"] == "Parallel"
+    assert short["Sketcher_ConstrainSymmetric"] == "Symmetrisch"
+
+
+def test_shared_word_pairs_are_left_out():
+    short = short_forms(list(CONSTRAINTS.items()), "de")
+    assert short["Sketcher_CreateEllipseByCenter"] == "Ellipse"
+    assert short["Sketcher_CreateArc"] == "Kreisbogen"
+
+
+def test_a_short_form_goes_to_the_first_command_only():
+    """ "Kreis um Mittelpunkt" and "Kreis durch 3 Punkte" both become "Kreis": the first one,
+    the group's default, gets it."""
+    short = short_forms(list(CONSTRAINTS.items()), "de")
+    assert short["Sketcher_CreateCircle"] == "Kreis"
+    assert "Sketcher_Create3PointCircle" not in short
+
+
+def test_rare_words_and_one_word_labels_stay():
+    short = short_forms(list(CONSTRAINTS.items()), "de")
+    assert "Sketcher_CreateLine" not in short and "Sketcher_LeaveSketch" not in short
+
+
+def test_no_short_form_equal_to_another_label():
+    labels = [("A", "Spiegeln festlegen"), ("B", "X festlegen"), ("C", "Y festlegen"), ("D", "Spiegeln")]
+    assert "A" not in short_forms(labels, "de")
+
+
+def test_short_forms_become_phrases_of_the_candidates():
+    toolbars = {"c": list(CONSTRAINTS)}
+    labels = {k: [v] for k, v in CONSTRAINTS.items()}
+    c = by_id(build_candidates(toolbars, labels, {}, language="de"))
+    assert c["Sketcher_ConstrainParallel"]["short"] == ["Parallel"]
+    assert c["Sketcher_CreateLine"]["short"] == []

@@ -133,7 +133,7 @@ class _Setup:
         """(candidates, tool running)"""
         if name not in self.built:
             data = context(self.language, name)
-            self.built[name] = (from_snapshot(data["context"], self.vocab, self.heard), bool(data.get("tool_running")))
+            self.built[name] = (from_snapshot(data["context"], self.vocab, self.heard, self.language), bool(data.get("tool_running")))
         return self.built[name]
 
     def plan(self, text, candidates, tool_running):
