@@ -10,6 +10,8 @@ def _talktome_init():
     # Translations of the user interface, in FreeCAD's language; before the commands are created.
     FreeCADGui.addLanguagePath(os.path.join(os.path.dirname(os.path.dirname(talktome.__file__)), "translations"))
     FreeCADGui.updateLocale()
+    # Icons by name, e.g. "preferences-talk_to_me" for the settings page's group.
+    FreeCADGui.addIconPath(os.path.join(os.path.dirname(os.path.dirname(talktome.__file__)), "Resources", "icons"))
 
     import talktome.command
     import talktome.preferences

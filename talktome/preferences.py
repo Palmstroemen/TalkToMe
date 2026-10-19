@@ -80,7 +80,7 @@ def browse_row(edit, caption, file_filter):
 class PreferencesPage:
     def __init__(self, parent=None):
         self.form = QtWidgets.QWidget(parent)
-        self.form.setWindowTitle("Talk to me")
+        self.form.setWindowTitle(translate("TalkToMe", "Voice control"))     # the page's name in the group
         self.probe = None
         self.lists = {}                  # list key → words as edited
         self.list_language = None
