@@ -206,6 +206,10 @@ class Controller(QtCore.QObject):
         model = PARAMS.GetString("Model", "")
         if model:
             args += ["--model", model]
+        args += ["--speech", PARAMS.GetString("Speech", "important")]
+        voice = PARAMS.GetString("Voice", "")
+        if voice:
+            args += ["--voice", voice]
         args += PARAMS.GetString("ExtraArgs", "").split()
 
         env = QtCore.QProcessEnvironment.systemEnvironment()
@@ -335,6 +339,8 @@ class Controller(QtCore.QObject):
             self.status("not understood: »{}« ({})".format(msg.get("text", ""), msg.get("reason")))
             log("not understood »{}«, reason {}, candidates {}".format(
                 msg.get("text"), msg.get("reason"), msg.get("alternatives")))
+        elif kind == "said":
+            log("said »{}«".format(msg.get("text", "")))
         elif kind == "ignored":
             log("ignored »{}«".format(msg.get("text", "")))
         elif kind == "error":

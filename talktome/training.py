@@ -206,7 +206,10 @@ class TrainingDialog(QtWidgets.QDialog):
             return
         self.recordings.append(text)
         self.results.addItem("»{}«".format(text) if text.strip() else "– nothing recognized")
-        if len(self.recordings) >= RECORDINGS:
+        remaining = RECORDINGS - len(self.recordings)
+        if remaining > 0:
+            self.controller.send("say", kind="train_again", n=remaining)
+        else:
             self.record.setChecked(False)
         self.update_buttons()
 
@@ -309,6 +312,8 @@ class TrainingDialog(QtWidgets.QDialog):
         self.recordings = []
         self.typed.clear()
         self.fill_misses()
+        if learned:
+            self.controller.send("say", kind="train_done")
         self.controller.status("learned {} form(s) for {}{}".format(
             len(learned), label, ", {} not stored (another command)".format(len(conflicts)) if conflicts else ""))
         self.update_buttons()

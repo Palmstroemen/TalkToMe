@@ -30,6 +30,10 @@ def main(argv=None):
     ap.add_argument("--mic", help="input device name or index (see --list-devices)")
     ap.add_argument("--input-wav", nargs="+", help="play these WAV files instead of the microphone")
     ap.add_argument("--volume", type=float, default=0.4)
+    ap.add_argument("--speech", choices=("off", "important", "chatty"), default="important",
+                    help="speech output: off (tones only), important moments, or chatty")
+    ap.add_argument("--voice", help="Piper voice name (downloaded on first use) or path to an .onnx file "
+                                    "(default: the language pack's voice)")
     ap.add_argument("--list-devices", action="store_true")
     args = ap.parse_args(argv)
 
@@ -53,6 +57,8 @@ def main(argv=None):
     from talktome_service.stt import Transcriber, cuda_device_count
     from talktome_service.tones import TonePlayer
     from talktome_service.vad import SileroVAD
+    from talktome_service.voice import LazySpeaker
+    from ttm_core.speech import phrase
 
     profile = select_profile(args.device, cuda_device_count(), args.model)
     if profile.fallback:
@@ -68,9 +74,16 @@ def main(argv=None):
     info = {"language": args.language, "model": profile.model, "device": profile.device,
             "compute_type": profile.compute_type, "fallback": profile.fallback}
 
+    speaker = None
+    voice = args.voice or langpack.pack(args.language).voice
+    if args.speech != "off" and voice:
+        fixed = [phrase(kind, args.language, args.speech)              # said without delay later
+                 for kind in ("ready", "not_understood", "failed", "done", "train_done")]
+        speaker = LazySpeaker(voice, log=log, warm_up=[t for t in fixed if t])
+
     service = Service(token=token, source=source, vad=SileroVAD(), transcriber=transcriber,
                       tones=TonePlayer(volume=args.volume), host=args.host, port=args.port,
-                      info=info, log=log)
+                      info=info, log=log, speaker=speaker, speech_level=args.speech)
     port = service.start()
     print("TTM_PORT={}".format(port), flush=True)
     log("listening on {}:{}".format(args.host, port))

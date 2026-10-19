@@ -1,0 +1,15 @@
+{
+  "_about": "Sentences of the speech output. level: important (default setting) or chatty (only with the setting 'chatty'). Several texts take turns. Values in braces are filled in.",
+  "voice": "de_DE-thorsten-medium",
+  "messages": {
+    "ready":          {"level": "important", "text": ["Ich höre zu."]},
+    "not_understood": {"level": "important", "text": ["Das habe ich nicht verstanden."]},
+    "ambiguous":      {"level": "important", "text": ["Meinst du {first} oder {second}?"]},
+    "inactive":       {"level": "important", "text": ["{first} geht gerade nicht."]},
+    "failed":         {"level": "important", "text": ["Das hat nicht geklappt."]},
+    "train_again":    {"level": "important", "text": ["Bitte noch {n} mal."]},
+    "train_done":     {"level": "important", "text": ["Danke, das habe ich mir gemerkt."]},
+    "done":           {"level": "chatty",    "text": ["Mache ich.", "Okay.", "Erledigt."]},
+    "mic_off":        {"level": "chatty",    "text": ["Mikrofon ist aus."]}
+  }
+}

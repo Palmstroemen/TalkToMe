@@ -55,18 +55,38 @@ class TonePlayer:
             outdata[n:, 0] = 0.0
             self._pending = self._pending[n:]
 
-    def play(self, kind):
-        tone = make_tone(kind, self.sample_rate, self.volume)
-        if self.volume <= 0:
-            return 0.0
+    def _ensure_stream(self):
         if self._stream is None:
             import sounddevice as sd
             self._stream = sd.OutputStream(samplerate=self.sample_rate, channels=1, dtype="float32",
                                            callback=self._callback, latency=self.LATENCY_S)
             self._stream.start()
+
+    def play(self, kind):
+        tone = make_tone(kind, self.sample_rate, self.volume)
+        if self.volume <= 0:
+            return 0.0
+        self._ensure_stream()
         with self._lock:
             self._pending = tone
         return self._stream.latency + len(tone) / self.sample_rate
+
+    def resample(self, audio, rate):
+        """To the player's sample rate (linear interpolation is good enough for speech)."""
+        if rate == self.sample_rate:
+            return audio.astype(np.float32)
+        n = int(round(len(audio) * self.sample_rate / rate))
+        return np.interp(np.linspace(0, len(audio) - 1, n), np.arange(len(audio)), audio).astype(np.float32)
+
+    def play_samples(self, audio, rate):
+        """Play audio (e.g. speech) at rate; returns how long the speaker is busy, like play()."""
+        if self.volume <= 0:
+            return 0.0
+        samples = self.resample(audio, rate) * min(1.0, self.volume * 2.5)
+        self._ensure_stream()
+        with self._lock:
+            self._pending = samples
+        return self._stream.latency + len(samples) / self.sample_rate
 
     def close(self):
         stream, self._stream = self._stream, None

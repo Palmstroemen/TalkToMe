@@ -16,7 +16,10 @@ python3 -m venv service/.venv
 service/.venv/bin/pip install -r service/requirements.txt pytest
 ```
 
-The first start downloads the speech model (`base`: ~150 MB, `small`: ~500 MB) to `~/.cache/huggingface`.
+The first start downloads the speech model (`base`: ~150 MB, `small`: ~500 MB) to `~/.cache/huggingface`
+and the voice of the speech output (~60 MB) to `~/.cache/talktome/voices`. The default voices are
+free: Thorsten (German, CC0) and LJSpeech (English, public domain). Any other Piper voice works
+too (`Voice` parameter); check its license yourself.
 
 ## Try it outside FreeCAD
 
@@ -75,6 +78,8 @@ Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkTo
 | `ServicePython` | `service/.venv/bin/python` | Python of the speech service |
 | `DryRun` | `false` | Only show recognized commands, don't execute them |
 | `AskMenu` | `true` | Question menu next to the mouse pointer when not sure |
+| `Speech` | `important` | Speech output: `off` (tones only), `important` (not understood, questions, training), `chatty` (also "Mache ich.") |
+| `Voice` | language pack's voice | Piper voice name (downloaded to `~/.cache/talktome/voices` on first use) or path to an `.onnx` file |
 
 ## Languages
 

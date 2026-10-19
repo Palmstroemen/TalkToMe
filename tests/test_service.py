@@ -18,9 +18,10 @@ SPEECH_PATTERN = [0.0] * 10 + [0.9] * 20 + [0.0] * 30
 class FakeSource:
     """Frames with a faint noise floor like a real microphone; level 0.0 is a system-muted one."""
 
-    def __init__(self, n_frames, levels=None):
+    def __init__(self, n_frames, levels=None, delay=0.0):
         self.n_frames = n_frames
         self.levels = levels or [1e-4] * n_frames
+        self.delay = delay              # the user starts speaking a moment later
         self.running = False
         self.starts = 0
 
@@ -28,6 +29,7 @@ class FakeSource:
         self.running = True
         self.starts += 1
         def feed():
+            time.sleep(self.delay)
             for level in self.levels[:self.n_frames]:
                 if not self.running:
                     return
@@ -68,6 +70,19 @@ class FakeTones:
     def play(self, kind):
         self.played.append(kind)
         return 0.01
+
+    def play_samples(self, audio, sample_rate):
+        self.played.append("speech")
+        return 0.01
+
+
+class FakeSpeaker:
+    def __init__(self):
+        self.said = []
+
+    def synth(self, text):
+        self.said.append(text)
+        return np.zeros(100, dtype=np.float32), 22050
 
 
 class Client:
@@ -557,5 +572,103 @@ def test_learned_patterns_come_with_the_context(parts):
     c.send("listen", on=True)
     msg = c.wait_for("plan")
     assert (msg["command"], msg["args"]) == ("ui:rename", {"label": "Bodenplatte"})
+    c.close()
+    s.stop()
+
+
+
+# --- speech output (DESIGN.md 10.1) ---------------------------------------------------------------
+
+def speaking_service(parts, text, level="important", candidates=None):
+    """The greeting "Ich höre zu." makes the microphone deaf for a moment; speech starts after it."""
+    parts["transcriber"] = FakeTranscriber(text)
+    parts["source"].delay = 0.4
+    speaker = FakeSpeaker()
+    s = Service(token=TOKEN, log=lambda *a: None, speaker=speaker, speech_level=level, info={"language": "de"}, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=candidates or CANDIDATES)
+    c.send("listen", on=True)
+    return s, c, speaker
+
+
+def wait_said(speaker, n, timeout=5):
+    deadline = time.monotonic() + timeout
+    while len(speaker.said) < n and time.monotonic() < deadline:
+        time.sleep(0.01)
+
+
+def test_ready_is_said_once(parts):
+    s, c, speaker = speaking_service(parts, "")
+    wait_said(speaker, 1)
+    c.send("listen", on=False)
+    c.send("listen", on=True)
+    time.sleep(0.2)
+    assert speaker.said.count("Ich höre zu.") == 1
+    c.close()
+    s.stop()
+
+
+def test_not_understood_is_said_instead_of_the_error_tone(parts):
+    s, c, speaker = speaking_service(parts, "Klaus")
+    c.wait_for("not_understood")
+    msg = c.wait_for("said")
+    assert msg["text"] == "Das habe ich nicht verstanden."
+    assert "error" not in parts["tones"].played
+    c.close()
+    s.stop()
+
+
+def test_ambiguity_names_the_choices(parts):
+    candidates = [{"id": "A_Rect", "level": "edit", "phrases": ["Rechteck"], "label": "Rechteck A", "active": True},
+                  {"id": "B_Rect", "level": "edit", "phrases": ["Rechteck"], "label": "Rechteck B", "active": True}]
+    s, c, speaker = speaking_service(parts, "Rechteck", candidates=candidates)
+    c.wait_for("not_understood")
+    assert c.wait_for("said")["text"] in ("Meinst du Rechteck A oder Rechteck B?", "Meinst du Rechteck B oder Rechteck A?")
+    c.close()
+    s.stop()
+
+
+def test_chatty_confirms_by_voice(parts):
+    s, c, speaker = speaking_service(parts, "Zeichne ein Rechteck", level="chatty")
+    msg = c.wait_for("plan")
+    c.send("result", ok=True, id=msg["id"])
+    assert c.wait_for("said")["text"] in ("Mache ich.", "Okay.", "Erledigt.")
+    assert "ok" not in parts["tones"].played
+    c.close()
+    s.stop()
+
+
+def test_important_level_keeps_the_ok_tone(parts):
+    s, c, speaker = speaking_service(parts, "Zeichne ein Rechteck")
+    msg = c.wait_for("plan")
+    c.send("result", ok=True, id=msg["id"])
+    wait_tones(parts["tones"], 2)                         # "Ich höre zu." and the ok tone
+    assert parts["tones"].played[-1] == "ok"
+    c.close()
+    s.stop()
+
+
+def test_addon_can_ask_for_a_sentence(parts):
+    s, c, speaker = speaking_service(parts, "")
+    c.send("say", kind="train_again", n=2)
+    deadline = time.monotonic() + 5
+    while "Bitte noch 2 mal." not in speaker.said and time.monotonic() < deadline:
+        time.sleep(0.01)
+    assert "Bitte noch 2 mal." in speaker.said
+    c.close()
+    s.stop()
+
+
+def test_without_voice_tones_stay(parts):
+    parts["transcriber"] = FakeTranscriber("Klaus")
+    s = Service(token=TOKEN, log=lambda *a: None, speaker=None, speech_level="important", **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=CANDIDATES)
+    c.send("listen", on=True)
+    c.wait_for("not_understood")
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["error"]
     c.close()
     s.stop()

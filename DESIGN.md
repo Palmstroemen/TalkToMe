@@ -570,6 +570,11 @@ Töne für das Alltägliche, Sprache für die Momente, in denen ein Ton zu wenig
 - **Im Sprachdienst**, der auch die Töne spielt: Während er spricht, ist das Mikrofon taub
   (sich nicht selbst hören). Unterbrechen im Satz ist ein späteres Thema.
 - **Die Sätze stehen im Sprachpaket** (`lang/<sprache>/speech.json`, 13.1).
+- **Umgesetzt (2026-10-19):** `ttm_core/speech.py` wählt den Satz, `talktome_service/voice.py`
+  lädt die Stimme im Hintergrund (bis dahin nur Töne) und hält erzeugte Sätze vor; feste Sätze
+  werden nach dem Laden vorab erzeugt. Ein Satz braucht 50–120 ms auf der CPU. Sprache ersetzt
+  den Fehlerton, wo sie mehr sagt; „Ich höre zu.“ einmal pro Dienststart; das Addon kann Sätze
+  anfordern (`say`, z. B. im Training). Einstellungen `Speech` und `Voice`.
 - **Stimme wählbar:** Mitgeliefert bzw. vorgeschlagen werden nur frei lizenzierte Stimmen (z. B.
   „Thorsten“, CC0). Andere Piper-Stimmen lädt der Nutzer selbst und wählt die Datei. Stimmen,
   die aus urheberrechtlich geschütztem Material trainiert sind (z. B. GLaDOS aus „Portal“),
@@ -592,6 +597,9 @@ Die Verbindung läuft über TCP auf `127.0.0.1` (Port einstellbar), mit einer JS
 | Dienst → Addon | `not_understood` | Erkannter Text, ggf. Top-3-Kandidaten |
 | Addon → Dienst | `result` | `ok` und die `id` des Schritts. Bei `more` schickt das Addon vorher den neuen `context`. Der Dienst entscheidet dann den nächsten Schritt oder spielt den Ton |
 | Addon → Dienst | `learn` | Äußerung + Befehls-ID aus dem Lernmodus |
+| Addon → Dienst | `train` | `on`: nur erkennen, nichts entscheiden (Training) |
+| Addon → Dienst | `say` | `kind` und Werte: einen Satz der Sprachausgabe sagen |
+| Dienst → Addon | `said` | gesagter Satz (für Protokoll und Statusleiste) |
 
 Die Verbindung wird nur lokal angenommen, also nicht an andere Netzwerkschnittstellen gebunden. Zusätzlich gibt es ein beim Start erzeugtes Token, damit keine anderen lokalen Programme Befehle einschleusen können.
 
@@ -706,7 +714,7 @@ System-Stummschaltung. Reihenfolge:
 
 1. ~~Training (8.7) und Rückfrage-Menü (8.8)~~
 2. ~~Sprachpakete de und en (13.1)~~
-3. Sprachausgabe (10.1)
+3. ~~Sprachausgabe (10.1)~~
 4. Einstellungsseite (13)
 5. Wortschatz-Editor
 6. Übersetzung der Oberfläche

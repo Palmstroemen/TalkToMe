@@ -1,0 +1,15 @@
+{
+  "_about": "Sentences of the speech output. level: important (default setting) or chatty (only with the setting 'chatty'). Several texts take turns. Values in braces are filled in.",
+  "voice": "en_US-ljspeech-medium",
+  "messages": {
+    "ready":          {"level": "important", "text": ["I'm listening."]},
+    "not_understood": {"level": "important", "text": ["Sorry, I didn't get that."]},
+    "ambiguous":      {"level": "important", "text": ["Do you mean {first} or {second}?"]},
+    "inactive":       {"level": "important", "text": ["{first} isn't possible right now."]},
+    "failed":         {"level": "important", "text": ["That didn't work."]},
+    "train_again":    {"level": "important", "text": ["Please say it {n} more times."]},
+    "train_done":     {"level": "important", "text": ["Thanks, I'll remember that."]},
+    "done":           {"level": "chatty",    "text": ["Will do.", "Okay.", "Done."]},
+    "mic_off":        {"level": "chatty",    "text": ["Microphone is off."]}
+  }
+}

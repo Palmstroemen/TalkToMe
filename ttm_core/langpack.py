@@ -3,6 +3,7 @@
     lang/<code>/language.json   word lists, number words, names of the phonetic and stemming algorithm
     lang/<code>/patterns.json   sentence patterns for commands with free text
     lang/<code>/vocab.json      phrases for commands (synonyms)
+    lang/<code>/speech.json     sentences of the speech output and the default voice
 
 The user's changes live in <user dir>/lang/<code>/ with the same files: a list there replaces the
 pack's list, patterns there come before the pack's. Algorithms (phonetics, stemming) stay code;
@@ -45,7 +46,7 @@ def _read(directory, language, name):
 
 
 class Pack:
-    def __init__(self, language, data, patterns, vocab):
+    def __init__(self, language, data, patterns, vocab, speech):
         self.language = language
         self.name = data.get("name", language)
         self.phonetics = data.get("phonetics")
@@ -61,6 +62,8 @@ class Pack:
         self.pattern_trailing = set(data.get("pattern_trailing", []))
         self.patterns = patterns
         self.vocab = vocab
+        self.voice = speech.get("voice")
+        self.messages = speech.get("messages", {})
 
 
 def _patterns(*sources):
@@ -86,7 +89,12 @@ def pack(language):
         patterns = _patterns(user_patterns, pack_patterns)
         vocab = {k: v for k, v in _read(LANG_DIR, language, "vocab.json").items()
                  if not k.startswith("_") and isinstance(v, list)}
-        _cache[language] = Pack(language, data, patterns, vocab)
+        speech = dict(_read(LANG_DIR, language, "speech.json"))
+        user_speech = _read(user_dir, language, "speech.json")
+        speech["messages"] = dict(speech.get("messages", {}), **user_speech.get("messages", {}))
+        if user_speech.get("voice"):
+            speech["voice"] = user_speech["voice"]
+        _cache[language] = Pack(language, data, patterns, vocab, speech)
     return _cache[language]
 
 

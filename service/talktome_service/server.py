@@ -6,6 +6,8 @@ All hardware-facing parts are passed in, so the service can be tested with fakes
   vad          prob(frame) / reset()      speech probability of one frame
   transcriber  transcribe(audio) -> {"text": ..., "stt_ms": ..., ...}
   tones        play(kind) -> seconds      kind is "ok" or "error"
+               play_samples(audio, rate) -> seconds
+  speaker      synth(text) -> (audio, rate)  speech output (Piper), optional
 """
 
 import queue
@@ -23,6 +25,7 @@ from ttm_core.matching import hotwords
 from ttm_core.params import parse
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 from ttm_core.sequence import EXCLUSIVE, next_step
+from ttm_core.speech import phrase
 
 SAMPLE_RATE = 16000
 FRAME = 512
@@ -33,12 +36,16 @@ SYSTEM_MUTE_FRAMES = 500 // FRAME_MS   # exact digital silence this long: muted 
 
 class Service:
     def __init__(self, token, source, vad, transcriber, tones, segmenter=None,
-                 host="127.0.0.1", port=0, info=None, log=print):
+                 host="127.0.0.1", port=0, info=None, log=print, speaker=None, speech_level="off"):
         self.token = token
         self.source = source
         self.vad = vad
         self.transcriber = transcriber
         self.tones = tones
+        self.speaker = speaker
+        self.speech_level = speech_level
+        self._turn = 0                        # variants of a sentence take turns
+        self._greeted = False
         self.segmenter = segmenter or Segmenter(frame_ms=FRAME_MS)
         self.host, self.port = host, port
         self.info = info or {}
@@ -169,6 +176,9 @@ class Service:
             self._training = bool(msg.get("on"))
         elif kind == "result":
             self._on_result(msg)
+        elif kind == "say":
+            values = {k: v for k, v in msg.items() if k not in ("type", "kind")}
+            self._say(msg.get("kind", ""), **values)
         elif kind == "bye":
             self._stop.set()
         else:
@@ -198,6 +208,8 @@ class Service:
             self._zero_frames, self._system_muted = 0, False
             self._listening = True
             self.source.start(self._on_frame)
+            if not self._greeted:
+                self._greeted = self._say("ready")
         elif not on and self._listening:
             self._listening = False
             self.source.stop()
@@ -313,13 +325,13 @@ class Service:
             self._awaiting = None
             if not msg.get("ok"):
                 self._pending = []
-                self._play("error")
+                self._say("failed") or self._play("error")
                 return
             if self._follow_up():
                 return
             last = self._advance()
             if self._awaiting is None and (last is None or last.kind == "ignore"):
-                self._play("ok")               # all steps done
+                self._say("done") or self._play("ok")     # all steps done
 
     def _follow_up(self):
         """Did the step open a dialog asking for what its clause said already? "Mach eine Skizze
@@ -365,10 +377,45 @@ class Service:
             if d.kind == "not_understood":
                 self._pending = []
                 self.send("not_understood", reason=d.reason, **info)
-                self._play("error")
+                self._say_not_understood(d) or self._play("error")
                 return d
             self.send("ignored", reason=d.reason, text=span, utterance=self._utterance)
         return last
+
+    # --- speech output (DESIGN.md 10.1) -----------------------------------------------------
+
+    def _label(self, command):
+        for c in self._candidates or []:
+            if c["id"] == command:
+                return c.get("label") or (c.get("phrases") or [command])[0]
+        return command
+
+    def _say_not_understood(self, d):
+        names = [self._label(cmd) for cmd, _ in d.alternatives]
+        if d.reason == "ambiguous" and len(names) >= 2:
+            return self._say("ambiguous", first=names[0], second=names[1])
+        if d.reason == "inactive" and names:
+            return self._say("inactive", first=names[0])
+        return self._say("not_understood")
+
+    def _say(self, kind, **values):
+        """Say the sentence for kind, if the speech level asks for it. True if something is said;
+        the microphone stays deaf meanwhile."""
+        if self.speaker is None:
+            return False
+        text = phrase(kind, self.language, self.speech_level, turn=self._turn, **values)
+        if text is None:
+            return False
+        self._turn += 1
+        try:
+            audio, rate = self.speaker.synth(text)
+            duration = self.tones.play_samples(audio, rate)
+        except Exception as e:
+            self.log("speech failed: {}".format(e))
+            return False
+        self._mute_until = time.monotonic() + duration + MUTE_AFTER_TONE_S
+        self.send("said", text=text)
+        return True
 
     def _play(self, kind):
         try:
