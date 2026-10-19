@@ -43,3 +43,48 @@ def test_different_words_differ():
 def test_empty():
     assert cologne("") == ""
     assert cologne("123") == ""
+
+
+# --- Metaphone (English) ---------------------------------------------------------------------------
+
+from ttm_core.phonetics import PHONETICS, metaphone
+
+
+@pytest.mark.parametrize("word, code", [
+    ("Thompson", "0MPSN"),      # TH → 0 (theta), vowels after the first letter dropped
+    ("knight", "NT"),           # silent K, GH
+    ("Smith", "SM0"),           # TH → 0 (theta)
+    ("phone", "FN"),            # PH → F
+    ("chamfer", "XMFR"),        # CH → X
+    ("science", "SNS"),         # SC before E/I/Y: C silent
+    ("extrude", "EKSTRT"),      # X → KS, initial vowel kept
+    ("judge", "JJ"),            # DGE → J
+    ("sketch", "SKX"),          # TCH: T silent
+    ("wrench", "RNX"),          # initial WR → R
+    ("Xavier", "SFR"),          # initial X → S
+    ("lamb", "LM"),             # final MB: B silent
+])
+def test_metaphone_values(word, code):
+    assert metaphone(word) == code
+
+
+@pytest.mark.parametrize("heard, meant", [
+    ("Pat", "Pad"),
+    ("shamfur", "chamfer"),
+    ("poquet", "pocket"),
+    ("filit", "fillet"),
+    ("skech", "sketch"),
+    ("Smyth", "Smith"),
+])
+def test_misheard_english_words_share_the_code(heard, meant):
+    assert metaphone(heard) == metaphone(meant)
+
+
+def test_different_english_words_differ():
+    assert metaphone("pad") != metaphone("pocket")
+    assert metaphone("circle") != metaphone("line")
+
+
+def test_english_pack_uses_metaphone():
+    assert PHONETICS.get("en") is metaphone
+    assert PHONETICS.get("de") is cologne

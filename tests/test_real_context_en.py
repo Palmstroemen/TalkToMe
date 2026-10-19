@@ -110,3 +110,13 @@ def test_microphone_off(text):
                "active": True, "description": ""}
     d = decide(text, PART_DESIGN + [mic_off], "en")
     assert (d.kind, d.command) == ("execute", "ui:mic_off")
+
+
+@pytest.mark.parametrize("text, command", [
+    ("Make a shamfur", "PartDesign_Chamfer"),       # spelled as heard: same sound
+    ("Poquet", "PartDesign_Pocket"),
+    ("Pat", "PartDesign_Pad"),
+])
+def test_commands_by_sound(text, command):
+    d = decide(text, PART_DESIGN, "en")
+    assert (d.kind, d.command) == ("execute", command), d

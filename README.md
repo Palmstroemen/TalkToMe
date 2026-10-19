@@ -97,7 +97,9 @@ Everything language specific of the recognition is in a language pack, `lang/<co
 | `patterns.json` | sentence patterns for commands with free text, e.g. renaming |
 | `vocab.json` | synonyms for commands |
 
-Packs exist for German and English. Your own changes go to the same files in
+Packs exist for German and English. Misheard words that sound like a command still find it:
+German compares by Cologne phonetics ("Richtig" ≈ "Rechteck"), English by Metaphone
+("Pat" ≈ "Pad"); the settings page explains this for the chosen language. Your own changes go to the same files in
 `<UserAppDataDir>/TalkToMe/lang/<code>/`: a list there replaces the pack's list, patterns there
 come first. A new language starts with a copy of `lang/en/`; without a phonetic algorithm,
 words are compared by spelling only.

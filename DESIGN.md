@@ -694,7 +694,7 @@ lang/en/  …
 (`FILLER_WORDS`, `PATTERNS`, `PHONETICS`, …) sind Sichten darauf, der übrige Code blieb gleich.
 Benutzeränderungen liegen in `<UserAppDataDir>/TalkToMe/lang/<code>/` (Addon und Dienst bekommen
 den Ordner, der Dienst über `TTM_USER_DIR`). Englisch: Wortlisten, Muster, Vokabular und ein
-einfacher Stemmer; kein Lautvergleich (Metaphone fehlt noch), also nur Schreibweise. Getestet
+einfacher Stemmer und Lautvergleich mit Metaphone („Pat“ ≈ „Pad“, „shamfur“ ≈ „chamfer“). Getestet
 mit aus FreeCAD 1.1.4 auf Englisch aufgezeichneten Kontexten (`tests/test_real_context_en.py`).
 
 Davon getrennt ist die **Übersetzung der Oberfläche** (Knöpfe, Statusleiste) über FreeCADs

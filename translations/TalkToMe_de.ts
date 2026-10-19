@@ -279,188 +279,218 @@
         <translation>Verbpartikel – Ende trennbarer Verben („zieht … ab“)</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="69" />
+        <location filename="../talktome/preferences.py" line="42" />
+        <source>Cologne phonetics (Kölner Phonetik)</source>
+        <translation>Kölner Phonetik</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="43" />
+        <source>Metaphone</source>
+        <translation>Metaphone</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="79" />
         <source>Browse…</source>
         <translation>Durchsuchen…</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="83" />
+        <location filename="../talktome/preferences.py" line="93" />
         <source>Voice control</source>
         <translation>Sprachsteuerung</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="89" />
+        <location filename="../talktome/preferences.py" line="99" />
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="90" />
+        <location filename="../talktome/preferences.py" line="100" />
         <source>Recognition</source>
         <translation>Erkennung</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="91" />
+        <location filename="../talktome/preferences.py" line="101" />
         <source>Behavior</source>
         <translation>Verhalten</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="92" />
+        <location filename="../talktome/preferences.py" line="102" />
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="93" />
+        <location filename="../talktome/preferences.py" line="103" />
         <source>Expert</source>
         <translation>Experte</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="102" />
+        <location filename="../talktome/preferences.py" line="112" />
         <source>Spoken language:</source>
         <translation>Gesprochene Sprache:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="104" />
+        <location filename="../talktome/preferences.py" line="114" />
         <source>Microphone:</source>
         <translation>Mikrofon:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="112" />
+        <location filename="../talktome/preferences.py" line="122" />
         <source>Volume of tones and voice:</source>
         <translation>Lautstärke von Tönen und Stimme:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="113" />
+        <location filename="../talktome/preferences.py" line="123" />
         <source>The microphone is switched on and off with the button in the toolbar "Talk to me". A keyboard shortcut for it: Tools → Customize → Keyboard.</source>
         <translation>Das Mikrofon schaltest du mit dem Button in der Symbolleiste „Talk to me“ ein und aus. Ein Tastenkürzel dafür: Werkzeuge → Anpassen → Tastatur.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="121" />
+        <location filename="../talktome/preferences.py" line="131" />
         <source>Speech recognition model:</source>
         <translation>Modell der Spracherkennung:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="123" />
+        <location filename="../talktome/preferences.py" line="133" />
         <source>Run on:</source>
         <translation>Ausführen auf:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="126" />
+        <location filename="../talktome/preferences.py" line="136" />
         <source>Larger models recognize better but take longer. Without a GPU, "base" answers in about a second. A new model is downloaded on its first use.</source>
         <translation>Größere Modelle erkennen besser, brauchen aber länger. Ohne Grafikkarte antwortet „base“ in etwa einer Sekunde. Ein neues Modell wird bei der ersten Verwendung heruntergeladen.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="133" />
+        <location filename="../talktome/preferences.py" line="143" />
         <source>Offer the likely commands next to the mouse pointer when not sure</source>
         <translation>Bei Unsicherheit die wahrscheinlichen Befehle neben dem Mauszeiger anbieten</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="136" />
+        <location filename="../talktome/preferences.py" line="146" />
         <source>Speech output:</source>
         <translation>Sprachausgabe:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="138" />
+        <location filename="../talktome/preferences.py" line="148" />
         <source>default voice of the language</source>
         <translation>Standardstimme der Sprache</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="139" />
+        <location filename="../talktome/preferences.py" line="149" />
         <source>Voice:</source>
         <translation>Stimme:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="139" />
+        <location filename="../talktome/preferences.py" line="149" />
         <source>Piper voice</source>
         <translation>Piper-Stimme</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="142" />
+        <location filename="../talktome/preferences.py" line="152" />
         <source>Only show what was recognized, don't execute (for testing)</source>
         <translation>Nur anzeigen, was erkannt wurde, nicht ausführen (zum Testen)</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="149" />
+        <location filename="../talktome/preferences.py" line="162" />
         <source>Word lists of the spoken language. Your changes are kept apart from the language pack, in your own folder; "Reset" brings back the pack's list.</source>
         <translation>Wortlisten der gesprochenen Sprache. Deine Änderungen liegen getrennt vom Sprachpaket in deinem eigenen Ordner; „Zurücksetzen“ holt die Liste des Pakets zurück.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="155" />
+        <location filename="../talktome/preferences.py" line="168" />
         <source>one word per line</source>
         <translation>ein Wort pro Zeile</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="159" />
+        <location filename="../talktome/preferences.py" line="172" />
         <source>Reset this list</source>
         <translation>Liste zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="161" />
+        <location filename="../talktome/preferences.py" line="174" />
         <source>Training…</source>
         <translation>Training…</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="163" />
+        <location filename="../talktome/preferences.py" line="176" />
         <location filename="../talktome/training.py" line="124" />
         <source>Vocabulary…</source>
         <translation>Wortschatz…</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="164" />
+        <location filename="../talktome/preferences.py" line="177" />
         <source>Your phrases and what training learned, by command</source>
         <translation>Deine Phrasen und was das Training gelernt hat, nach Befehlen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="166" />
+        <location filename="../talktome/preferences.py" line="179" />
         <source>Open my folder</source>
         <translation>Meinen Ordner öffnen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="181" />
+        <location filename="../talktome/preferences.py" line="194" />
         <source>service/.venv/bin/python of the addon</source>
         <translation>service/.venv/bin/python des Addons</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="182" />
+        <location filename="../talktome/preferences.py" line="195" />
         <source>Python of the speech service:</source>
         <translation>Python des Sprachdienstes:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="184" />
+        <location filename="../talktome/preferences.py" line="197" />
         <source>Extra arguments:</source>
         <translation>Zusätzliche Argumente:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="185" />
+        <location filename="../talktome/preferences.py" line="198" />
         <source>Extra arguments are passed to the speech service, e.g. "--beam 3". See: python -m talktome_service --help</source>
         <translation>Zusätzliche Argumente gehen an den Sprachdienst, z. B. „--beam 3“. Siehe: python -m talktome_service --help</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="241" />
+        <location filename="../talktome/preferences.py" line="219" />
+        <source>&lt;b&gt;Sound comparison:&lt;/b&gt; {}. Words that sound alike count as the same, so a command is found even when the speech recognition spelled it wrong: {}.</source>
+        <translation>&lt;b&gt;Lautvergleich:&lt;/b&gt; {}. Gleich klingende Wörter zählen als gleich, so wird ein Befehl auch dann gefunden, wenn die Spracherkennung ihn falsch geschrieben hat: {}.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="223" />
+        <source>&lt;b&gt;Sound comparison:&lt;/b&gt; none for this language, only the spelling is compared. A language pack names its algorithm in language.json ("phonetics").</source>
+        <translation>&lt;b&gt;Lautvergleich:&lt;/b&gt; keiner für diese Sprache, verglichen wird nur die Schreibweise. Ein Sprachpaket nennt sein Verfahren in language.json („phonetics“).</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="227" />
+        <source>&lt;b&gt;Word stems:&lt;/b&gt; forms of a word count as one when comparing with the help texts of the commands: {}.</source>
+        <translation>&lt;b&gt;Wortstämme:&lt;/b&gt; Formen eines Wortes zählen beim Vergleich mit den Hilfetexten der Befehle als eines: {}.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="229" />
+        <source>&lt;b&gt;Word stems:&lt;/b&gt; none for this language, help texts are compared word by word.</source>
+        <translation>&lt;b&gt;Wortstämme:&lt;/b&gt; keine für diese Sprache, Hilfetexte werden Wort für Wort verglichen.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="274" />
         <source>System default</source>
         <translation>Systemvorgabe</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="250" />
+        <location filename="../talktome/preferences.py" line="283" />
         <source>The speech service is not installed yet, see README.</source>
         <translation>Der Sprachdienst ist noch nicht installiert, siehe README.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="253" />
+        <location filename="../talktome/preferences.py" line="286" />
         <source>Found: {} CUDA GPU(s).</source>
         <translation>Gefunden: {} CUDA-Grafikkarte(n).</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="254" />
+        <location filename="../talktome/preferences.py" line="287" />
         <source>No CUDA GPU found: the CPU is used.</source>
         <translation>Keine CUDA-Grafikkarte gefunden: Die CPU wird verwendet.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="261" />
+        <location filename="../talktome/preferences.py" line="294" />
         <source>Default: {}. Any Piper voice (name or .onnx file) works; check its license.</source>
         <translation>Vorgabe: {}. Jede Piper-Stimme (Name oder .onnx-Datei) geht; prüfe ihre Lizenz.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="262" />
+        <location filename="../talktome/preferences.py" line="295" />
         <source>Speech output needs piper-tts in the service's Python.</source>
         <translation>Die Sprachausgabe braucht piper-tts im Python des Sprachdienstes.</translation>
     </message>

@@ -1,7 +1,7 @@
 {
   "_about": "Language data of the speech recognition for English. Lists of words; see DESIGN.md 13.1.",
   "name": "English",
-  "phonetics": null,
+  "phonetics": "metaphone",
   "stemmer": "english",
   "filler_words": [
     "a", "ah", "alright", "and", "around", "eh", "er", "erm", "exactly", "from", "good", "hm", "hmm",

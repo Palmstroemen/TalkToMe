@@ -37,6 +37,16 @@ LISTS = {
     "particles": QT_TRANSLATE_NOOP("TalkToMe", "Verb particles – end of separable verbs (\"zieht … ab\")"),
 }
 
+# How a language pack compares words (DESIGN.md 7, 13.1): name and an example of what it catches.
+PHONETICS = {
+    "cologne": (QT_TRANSLATE_NOOP("TalkToMe", "Cologne phonetics (Kölner Phonetik)"), "»Richtig« ≈ »Rechteck«, »Phase« ≈ »Fase«"),
+    "metaphone": (QT_TRANSLATE_NOOP("TalkToMe", "Metaphone"), "»Pat« ≈ »Pad«, »shamfur« ≈ »chamfer«"),
+}
+STEMMERS = {
+    "german": "»extrudiere« = »extrudiert«",
+    "english": "»extrudes« = »extruded«",
+}
+
 # Read by the service at its start: a change restarts a running service.
 RESTART = ("Language", "Microphone", "Volume", "Model", "Device", "Speech", "Voice", "ServicePython", "ExtraArgs")
 
@@ -146,6 +156,9 @@ class PreferencesPage:
     def language_tab(self):
         tab = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(tab)
+        self.pack_info = QtWidgets.QLabel()
+        self.pack_info.setWordWrap(True)
+        layout.addWidget(self.pack_info)
         layout.addWidget(hint(translate("TalkToMe", "Word lists of the spoken language. Your changes are kept apart from "
                               "the language pack, in your own folder; \"Reset\" brings back the pack's list.")))
         self.list_key = combo(list(LISTS.items()))
@@ -196,6 +209,26 @@ class PreferencesPage:
         self.list_language = self.language.currentData()
         self.lists = {}
         self.show_list()
+        self.show_pack_info()
+
+    def show_pack_info(self):
+        """How the language compares words, explained with an example of that language."""
+        pack = langpack.pack(self.list_language)
+        name, example = PHONETICS.get(pack.phonetics, (None, None))
+        if name:
+            sound = translate("TalkToMe", "<b>Sound comparison:</b> {}. Words that sound alike count as the same, "
+                                          "so a command is found even when the speech recognition spelled it "
+                                          "wrong: {}.").format(translate("TalkToMe", name), example)
+        else:
+            sound = translate("TalkToMe", "<b>Sound comparison:</b> none for this language, only the spelling "
+                                          "is compared. A language pack names its algorithm in language.json "
+                                          "(\"phonetics\").")
+        stems = STEMMERS.get(pack.stemmer)
+        stem = (translate("TalkToMe", "<b>Word stems:</b> forms of a word count as one when comparing with "
+                                      "the help texts of the commands: {}.").format(stems) if stems else
+                translate("TalkToMe", "<b>Word stems:</b> none for this language, help texts are compared "
+                                      "word by word."))
+        self.pack_info.setText(sound + "<br>" + stem)
 
     def show_list(self, *args):
         key = self.current_list_key()
