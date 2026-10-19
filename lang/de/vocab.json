@@ -39,6 +39,8 @@
                                  "Pause machen", "Stoppe die Aufnahme", "Aufnahme stoppen", "Aufnahme aus",
                                  "Mach das Mikro zu", "Mikro zu", "Höre nicht mehr zu", "Hör auf zuzuhören",
                                  "nicht mehr zuhören"],
+    "ui:train":                 ["Training", "Lerndialog", "Zeige den Lerndialog", "Öffne das Training",
+                                 "Trainingsfenster", "Lass uns das trainieren", "Das trainieren wir"],
 
     "workbench:PartDesignWorkbench": ["Part Design", "Wechsle zu Part Design"],
     "workbench:SketcherWorkbench":   ["Wechsle zum Sketcher"],

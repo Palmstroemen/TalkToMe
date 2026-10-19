@@ -120,6 +120,13 @@ def test_microphone_off_is_always_offered():
         assert c["ui:mic_off"]["level"] == "global"
 
 
+def test_training_is_always_offered():
+    vocab = {"ui:train": ["Training"]}
+    for dialog_open in (False, True):
+        c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=dialog_open, vocab=vocab))
+        assert c["ui:train"]["level"] == "global"
+
+
 # --- choices in an open dialog ---------------------------------------------------------------
 
 PLANES = ["XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)"]

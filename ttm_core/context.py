@@ -76,6 +76,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
 
     add("ui:cancel", "global", merge_phrases(vocab.get("ui:cancel")))
     add("ui:mic_off", "global", merge_phrases(vocab.get("ui:mic_off")))
+    add("ui:train", "global", merge_phrases(vocab.get("ui:train")))
     for wb, names in (workbenches or {}).items():
         if wb != current_workbench:
             wb_id = "workbench:" + wb

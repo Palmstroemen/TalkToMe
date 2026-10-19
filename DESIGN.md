@@ -452,8 +452,11 @@ Nicht jede Fehlerkennung lässt sich mit einer Regel beheben. Wie Whisper eine S
 hängt von Sprecher, Mikrofon und Modell ab (das gesprochene „Ypsilon“ wird bei einem Nutzer zu
 „Upsilom“, „Upsalon“, „Öpsilon“). Statt Sonderregeln lernt das System diese Formen pro Nutzer.
 
-**Trainingsseite** (eigenes, nicht-modales Fenster, Befehl `TalkToMe_Training`), von oben
-nach unten, jeweils mit kurzem Hilfetext:
+**Trainingsseite** (eigenes, nicht-modales Fenster), von oben nach unten, jeweils mit kurzem
+Hilfetext. Geöffnet wird sie per Sprache („Zeige mal den Lerndialog“, „Lass uns das mal
+trainieren“: `ui:train`, immer verfügbar), aus dem Rückfrage-Menü (8.8) oder aus den
+Einstellungen. Einen eigenen Button in der Symbolleiste gibt es bewusst nicht, neben dem
+Mikrofon verwirrte er; der Befehl `TalkToMe_Training` bleibt für ein Tastenkürzel.
 
 1. **Nicht verstandene Sätze** als Tabelle *Zeit | Gehört | Gemeint*. Was schon zugewiesen ist
    (auch über das Rückfrage-Menü), steht als „→ XY-Ebene ✓“ in der letzten Spalte. Jeder Satz

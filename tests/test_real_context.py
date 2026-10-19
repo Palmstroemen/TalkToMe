@@ -98,6 +98,19 @@ def test_microphone_off(text):
     assert (d.kind, d.command) == ("execute", "ui:mic_off")
 
 
+TRAIN = {"id": "ui:train", "level": "global", "phrases": VOCAB["ui:train"], "foreign": [],
+         "active": True, "description": ""}
+
+
+@pytest.mark.parametrize("text", [
+    "Zeige mal den Lerndialog", "Lass uns das mal trainieren", "Training", "Öffne das Training",
+    "Trainingsfenster",
+])
+def test_training_by_voice(text):
+    d = decide(text, PART_DESIGN + [MIC_OFF, TRAIN], "de")
+    assert (d.kind, d.command) == ("execute", "ui:train"), d
+
+
 def test_full_example_steps():
     """The user's example, after the switch to Part Design."""
     text = "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene."

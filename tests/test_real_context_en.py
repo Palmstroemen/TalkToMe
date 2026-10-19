@@ -120,3 +120,12 @@ def test_microphone_off(text):
 def test_commands_by_sound(text, command):
     d = decide(text, PART_DESIGN, "en")
     assert (d.kind, d.command) == ("execute", command), d
+
+
+@pytest.mark.parametrize("text", ["Show the training", "Let's train that", "Training", "Open the training window"])
+def test_training_by_voice(text):
+    vocab = load(os.path.join("..", "..", "lang", "en", "vocab.json"))
+    train = {"id": "ui:train", "level": "global", "phrases": vocab["ui:train"], "foreign": [],
+             "active": True, "description": ""}
+    d = decide(text, PART_DESIGN + [train], "en")
+    assert (d.kind, d.command) == ("execute", "ui:train"), d

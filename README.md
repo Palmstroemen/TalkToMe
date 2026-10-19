@@ -70,7 +70,8 @@ open, confirm with "OK".
 
 When something is not clear, a small menu next to the mouse pointer offers the likely commands;
 pick one by mouse or by voice ("die zweite"). The choice is executed and remembered: next time
-the same mishearing is understood. The button "Talk to me: Training" opens a page to teach
+the same mishearing is understood. Say "Lass uns das mal trainieren" ("Let's train that"), pick
+"None of these – train…" in the menu or press "Training…" in the settings to open a page to teach
 it on purpose: pick what you meant, say it three times. Learned forms are stored in
 `<UserAppDataDir>/TalkToMe/custom.<language>.json`. The vocabulary editor (button "Vocabulary…"
 on the training page and in the settings) shows them by command: delete them, or move a form

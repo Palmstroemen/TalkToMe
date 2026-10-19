@@ -582,6 +582,9 @@ class Controller(QtCore.QObject):
         if command == "ui:mic_off":
             self.action.setChecked(False)      # switching on again is the button's job
             ok, reason = True, ""
+        elif command == "ui:train":            # "Zeige mal den Lerndialog"
+            self.open_training()
+            ok, reason = True, ""
         elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, translate("TalkToMe", "dry run, not executed")
         elif command == "ui:values":

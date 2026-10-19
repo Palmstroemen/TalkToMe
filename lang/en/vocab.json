@@ -33,6 +33,8 @@
     "ui:rename":                ["Rename"],
     "ui:mic_off":               ["Mic off", "Microphone off", "Stop listening", "Short break", "Take a short break",
                                  "Pause", "Stop recording", "Mute"],
+    "ui:train":                 ["Training", "Show the training", "Open the training window", "Let's train that",
+                                 "Train that"],
 
     "workbench:PartDesignWorkbench": ["Part Design", "Switch to Part Design"],
     "workbench:SketcherWorkbench":   ["Switch to the sketcher"],
