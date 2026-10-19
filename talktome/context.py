@@ -84,6 +84,15 @@ def task_lists():
     return [w for w in mw.findChildren(QtWidgets.QListWidget) if in_task_dialog(w)]
 
 
+def tool_running():
+    """Whether an interactive sketcher tool runs (rectangle, line, ...): its task widget shows."""
+    if not Gui.Control.activeDialog():
+        return False
+    mw = Gui.getMainWindow()
+    return any(w.metaObject().className() == "SketcherGui::TaskSketcherTool" and in_task_dialog(w)
+               for w in mw.findChildren(QtWidgets.QWidget))
+
+
 def _choices():
     texts = []
     for widget in task_lists():

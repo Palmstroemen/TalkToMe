@@ -27,11 +27,94 @@ def _task_button(which):
 
 
 def _press_escape():
-    """Escape ends the running tool, e.g. the rectangle tool in the sketcher."""
-    target = QtWidgets.QApplication.focusWidget() or Gui.getMainWindow()
+    """Escape ends the running tool, e.g. the rectangle tool in the sketcher. With the value
+    fields of a tool showing, the 3D view gets it twice: the first closes the fields, the second
+    ends the tool, as with the keyboard."""
+    from talktome.context import tool_running
+    view = None
+    if tool_running():
+        try:
+            view = Gui.ActiveDocument.ActiveView.graphicsView()
+        except Exception:
+            view = None
+    target = view or QtWidgets.QApplication.focusWidget() or Gui.getMainWindow()
+    for _ in range(2 if view is not None else 1):
+        for kind in (QtCore.QEvent.Type.KeyPress, QtCore.QEvent.Type.KeyRelease):
+            event = QtGui.QKeyEvent(kind, QtCore.Qt.Key.Key_Escape, QtCore.Qt.KeyboardModifier.NoModifier)
+            QtWidgets.QApplication.sendEvent(target, event)
+        QtWidgets.QApplication.processEvents()
+        if view is not None and not tool_running():
+            break
+
+
+def value_fields():
+    """The fields a running tool shows in the 3D view for its values (On-View-Parameters), the one
+    with the focus first: it is the value the tool asks for next."""
+    fields = [w for w in Gui.getMainWindow().findChildren(QtWidgets.QAbstractSpinBox)
+              if w.metaObject().className() == "Gui::QuantitySpinBox" and w.isVisible() and _in_view(w)]
+    fields.sort(key=lambda w: not w.hasFocus())
+    return fields
+
+
+def _in_view(widget):
+    while widget is not None:
+        if widget.metaObject().className() == "Gui::View3DInventor":
+            return True
+        widget = widget.parentWidget()
+    return False
+
+
+def quantity(value, unit="mm"):
+    text = ("{:.6f}".format(value)).rstrip("0").rstrip(".")
+    return text.replace(".", QtCore.QLocale().decimalPoint()) + ("°" if unit == "°" else " " + unit)
+
+
+def _enter(field, value):
+    field.setFocus()
+    line = field.findChild(QtWidgets.QLineEdit)
+    line.selectAll()
+    line.setText(quantity(value, field.property("unit") or "mm"))
     for kind in (QtCore.QEvent.Type.KeyPress, QtCore.QEvent.Type.KeyRelease):
-        event = QtGui.QKeyEvent(kind, QtCore.Qt.Key.Key_Escape, QtCore.Qt.KeyboardModifier.NoModifier)
-        QtWidgets.QApplication.sendEvent(target, event)
+        QtWidgets.QApplication.sendEvent(field, QtGui.QKeyEvent(kind, QtCore.Qt.Key.Key_Return,
+                                                               QtCore.Qt.KeyboardModifier.NoModifier))
+    QtWidgets.QApplication.processEvents()
+
+
+# Tools whose length field is a diameter (FreeCAD 1.1.4): "Radius 20" means 40 there.
+DIAMETER_TOOLS = {"Sketcher_CreateCircle"}
+
+
+def _slots(fields, values):
+    """Values for fields in their order: named ones at their position, the others in the order spoken."""
+    slots = [None] * len(fields)
+    for position, value in values:
+        if position is not None and position < len(slots) and slots[position] is None:
+            slots[position] = value
+    rest = iter(v for p, v in values if p is None or p >= len(slots))
+    return [value if value is not None else next(rest, None) for value in slots]
+
+
+def fill_values(values, tool=None):
+    """Type spoken values into the tool's fields: [(position or None, value, kind)] (ttm_core.values).
+
+    Lengths go to the fields in mm, angles to those in °; named values to their position in the
+    tool's order (width 0, height 1), the others in the order spoken. A radius is doubled for
+    tools that ask for a diameter (tool: the command that started the tool, if known). Each value
+    is confirmed with Enter, as typed. Returns the number of values entered.
+    """
+    fields = value_fields()
+    lengths = [f for f in fields if f.property("unit") != "°"]
+    angles = [f for f in fields if f.property("unit") == "°"]
+    factor = 2 if tool in DIAMETER_TOOLS else 1
+    length_values = [(p, v * factor if k == "radius" else v) for p, v, k in values if k != "angle"]
+    angle_values = [(p, v) for p, v, k in values if k == "angle"]
+    entered = 0
+    for group, group_values in ((lengths, length_values), (angles, angle_values)):
+        for field, value in zip(group, _slots(group, group_values)):
+            if value is not None:
+                _enter(field, value)
+                entered += 1
+    return entered
 
 
 def _confirms(widget):

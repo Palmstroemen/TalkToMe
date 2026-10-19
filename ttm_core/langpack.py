@@ -58,6 +58,13 @@ class Pack:
         self.stop_words = self.filler_words | self.particles | set(data.get("stop_words", []))
         self.number_values = dict(data.get("number_values", {}))
         self.pick_words = dict(data.get("pick_words", {}))
+        self.value_names = dict(data.get("value_names", {}))
+        self.unit_factors = dict(data.get("unit_factors", {}))
+        self.negative_words = set(data.get("negative_words", []))
+        self.article_numbers = set(data.get("article_numbers", []))
+        self.angle_names = set(data.get("angle_names", []))
+        self.angle_units = set(data.get("angle_units", [])) | {"°"}
+        self.radius_words = set(data.get("radius_words", []))
         self.pattern_leading = set(data.get("pattern_leading", []))
         self.pattern_trailing = set(data.get("pattern_trailing", []))
         self.patterns = patterns

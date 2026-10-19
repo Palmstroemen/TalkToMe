@@ -185,10 +185,28 @@ Viele Befehle starten ein **interaktives Werkzeug**, das weitere Eingaben erwart
 - **Eingabe der Werte:** FreeCAD 1.x zeigt beim Zeichnen im Sketcher Eingabefelder direkt in der Ansicht (*On-View-Parameters*). Die Werte könnten wie Tastatureingaben dort hineingeschrieben werden (Zahl, Tab, Zahl, Enter).
 - **Mausklicks bleiben beim Nutzer.** Sprache und Maus ergänzen sich. Was der Nutzer *während* der Klicks sagt („von hier … nach hier“), ist Begleitsprache und wird ignoriert (Abschnitt 9.4).
 
-**Zu klären in FreeCAD (vor Phase 4):**
-1. Lässt sich von Python aus erkennen, **ob und welches Werkzeug gerade läuft**? Falls nicht, muss das Addon es selbst verfolgen: Werkzeug gestartet, bis Escape, Enter oder ein neuer Befehl.
-2. Nehmen die **On-View-Parameters** simulierte Tastatureingaben zuverlässig an? Gibt es eine direktere Schnittstelle?
-3. Welche Werkzeuge haben welche Folgeeingaben? Das ergibt eine Liste pro Workbench, beginnend mit Sketcher und PartDesign.
+**Umgesetzt für die Sketcher-Werkzeuge (2026-10-19), Antworten aus FreeCAD 1.1.4:**
+1. *Läuft ein Werkzeug?* Ja: Dann ist das Aufgaben-Widget `SketcherGui::TaskSketcherTool` sichtbar
+   (`talktome.context.tool_running`). Welches Werkzeug, verrät es nicht; das Addon merkt sich
+   das per Sprache gestartete.
+2. *Eingabe der Werte:* Die Felder des Werkzeug-Widgets (`parameterOne` …) sind in 1.1.4
+   versteckt, die Werte stehen in Feldern in der 3D-Ansicht (`Gui::QuantitySpinBox`, On-View-
+   Parameter). Mit der Vorgabe „nur Maße“ erscheinen sie nach dem ersten Klick. Eingabe wie per
+   Tastatur: ins Feld mit dem Fokus schreiben, Enter, der Fokus wandert zum nächsten Wert. Jedes
+   Feld hat eine Einheit (`mm` oder `°`). Escape an die 3D-Ansicht, zweimal, beendet das Werkzeug.
+3. *Welche Werte?* Allgemein, ohne Liste pro Werkzeug: Längen in die mm-Felder, Winkel in die
+   °-Felder, benannte Werte an ihre Stelle („Breite“ 0, „Höhe“ 1). Einzige Ausnahme: Der Kreis
+   fragt nach dem Durchmesser, „Radius 20“ wird dort verdoppelt (nur wenn er per Sprache
+   gestartet wurde; per Maus gestartet weiß das Addon nicht, welches Werkzeug läuft).
+
+Ablauf: Läuft ein Werkzeug, ist ein Teilsatz mit Zahlen eine Werteingabe (`ui:values`), sofern
+er keinen Befehl nennt (`ttm_core/values.py`: „50 mal 30“, „Breite 50, Höhe 30“, „5 cm“,
+„40 mm und 30 Grad“; Namen und Einheiten aus dem Sprachpaket). „Zeichne ein Rechteck 50 mal
+30“: Das Werkzeug startet, die Werte folgen als Nachschritt des Teilsatzes; erscheinen die
+Felder erst nach dem Klick, hält das Addon die Werte bis dahin fest.
+
+Offen: PartDesign-Werkzeuge (Aufpolsterung „12 mm“ im Aufgabendialog), weitere Sketcher-
+Werkzeuge im Alltag prüfen.
 
 ### 6.6 Kontext-Synchronisation
 

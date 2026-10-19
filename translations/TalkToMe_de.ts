@@ -18,37 +18,37 @@
         <translation>Nichts davon – trainieren…</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="55" />
+        <location filename="../talktome/executor.py" line="138" />
         <source>selected, but OK is not available</source>
         <translation>ausgewählt, aber OK ist nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="58" />
+        <location filename="../talktome/executor.py" line="141" />
         <source>choice no longer offered</source>
         <translation>Auswahl wird nicht mehr angeboten</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="108" />
+        <location filename="../talktome/executor.py" line="191" />
         <source>named {}</source>
         <translation>heißt jetzt {}</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="122" />
+        <location filename="../talktome/executor.py" line="205" />
         <source>unknown workbench</source>
         <translation>unbekannter Arbeitsbereich</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="137" />
+        <location filename="../talktome/executor.py" line="220" />
         <source>no dialog to confirm</source>
         <translation>kein Dialog zum Bestätigen</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="141" />
+        <location filename="../talktome/executor.py" line="224" />
         <source>unknown command</source>
         <translation>unbekannter Befehl</translation>
     </message>
     <message>
-        <location filename="../talktome/executor.py" line="143" />
+        <location filename="../talktome/executor.py" line="226" />
         <source>not available right now</source>
         <translation>gerade nicht verfügbar</translation>
     </message>
@@ -103,17 +103,17 @@
         <translation>Talk to me: Sprachdienst nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="260" />
+        <location filename="../talktome/gui.py" line="263" />
         <source>speech service not installed ({} not found), see README</source>
         <translation>Sprachdienst nicht installiert ({} nicht gefunden), siehe README</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="288" />
+        <location filename="../talktome/gui.py" line="291" />
         <source>starting speech service (the first start downloads the model) ...</source>
         <translation>Sprachdienst startet (beim ersten Start wird das Modell geladen) …</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="309" />
+        <location filename="../talktome/gui.py" line="312" />
         <source>Talk to me: speech service output:
   {}
 </source>
@@ -122,79 +122,94 @@
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="311" />
+        <location filename="../talktome/gui.py" line="314" />
         <source>speech service stopped, see Report view for details</source>
         <translation>Sprachdienst beendet, Einzelheiten im Ausgabefenster</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="343" />
+        <location filename="../talktome/gui.py" line="346" />
         <source>cannot connect to speech service: {}</source>
         <translation>keine Verbindung zum Sprachdienst: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="387" />
+        <location filename="../talktome/gui.py" line="402" />
         <source>connection to speech service lost</source>
         <translation>Verbindung zum Sprachdienst verloren</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="397" />
+        <location filename="../talktome/gui.py" line="412" />
         <source>no usable GPU found, using the CPU</source>
         <translation>keine nutzbare Grafikkarte gefunden, die CPU wird verwendet</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="412" />
+        <location filename="../talktome/gui.py" line="427" />
         <source>not understood: »{}« ({})</source>
         <translation>nicht verstanden: »{}« ({})</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="512" />
+        <location filename="../talktome/gui.py" line="527" />
         <source>nothing to pick</source>
         <translation>nichts zum Auswählen</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="542" />
+        <location filename="../talktome/gui.py" line="557" />
         <source>»{}« → {} failed: {}</source>
         <translation>»{}« → {} fehlgeschlagen: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="543" />
+        <location filename="../talktome/gui.py" line="558" />
         <source>Talk to me: »{}« → {} failed: {}
 </source>
         <translation>Talk to me: »{}« → {} fehlgeschlagen: {}
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="559" />
+        <location filename="../talktome/gui.py" line="574" />
         <source> (from help text)</source>
         <translation> (aus dem Hilfetext)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="571" />
+        <location filename="../talktome/gui.py" line="586" />
         <source>dry run, not executed</source>
         <translation>Testmodus, nicht ausgeführt</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="579" />
+        <location filename="../talktome/gui.py" line="593" />
+        <source>values wait for the first click</source>
+        <translation>Werte warten auf den ersten Klick</translation>
+    </message>
+    <message>
+        <location filename="../talktome/gui.py" line="595" />
+        <source>no tool waiting for values</source>
+        <translation>kein Werkzeug wartet auf Werte</translation>
+    </message>
+    <message>
+        <location filename="../talktome/gui.py" line="596" />
+        <source>values {}</source>
+        <translation>Werte {}</translation>
+    </message>
+    <message>
+        <location filename="../talktome/gui.py" line="605" />
         <source>no object »{}« in the document</source>
         <translation>kein Objekt »{}« im Dokument</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="580" />
+        <location filename="../talktome/gui.py" line="606" />
         <source>nothing to rename: select an object</source>
         <translation>nichts zum Umbenennen: wähle ein Objekt aus</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="584" />
+        <location filename="../talktome/gui.py" line="610" />
         <source>dimension name »{}«</source>
         <translation>Name der Bemaßung »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="588" />
+        <location filename="../talktome/gui.py" line="614" />
         <source>rename dimension {} to »{}«</source>
         <translation>Bemaßung {} umbenannt in »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="591" />
+        <location filename="../talktome/gui.py" line="617" />
         <source>rename {} to »{}«</source>
         <translation>{} umbenannt in »{}«</translation>
     </message>

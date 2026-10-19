@@ -62,6 +62,10 @@ A toolbar "Talk to me" with a microphone button appears in every workbench. To g
 keyboard shortcut (or a foot pedal key), assign one to the command "Talk to me" in
 Tools → Customize → Keyboard. The microphone key of a laptop keyboard mutes the microphone in
 the system; the button then turns orange.
+While a sketcher tool runs, say its values: after the first corner of a rectangle "50 mal 30"
+or "Breite 50, Höhe 30", for a line "40 mm und 30 Grad", for a circle "Radius 20". Said with
+the command ("Zeichne ein Rechteck 50 mal 30"), they wait for your first click.
+
 When something is not clear, a small menu next to the mouse pointer offers the likely commands;
 pick one by mouse or by voice ("die zweite"). The choice is executed and remembered: next time
 the same mishearing is understood. The button "Talk to me: Training" opens a page to teach

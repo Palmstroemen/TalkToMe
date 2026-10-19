@@ -26,6 +26,10 @@ from ttm_core.params import parse
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 from ttm_core.sequence import EXCLUSIVE, next_step
 from ttm_core.speech import phrase
+from ttm_core.decision import Decision
+from ttm_core.values import parse_values
+
+VALUES = "ui:values"
 
 SAMPLE_RATE = 16000
 FRAME = 512
@@ -60,6 +64,7 @@ class Service:
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
         self._training = False       # training: only transcripts, nothing is decided or executed
         self._patterns = None        # learned sentence patterns {command: [templates]}
+        self._tool = {}              # the running tool, e.g. {"running": True}: it takes spoken values
         self.language = self.info.get("language")
         self._mute_until = 0.0
         self._zero_frames = 0
@@ -191,6 +196,8 @@ class Service:
             self._candidates = candidates
         if "patterns" in msg:
             self._patterns = msg["patterns"]
+        if "tool" in msg:
+            self._tool = msg["tool"] or {}
         words = msg.get("hotwords")
         if words is None and candidates is not None:
             order = {level: i for i, level in enumerate(LEVELS)}
@@ -307,7 +314,8 @@ class Service:
             if self._candidates is not None:
                 whole = decide(text, self._candidates, self.language)
                 patterns = any(parse(c, self.language, self._patterns) for c in self._pending)
-                if whole.kind == "ignore" and not patterns:   # talk; its clauses alone would look like short attempts
+                values = self._tool.get("running") and parse_values(text, self.language)
+                if whole.kind == "ignore" and not patterns and not values:   # talk; its clauses alone would look like short attempts
                     self._pending = []
                     self.send("ignored", reason=whole.reason, text=text)
                     return
@@ -338,14 +346,26 @@ class Service:
         in der XY-Ebene": the sketch command opens the plane choice, the clause names the plane.
         Sends the choice as one more step; uses the addon's context sent before its result."""
         span, self._last_span = self._last_span, None
-        choices = [c for c in self._candidates or [] if c["id"].startswith(CHOOSE)]
-        if span is None or not choices:
+        if span is None:
             return False
-        d = decide(span, choices, self.language)
-        if d.kind != "execute":
+        choices = [c for c in self._candidates or [] if c["id"].startswith(CHOOSE)]
+        d = decide(span, choices, self.language) if choices else None
+        if d is None or d.kind != "execute":
+            d = self._values(span)             # "Zeichne ein Rechteck 50 mal 30": the tool runs now
+        if d is None or d.kind != "execute":
             return False
         self._send_step(d, span)
         return True
+
+    def _values(self, clause):
+        """Values for the running tool (DESIGN.md 6.5), or None."""
+        if not self._tool.get("running"):
+            return None
+        values = parse_values(clause, self.language)
+        if not values:
+            return None
+        return Decision("execute", VALUES, score=1.0, level="tool", via="values",
+                        args={"values": [list(v) for v in values]})
 
     def _send_step(self, d, span):
         self._step_id += 1
@@ -364,6 +384,10 @@ class Service:
         last = None
         while self._pending and self._candidates is not None:
             d, n = next_step(self._pending, self._candidates, self.language, patterns=self._patterns)
+            if d.kind != "execute":                # a command name wins; otherwise numbers fill the tool
+                values = self._values(self._pending[0])
+                if values is not None:
+                    d, n = values, 1
             span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
             last = d
             info = dict(text=span, utterance=self._utterance, utterance_id=self._utterance_id,
@@ -371,7 +395,7 @@ class Service:
                         alternatives=d.alternatives, via=d.via)
             if d.kind == "execute":
                 # A step may open a dialog asking for what its clause said; a choice is the answer.
-                self._last_span = None if d.command.startswith(CHOOSE) else span
+                self._last_span = None if d.command.startswith(CHOOSE) or d.command == VALUES else span
                 self._send_step(d, span)
                 return d                       # the addon executes and answers with "result"
             if d.kind == "not_understood":

@@ -224,5 +224,40 @@
   ],
   "pattern_trailing": [
     "bitte"
+  ],
+  "value_names": {
+    "breite": 0,
+    "länge": 0,
+    "radius": 0,
+    "durchmesser": 0,
+    "abstand": 0,
+    "höhe": 1,
+    "tiefe": 1
+  },
+  "unit_factors": {
+    "mm": 1,
+    "millimeter": 1,
+    "cm": 10,
+    "zentimeter": 10,
+    "m": 1000,
+    "meter": 1000,
+    "zoll": 25.4
+  },
+  "negative_words": [
+    "minus"
+  ],
+  "article_numbers": [
+    "ein",
+    "eine",
+    "einen"
+  ],
+  "radius_words": [
+    "radius"
+  ],
+  "angle_names": [
+    "winkel"
+  ],
+  "angle_units": [
+    "grad"
   ]
 }

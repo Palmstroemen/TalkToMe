@@ -672,3 +672,57 @@ def test_without_voice_tones_stay(parts):
     assert parts["tones"].played == ["error"]
     c.close()
     s.stop()
+
+
+# --- values for a running tool (DESIGN.md 6.5) -----------------------------------------------------
+
+SKETCHER = [
+    {"id": "Sketcher_CreateRectangle", "level": "edit", "phrases": ["Rechteck"], "active": True},
+    {"id": "Sketcher_CreateCircle", "level": "edit", "phrases": ["Kreis"], "active": True},
+]
+
+
+def tool_service(parts, text, tool):
+    parts["transcriber"] = FakeTranscriber(text)
+    s = Service(token=TOKEN, log=lambda *a: None, info={"language": "de"}, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=SKETCHER, tool=tool)
+    c.send("listen", on=True)
+    return s, c
+
+
+def test_values_go_to_the_running_tool(parts):
+    s, c = tool_service(parts, "50 mal 30", {"running": True})
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["args"]) == ("ui:values", {"values": [[None, 50.0, "length"], [None, 30.0, "length"]]})
+    c.close()
+    s.stop()
+
+
+def test_values_without_a_tool_are_nothing(parts):
+    s, c = tool_service(parts, "50 mal 30", {"running": False})
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.5)
+    c.close()
+    s.stop()
+
+
+def test_a_command_wins_over_values_in_a_tool(parts):
+    s, c = tool_service(parts, "Kreis", {"running": True})
+    assert c.wait_for("plan")["command"] == "Sketcher_CreateCircle"
+    c.close()
+    s.stop()
+
+
+def test_values_said_with_the_command_follow_it(parts):
+    """ "Zeichne ein Rechteck 50 mal 30": the tool starts, the values wait for its fields."""
+    s, c = tool_service(parts, "Zeichne ein Rechteck 50 mal 30", {"running": False})
+    first = c.wait_for("plan")
+    assert first["command"] == "Sketcher_CreateRectangle"
+    c.send("context", candidates=SKETCHER, tool={"running": True})       # the rectangle tool runs now
+    c.send("result", ok=True, id=first["id"])
+    second = c.wait_for("plan")
+    assert (second["command"], second["args"]) == ("ui:values", {"values": [[None, 50.0, "length"], [None, 30.0, "length"]]})
+    c.close()
+    s.stop()

@@ -122,6 +122,8 @@ class Controller(QtCore.QObject):
         self.training_candidates = None
         self.training_restore = None # microphone state to restore after training
         self.asking = None           # the open question menu: {"text", "options", "candidates", "popup"}
+        self.pending_values = None   # values said before the tool showed its fields (DESIGN.md 6.5)
+        self.tool_command = None     # the command that started the running tool, if started by voice
         self.process = None
         self.stderr_tail = []
         self.created = None          # (utterance id, document, object) of the last object a step created
@@ -164,7 +166,8 @@ class Controller(QtCore.QObject):
             log("collecting the context failed: {}".format(e))
             return
         self.last_candidates = candidates
-        self.send("context", candidates=candidates, patterns=self.patterns)
+        self.send("context", candidates=candidates, patterns=self.patterns,
+                  tool={"running": ttm_context.tool_running()})
 
     def reload_vocabulary(self):
         self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
@@ -372,7 +375,19 @@ class Controller(QtCore.QObject):
             if self.sock is not None:
                 self.sock.setblocking(False)
 
+    def fill_pending_values(self):
+        """"Rechteck 50 mal 30": the fields appear after the first click; fill them then."""
+        if self.pending_values is None:
+            return
+        if not ttm_context.tool_running():
+            self.pending_values = None         # the tool ended without its fields
+            return
+        if executor.value_fields():
+            values, self.pending_values = self.pending_values, None
+            executor.fill_values(values, self.tool_command)
+
     def on_poll(self):
+        self.fill_pending_values()
         while self.sock is not None:
             try:
                 data = self.sock.recv(65536)
@@ -569,6 +584,17 @@ class Controller(QtCore.QObject):
             ok, reason = True, ""
         elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, translate("TalkToMe", "dry run, not executed")
+        elif command == "ui:values":
+            values = [tuple(v) for v in args.get("values", [])]
+            if executor.value_fields():
+                ok, reason = executor.fill_values(values, self.tool_command) > 0, ""
+            elif ttm_context.tool_running():
+                self.pending_values = values
+                ok, reason = True, translate("TalkToMe", "values wait for the first click")
+            else:
+                ok, reason = False, translate("TalkToMe", "no tool waiting for values")
+            command = translate("TalkToMe", "values {}").format(
+                ", ".join(executor.quantity(v, "°" if k == "angle" else "mm") for _, v, k in values))
         elif command == "ui:rename":
             label = args.get("label", "")
             if args.get("target"):             # "Benenne den Körper2 in Grundplatte um"
@@ -596,6 +622,7 @@ class Controller(QtCore.QObject):
                 ok, reason = False, str(e)
             if ok:
                 self.remember_created(doc_name, before, utterance_id)
+                self.tool_command = command if ttm_context.tool_running() else None
         return ok, reason, command
 
 
