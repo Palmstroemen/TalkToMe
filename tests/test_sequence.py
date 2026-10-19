@@ -140,3 +140,29 @@ def test_plan_stops_at_an_unclear_clause():
     assert kinds(steps)[0] == ("execute", "PartDesign_Chamfer")
     assert steps[-1][0].kind in ("not_understood", "execute")
     assert all(d.kind != "not_understood" for d, _ in steps[:-1])
+
+
+WORKBENCH_PART = cand("workbench:PartWorkbench", ["Part"], "global")
+
+
+def test_values_win_over_a_sound_alike_while_a_tool_runs():
+    """ "Breite" sounds like "Part": with a tool running, a clause of only values fills the tool."""
+    steps = plan_utterance("Breite 50, Höhe 30", PART_DESIGN + [WORKBENCH_PART], "de", tool_running=True)
+    assert kinds(steps) == [("execute", VALUES)]
+    assert steps[0][0].args == {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}
+
+
+def test_value_clauses_in_a_row_are_one_step():
+    steps = plan_utterance("50, 30", PART_DESIGN, "de", tool_running=True)
+    assert kinds(steps) == [("execute", VALUES)]
+
+
+def test_command_name_still_wins_next_to_values():
+    steps = plan_utterance("Mach eine Fase, 2 mm", PART_DESIGN, "de", tool_running=True)
+    assert kinds(steps)[0] == ("execute", "PartDesign_Chamfer")
+
+
+def test_no_workbench_switch_while_a_tool_runs():
+    steps = plan_utterance("Part", PART_DESIGN + [WORKBENCH_PART], "de", tool_running=True)
+    assert all(d.command != "workbench:PartWorkbench" for d, _ in steps if d.kind == "execute")
+    assert kinds(plan_utterance("Part", PART_DESIGN + [WORKBENCH_PART], "de")) == [("execute", "workbench:PartWorkbench")]

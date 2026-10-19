@@ -7,7 +7,8 @@
     python tools/corpus.py de --coverage        how well each command is reached by voice, worst
                                                 first (--context NAME: only that context's commands)
 
-Exit code 1 if a case fails that is not marked "known", or with --with if anything got worse.
+Exit code 1 if a case fails that is not marked "known", if a "known" case is correct now (remove
+the mark), or with --with if anything got worse.
 """
 
 import argparse
@@ -28,6 +29,10 @@ def report(language, cases, verbose):
         "{} {}".format(n, outcome) for outcome, n in counts.items() if n)))
     unexpected = 0
     for r in sorted(results, key=lambda r: -corpus.RANK[r.outcome]):
+        if r.outcome == "correct" and r.case.get("known"):
+            unexpected += 1
+            print("  fixed – remove \"known\": " + corpus.describe(r))
+            continue
         if r.outcome == "correct" and not verbose:
             continue
         known = r.case.get("known")

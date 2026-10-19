@@ -12,7 +12,7 @@ from ttm_core.clauses import split_clauses
 from ttm_core.decision import Decision, decide, explains
 from ttm_core.matching import command_words
 from ttm_core.params import parse
-from ttm_core.values import parse_values
+from ttm_core.values import only_values, parse_values
 
 # Steps that change the candidates; what follows them is decided in the new context.
 CONTEXT_CHANGING = ("workbench:",)
@@ -68,7 +68,7 @@ def next_step(clauses, candidates, language=None, max_span=3, patterns=None, **d
 def start_utterance(text, candidates, language=None, patterns=None, tool_running=False):
     """(clauses to decide, None) or ([], the ignore decision) when the whole is talk."""
     pending = split_clauses(text, language)
-    whole = decide(text, candidates, language)
+    whole = decide(text, _while_tool(candidates, tool_running), language)
     has_pattern = any(parse(c, language, patterns) for c in pending)
     values = tool_running and parse_values(text, language)
     if whole.kind == "ignore" and not has_pattern and not values:   # its clauses alone would look like short attempts
@@ -89,10 +89,26 @@ def values_step(clause, language=None, tool_running=False):
                     args={"values": [list(v) for v in values]})
 
 
+def _while_tool(candidates, tool_running):
+    """No workbench switch while a tool waits for values: it would leave the tool."""
+    if not tool_running:
+        return candidates
+    return [c for c in candidates if not c["id"].startswith(CONTEXT_CHANGING)]
+
+
 def step(pending, candidates, language=None, patterns=None, tool_running=False):
-    """(Decision, number of clauses) for the start of pending: a command name wins; otherwise
-    numbers fill the running tool."""
-    d, n = next_step(pending, candidates, language, patterns=patterns)
+    """(Decision, number of clauses) for the start of pending.
+
+    While a tool runs, clauses of nothing but values ("Breite 50, Höhe 30") are one values step,
+    however much they sound like a command ("Breite" ≈ "Part"). Otherwise a command name wins,
+    and numbers next to no command fill the tool.
+    """
+    if tool_running and only_values(pending[0], language):
+        n = 1
+        while n < len(pending) and only_values(pending[n], language):
+            n += 1
+        return values_step(_join(pending[:n]), language, tool_running), n
+    d, n = next_step(pending, _while_tool(candidates, tool_running), language, patterns=patterns)
     if d.kind != "execute":
         values = values_step(pending[0], language, tool_running)
         if values is not None:

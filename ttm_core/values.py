@@ -50,3 +50,14 @@ def parse_values(text, language):
         elif values and token in p.unit_factors:
             values[-1][1] *= p.unit_factors[token]
     return [(position, round(value, 6), kind) for position, value, kind in values]
+
+
+def only_values(text, language):
+    """Whether text says nothing but values: numbers, their names and units, filler words
+    ("Breite 50", "und die Höhe 30 mm"). While a tool waits, such a clause is never a command,
+    however much it sounds like one ("Breite" ≈ "Part")."""
+    p = pack(language)
+    tokens = re.findall(r"-?\d+(?:[.,]\d+)?|°|[^\W\d_]+", text.lower())
+    value_words = (set(p.value_names) | p.angle_names | p.radius_words | p.negative_words | p.angle_units
+                   | set(p.unit_factors) | set(p.number_values) | p.article_numbers | p.stop_words | {"x"})
+    return bool(parse_values(text, language)) and all(NUMBER.match(t) or t in value_words for t in tokens)

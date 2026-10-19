@@ -682,12 +682,12 @@ SKETCHER = [
 ]
 
 
-def tool_service(parts, text, tool):
+def tool_service(parts, text, tool, extra=()):
     parts["transcriber"] = FakeTranscriber(text)
     s = Service(token=TOKEN, log=lambda *a: None, info={"language": "de"}, **parts)
     s.start()
     c = connect(s)
-    c.send("context", candidates=SKETCHER, tool=tool)
+    c.send("context", candidates=SKETCHER + list(extra), tool=tool)
     c.send("listen", on=True)
     return s, c
 
@@ -724,5 +724,16 @@ def test_values_said_with_the_command_follow_it(parts):
     c.send("result", ok=True, id=first["id"])
     second = c.wait_for("plan")
     assert (second["command"], second["args"]) == ("ui:values", {"values": [[None, 50.0, "length"], [None, 30.0, "length"]]})
+    c.close()
+    s.stop()
+
+
+def test_named_values_are_one_step_and_no_workbench_switch(parts):
+    """ "Breite" sounds like "Part": with a tool running, it is a value, never a workbench switch."""
+    s, c = tool_service(parts, "Breite 50, Höhe 30", {"running": True},
+                        extra=[{"id": "workbench:PartWorkbench", "level": "global", "phrases": ["Part"], "active": True}])
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["args"], msg["more"]) == \
+        ("ui:values", {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}, False)
     c.close()
     s.stop()

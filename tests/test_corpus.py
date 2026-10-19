@@ -127,6 +127,8 @@ def test_pack_corpus(language):
     results = corpus.run(language, corpus.cases(language))
     failed = [corpus.describe(r) for r in results if r.outcome != "correct" and not r.case.get("known")]
     assert not failed, "\n".join(failed)
+    fixed = [corpus.describe(r) for r in results if r.outcome == "correct" and r.case.get("known")]
+    assert not fixed, "fixed – remove \"known\":\n" + "\n".join(fixed)
 
 
 def test_packs_have_a_corpus():

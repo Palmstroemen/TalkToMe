@@ -937,6 +937,13 @@ laufendem Werkzeug zur Part-Werkbank („Breite“ ≈ „Part“); einzelne Wö
 („Parallel“, „Rechtwinklig“) unter der Schwelle, weil die Beschriftung „… festlegen“ lautet;
 „Symmetrisch“ ≈ „Isometrisch“; Werte mit Komma werden zwei Schritte.
 
+**Behoben:** Bei laufendem Werkzeug ist ein Teilsatz, der nur aus Werten besteht (Zahlen,
+Wertnamen, Einheiten, Füllwörter: „Breite 50“, „und die Höhe 30 mm“), immer eine Werteingabe,
+auch wenn er wie ein Befehl klingt (`values.only_values`); aufeinanderfolgende solche
+Teilsätze sind ein Schritt. Ein Befehlsname daneben bleibt Befehl („Mach eine Fase, 2 mm“).
+Werkbankwechsel werden bei laufendem Werkzeug nicht angeboten. Offen: Zahlwörter enden bei
+„zwölf“; „zwanzig“, „dreiundzwanzig“ fehlen (Whisper schreibt sie meist als Ziffern).
+
 ### 16.7 Abdeckung und Trainingsspiele
 
 Andersherum gedacht: Jeder Befehl, auch aus Addons, soll über einige typische Sätze erreichbar

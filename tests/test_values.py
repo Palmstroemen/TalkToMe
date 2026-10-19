@@ -50,3 +50,23 @@ def test_article_counts_only_with_unit_or_name():
 ])
 def test_angles_and_radius(text, values):
     assert parse_values(text, "de") == values
+
+
+from ttm_core.values import only_values   # noqa: E402
+
+
+@pytest.mark.parametrize("text", ["Breite 50", "Höhe 30", "12 mm", "30 Grad", "50 mal 30", "minus 10",
+                                  "und die Höhe 30", "Radius zwölf", "Länge 12,5 mm bitte"])
+def test_only_values(text):
+    assert only_values(text, "de")
+
+
+@pytest.mark.parametrize("text", ["Zeichne ein Rechteck 50 mal 30", "Breite", "Speichern", "Aufpolsterung 12 mm",
+                                  "ein Rechteck", ""])
+def test_not_only_values(text):
+    assert not only_values(text, "de")
+
+
+def test_only_values_english():
+    assert only_values("width 50", "en") and only_values("height 30 mm", "en")
+    assert not only_values("pad 12 mm", "en")

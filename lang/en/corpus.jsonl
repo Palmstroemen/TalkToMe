@@ -71,7 +71,10 @@
 
 # --- Values for a running tool
 {"text": "50 by 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}
-{"text": "width 50, height 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}], "known": true, "note": "the comma splits the values into two steps; one step with both is wanted"}
+{"text": "width 50, height 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}]}
+{"text": "height 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[1, 30.0, "length"]]}}]}
+{"text": "width 5 cm and height 2 cm", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 20.0, "length"]]}}]}
+{"text": "Switch to Part", "context": "fc114_sketcher_tool", "expect": "not_understood", "note": "no workbench switch while a tool waits for values"}
 
 # --- Values in the pad dialog
 {"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}

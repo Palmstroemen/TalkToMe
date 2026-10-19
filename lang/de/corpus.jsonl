@@ -97,9 +97,14 @@
 
 # --- Werte für ein laufendes Werkzeug
 {"text": "50 mal 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}
-{"text": "Breite 50, Höhe 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}], "known": true, "note": "BUG: 'Breite' sounds like 'Part' and switches the workbench while a tool runs"}
+{"text": "Breite 50, Höhe 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}]}
 {"text": "zwölf mal fünf", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"], [null, 5.0, "length"]]}}]}
 {"text": "Abbrechen", "context": "fc114_sketcher_tool", "expect": ["ui:cancel"]}
+{"text": "Höhe 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[1, 30.0, "length"]]}}]}
+{"text": "Breite 50 und Höhe 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}]}
+{"text": "und die Breite 40 mm", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 40.0, "length"]]}}]}
+{"text": "Breite 5 cm, Höhe 2 cm", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 20.0, "length"]]}}]}
+{"text": "Wechsle zu Part", "context": "fc114_sketcher_tool", "expect": "not_understood", "note": "no workbench switch while a tool waits for values"}
 
 # --- Werte im Dialog der Aufpolsterung
 {"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}
