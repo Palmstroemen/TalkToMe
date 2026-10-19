@@ -668,6 +668,13 @@ lang/en/  …
   Umbau des Abgleichs, der mit Wörtern arbeitet; Arabisch eigene Normalisierung.
 - **Englisch als zweites Paket** von Anfang an, um die Trennung zu prüfen.
 
+**Umgesetzt (2026-10-19):** `ttm_core/langpack.py` lädt die Pakete; die alten Namen
+(`FILLER_WORDS`, `PATTERNS`, `PHONETICS`, …) sind Sichten darauf, der übrige Code blieb gleich.
+Benutzeränderungen liegen in `<UserAppDataDir>/TalkToMe/lang/<code>/` (Addon und Dienst bekommen
+den Ordner, der Dienst über `TTM_USER_DIR`). Englisch: Wortlisten, Muster, Vokabular und ein
+einfacher Stemmer; kein Lautvergleich (Metaphone fehlt noch), also nur Schreibweise. Getestet
+mit aus FreeCAD 1.1.4 auf Englisch aufgezeichneten Kontexten (`tests/test_real_context_en.py`).
+
 Davon getrennt ist die **Übersetzung der Oberfläche** (Knöpfe, Statusleiste) über FreeCADs
 `translate()` und Übersetzungsdateien.
 
@@ -697,8 +704,8 @@ Davon getrennt ist die **Übersetzung der Oberfläche** (Knöpfe, Statusleiste) 
 Befehlsfolgen, Umbenennen, Auswahl in Dialogen, Mikrofon per Stimme aus, Anzeige der
 System-Stummschaltung. Reihenfolge:
 
-1. Training (8.7) und Rückfrage-Menü (8.8)
-2. Sprachpakete de und en (13.1)
+1. ~~Training (8.7) und Rückfrage-Menü (8.8)~~
+2. ~~Sprachpakete de und en (13.1)~~
 3. Sprachausgabe (10.1)
 4. Einstellungsseite (13)
 5. Wortschatz-Editor

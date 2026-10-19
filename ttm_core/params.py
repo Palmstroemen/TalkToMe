@@ -16,46 +16,26 @@ parameter cut out ("nenndas {label}"). Their fixed part may differ a little next
 import re
 from difflib import SequenceMatcher
 
+from ttm_core.langpack import View
 from ttm_core.languages import CLAUSE_WORDS, STOP_WORDS
 from ttm_core.phonetics import PHONETICS
 
 LABEL = "{label}"
 SIMILAR = 0.8        # fixed part of a learned pattern: spelling similarity needed (or same sound)
 
-_PRONOUN = r"(?:den|die|das|ihn|sie|es|diesen|diese|dieses)"
-
-PATTERNS = {
-    "de": [
-        ("ui:rename", rf"(?:{_PRONOUN}\s+)?(?:nennen\s+wir|nenne\s+ich|nennen|nenne|nenn)\s+"
-                      rf"(?:{_PRONOUN}\s+)?(?:jetzt\s+|mal\s+)?(?P<label>.+)"),
-        ("ui:rename", rf"(?:{_PRONOUN}\s+)?(?:benenne|benenn)\s+(?:{_PRONOUN}\s+)?um\s+(?:in|zu|auf)\s+(?P<label>.+)"),
-        ("ui:rename", r"(?:benenne|benenn)\s+(?:doch\s+)?(?:mal\s+)?(?:bitte\s+)?(?:(?:den|die|das)\s+)?"
-                      r"(?P<target>.+?)\s+(?:um\s+)?(?:in|zu|auf)\s+(?P<label>.+?)(?:\s+um)?"),
-        ("ui:rename", r"(?:umbenennen|umbenannt)\s+(?:in|zu|auf)\s+(?P<label>.+)"),
-        ("ui:rename", r"(?:der|die|das|er|sie|es|dieser|diese|dieses)\s+(?:soll|sollte)\s+(?P<label>.+?)\s+heißen"),
-        ("ui:rename", r"(?:der|die|das|er|sie|es)\s+heißt\s+(?P<label>.+)"),
-        ("ui:rename", r"(?:gib|gebe|geben\s+wir)\s+(?:ihm|ihr)\s+den\s+namen\s+(?P<label>.+)"),
-        ("ui:rename", r"name\s+(?P<label>.+)"),
-        ("ui:pick", r"(?:nummer\s+|die\s+|den\s+|das\s+)?(?P<pick>\w+)"),
-    ],
-}
-
-PICK_WORDS = {
-    "de": {"1": 1, "eins": 1, "erste": 1, "ersten": 1, "erstes": 1, "erstens": 1,
-           "2": 2, "zwei": 2, "zweite": 2, "zweiten": 2, "zweites": 2, "zweitens": 2,
-           "3": 3, "drei": 3, "dritte": 3, "dritten": 3, "drittes": 3, "drittens": 3},
-}
-
-# Words around the pattern that belong to neither command nor parameter.
-LEADING = {"bitte", "jetzt", "mal", "also"}
-TRAILING = {"bitte"}
+# Built-in patterns per language come from the language packs (lang/<code>/patterns.json).
+PATTERNS = View("patterns")
+PICK_WORDS = View("pick_words")
+LEADING = View("pattern_leading")      # words around a pattern that belong to neither command
+TRAILING = View("pattern_trailing")    # nor parameter ("bitte")
 
 
 def _strip(words, language):
-    lead = CLAUSE_WORDS.get(language, set()) | LEADING
+    lead = CLAUSE_WORDS.get(language, set()) | LEADING.get(language, set())
+    trail = TRAILING.get(language, set())
     while words and words[0].lower() in lead:
         words = words[1:]
-    while words and words[-1].lower() in TRAILING:
+    while words and words[-1].lower() in trail:
         words = words[:-1]
     return words
 

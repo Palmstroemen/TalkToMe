@@ -212,6 +212,7 @@ class Controller(QtCore.QObject):
         for name in FOREIGN_ENV:
             env.remove(name)
         env.insert("TTM_TOKEN", self.token)
+        env.insert("TTM_USER_DIR", ttm_context.user_dir())
         env.insert("PYTHONPATH", os.pathsep.join([ADDON_DIR, SERVICE_DIR]))
         env.insert("PYTHONIOENCODING", "utf-8")
         self.stderr_tail = []

@@ -1,0 +1,36 @@
+{
+  "_about": "Language data of the speech recognition for English. Lists of words; see DESIGN.md 13.1.",
+  "name": "English",
+  "phonetics": null,
+  "stemmer": "english",
+  "filler_words": [
+    "a", "ah", "alright", "and", "around", "eh", "er", "erm", "exactly", "from", "good", "hm", "hmm",
+    "here", "is", "it", "just", "like", "mhm", "no", "now", "oh", "okay", "please", "right", "so",
+    "thanks", "that", "the", "then", "there", "this", "to", "uh", "um", "well", "yeah", "yes"
+  ],
+  "parameter_words": [
+    "mm", "cm", "m", "millimeter", "millimeters", "millimetre", "millimetres", "centimeter", "centimeters",
+    "meter", "meters", "inch", "inches", "degree", "degrees", "percent", "point", "half",
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve", "twenty", "thirty", "forty", "fifty", "hundred", "thousand"
+  ],
+  "clause_words": ["and", "then", "afterwards", "next"],
+  "particles": ["up", "down", "out", "off", "away", "back", "over"],
+  "stop_words": [
+    "an", "of", "in", "on", "at", "by", "for", "with", "into", "onto", "from", "about",
+    "i", "you", "we", "me", "us", "he", "she", "him", "her", "they", "them", "its", "my", "your",
+    "these", "those", "which", "what", "or", "but", "if", "as", "also", "only", "not", "no",
+    "be", "am", "are", "was", "were", "been", "will", "would", "can", "could", "should", "shall",
+    "do", "does", "did", "have", "has", "had", "let", "lets", "let's",
+    "make", "makes", "do", "get", "selected", "existing", "current", "new"
+  ],
+  "number_values": {
+    "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+    "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12
+  },
+  "pick_words": {
+    "1": 1, "one": 1, "first": 1, "2": 2, "two": 2, "second": 2, "3": 3, "three": 3, "third": 3
+  },
+  "pattern_leading": ["please", "now", "just", "and", "then", "okay", "so"],
+  "pattern_trailing": ["please"]
+}

@@ -2,6 +2,8 @@
 
     TTM_TOKEN=<secret> python -m talktome_service --language de
 
+TTM_USER_DIR (optional) is where the user's changes to the language packs are (DESIGN.md 13.1).
+
 The service prints "TTM_PORT=<port>" on stdout once it accepts connections.
 """
 
@@ -40,6 +42,11 @@ def main(argv=None):
     if not token:
         log("TTM_TOKEN is not set")
         return 2
+
+    from ttm_core import langpack
+    langpack.configure(os.environ.get("TTM_USER_DIR") or None)
+    if args.language not in langpack.languages():
+        log("no language pack for '{}': recognition works, but without word lists and patterns".format(args.language))
 
     from talktome_service.audio import Microphone, WavSource
     from talktome_service.server import Service

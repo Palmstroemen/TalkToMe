@@ -8,15 +8,21 @@ import FreeCAD as App
 import FreeCADGui as Gui
 
 from talktome.qt import QtCore, QtWidgets
+from ttm_core import langpack
 from ttm_core.context import build_candidates
 from ttm_core.training import HEARD, PATTERNS
 
-ADDON_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def user_dir():
+    """The user's Talk to me folder: own vocabulary, learned forms, changes to language packs."""
+    return os.path.join(App.getUserAppDataDir(), "TalkToMe")
+
+
+langpack.configure(user_dir())
 
 
 def custom_path(language):
     """The user's own vocabulary file, also where training stores what it learned."""
-    return os.path.join(App.getUserAppDataDir(), "TalkToMe", "custom.{}.json".format(language))
+    return os.path.join(user_dir(), "custom.{}.json".format(language))
 
 
 def _read(path):
@@ -45,7 +51,7 @@ def load_vocabulary(language):
     """(vocab, heard, patterns): phrases of the addon's package, overridden by the user's own
     file; the forms and sentence patterns learned in training ({command: [texts]})."""
     vocab = {}
-    package = _read(os.path.join(ADDON_DIR, "vocab", "{}.json".format(language)))
+    package = langpack.pack(language).vocab
     custom = read_custom(language)
     for data in (package, custom):
         for cmd, phrases in data.items():

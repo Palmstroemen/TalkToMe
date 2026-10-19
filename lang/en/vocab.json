@@ -1,0 +1,42 @@
+{
+    "_comment": "English vocabulary pack: synonyms in addition to FreeCAD's button texts. Command ID -> phrases.",
+
+    "Sketcher_NewSketch":       ["New sketch", "Open the sketcher", "Open sketch"],
+    "Sketcher_LeaveSketch":     ["Close the sketch", "Close sketch", "Leave sketch", "Leave the sketcher"],
+    "Sketcher_CreateRectangle": ["Rectangle", "Box"],
+    "Sketcher_CreateCircle":    ["Circle"],
+    "Sketcher_CreateLine":      ["Line"],
+    "Sketcher_Dimension":       ["Dimension", "Measure"],
+
+    "PartDesign_Pad":           ["Pad", "extrude", "pull up"],
+    "PartDesign_Pocket":        ["Pocket", "cut out"],
+    "PartDesign_Chamfer":       ["Chamfer", "bevel"],
+    "PartDesign_Fillet":        ["Fillet", "round the edges", "round off"],
+    "PartDesign_Mirrored":      ["Mirror"],
+
+    "Std_ViewFront":            ["Front view", "From the front"],
+    "Std_ViewRear":             ["Rear view", "From behind", "Other side"],
+    "Std_ViewTop":              ["Top view", "From above"],
+    "Std_ViewBottom":           ["Bottom view", "From below"],
+    "Std_ViewLeft":             ["From the left"],
+    "Std_ViewRight":            ["From the right"],
+    "Std_ViewIsometric":        ["Isometric view", "Isometric"],
+    "Std_ViewFitAll":           ["Fit all", "Show everything"],
+    "Std_ViewZoomIn":           ["Zoom in"],
+    "Std_ViewZoomOut":          ["Zoom out"],
+    "Std_Undo":                 ["Undo", "Undo that"],
+    "Std_Redo":                 ["Redo"],
+    "Std_Save":                 ["Save", "Save that"],
+
+    "ui:cancel":                ["Cancel", "Abort", "Stop"],
+    "ui:ok":                    ["OK", "Okay", "Confirm", "Done"],
+    "ui:rename":                ["Rename"],
+    "ui:mic_off":               ["Mic off", "Microphone off", "Stop listening", "Short break", "Take a short break",
+                                 "Pause", "Stop recording", "Mute"],
+
+    "workbench:PartDesignWorkbench": ["Part Design", "Switch to Part Design"],
+    "workbench:SketcherWorkbench":   ["Switch to the sketcher"],
+    "workbench:PartWorkbench":       ["Switch to Part"],
+    "workbench:DraftWorkbench":      ["Switch to Draft"],
+    "workbench:TechDrawWorkbench":   ["Switch to TechDraw", "Tech Draw"]
+}

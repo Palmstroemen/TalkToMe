@@ -6,6 +6,8 @@ algorithm, e.g. Metaphone for English; without one, sound-alike matching is skip
 
 from functools import lru_cache
 
+from ttm_core.langpack import View
+
 VOWELS = set("aeijouyäöü")
 
 
@@ -59,4 +61,7 @@ def cologne(word):
     return collapsed[0] + collapsed[1:].replace("0", "")
 
 
-PHONETICS = {"de": cologne}
+ALGORITHMS = {"cologne": cologne}
+
+# language → phonetic function, as named in the language pack; None: compare spelling only.
+PHONETICS = View("phonetics", convert=ALGORITHMS.get)

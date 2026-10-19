@@ -1,0 +1,14 @@
+{
+  "_about": "Sentence patterns for commands with free text: regular expressions matched against a whole clause (case-insensitive). Groups: label (a name), target (the object named), pick (a menu entry, see pick_words). Macros in braces are replaced first.",
+  "macros": {
+    "pronoun": "(?:it|this|that|this\\s+one|that\\s+one|him|her)"
+  },
+  "patterns": [
+    ["ui:rename", "(?:let's\\s+|lets\\s+|we'll\\s+)?(?:call|name)\\s+{pronoun}\\s+(?P<label>.+)"],
+    ["ui:rename", "rename\\s+{pronoun}\\s+(?:to|as|into)\\s+(?P<label>.+)"],
+    ["ui:rename", "rename\\s+(?:the\\s+)?(?P<target>.+?)\\s+(?:to|as|into)\\s+(?P<label>.+)"],
+    ["ui:rename", "(?:give\\s+{pronoun}\\s+the\\s+name|its\\s+name\\s+is|it's\\s+called)\\s+(?P<label>.+)"],
+    ["ui:rename", "name\\s+(?P<label>.+)"],
+    ["ui:pick", "(?:number\\s+|the\\s+)?(?P<pick>\\w+)(?:\\s+one)?"]
+  ]
+}

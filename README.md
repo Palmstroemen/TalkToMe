@@ -26,7 +26,7 @@ service/.venv/bin/python tools/try_talktome.py --model small
 ```
 
 Every recognized sentence is printed with its latency and the service's decision, using the
-vocabulary in `vocab/de.json` (edit it to add your own phrases). You hear a confirmation tone
+vocabulary in `lang/de/vocab.json` (edit it to add your own phrases). You hear a confirmation tone
 when a command was recognized and an error tone when it was close but not clear.
 
 ## Measure models
@@ -69,12 +69,27 @@ Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkTo
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| `Language` | `de` | Spoken language |
+| `Language` | `de` | Spoken language: `de` or `en` (a folder in `lang/`) |
 | `Model` | by hardware | `tiny`, `base`, `small`, ... |
 | `Device` | `auto` | `auto`, `cuda`, `cpu` |
 | `ServicePython` | `service/.venv/bin/python` | Python of the speech service |
 | `DryRun` | `false` | Only show recognized commands, don't execute them |
 | `AskMenu` | `true` | Question menu next to the mouse pointer when not sure |
+
+## Languages
+
+Everything language specific of the recognition is in a language pack, `lang/<code>/`:
+
+| File | Content |
+|---|---|
+| `language.json` | word lists (fillers, stop words, number and unit words, clause words, verb particles), names of the phonetic and stemming algorithm |
+| `patterns.json` | sentence patterns for commands with free text, e.g. renaming |
+| `vocab.json` | synonyms for commands |
+
+Packs exist for German and English. Your own changes go to the same files in
+`<UserAppDataDir>/TalkToMe/lang/<code>/`: a list there replaces the pack's list, patterns there
+come first. A new language starts with a copy of `lang/en/`; without a phonetic algorithm,
+words are compared by spelling only.
 
 ## Tests
 

@@ -4,6 +4,8 @@
     "füge", "fügt"                            → "fug"
 """
 
+from ttm_core.langpack import View
+
 GERMAN_FOLD = str.maketrans({"ä": "a", "ö": "o", "ü": "u", "ß": "ss"})
 GERMAN_SUFFIXES = ("ungen", "ieren", "ierst", "iert", "iere", "ung",
                    "en", "er", "es", "em", "st", "et", "t", "e", "s", "n")
@@ -18,4 +20,22 @@ def stem_de(word):
     return word
 
 
-STEMMERS = {"de": stem_de}
+ENGLISH_SUFFIXES = ("ations", "ation", "ingly", "ings", "ing", "edly", "ed", "ies", "es", "ly", "s")
+
+
+def stem_en(word):
+    """"extrudes", "extruded", "extrude" → "extrud"."""
+    word = word.lower()
+    for suffix in ENGLISH_SUFFIXES:
+        if word.endswith(suffix) and len(word) - len(suffix) >= MIN_STEM:
+            word = word[:-len(suffix)] + ("y" if suffix == "ies" else "")
+            break
+    if word.endswith("e") and len(word) > MIN_STEM + 1:
+        word = word[:-1]
+    return word
+
+
+ALGORITHMS = {"german": stem_de, "english": stem_en}
+
+# language → stemming function, as named in the language pack.
+STEMMERS = View("stemmer", convert=ALGORITHMS.get)

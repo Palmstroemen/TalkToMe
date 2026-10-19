@@ -1,0 +1,1110 @@
+[
+ {
+  "id": "Std_New",
+  "level": "global",
+  "label": "New Document",
+  "phrases": [
+   "New Document"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a new empty document"
+ },
+ {
+  "id": "Std_Open",
+  "level": "global",
+  "label": "Open",
+  "phrases": [
+   "Open"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Opens a document or imports files"
+ },
+ {
+  "id": "Std_Save",
+  "level": "global",
+  "label": "Save",
+  "phrases": [
+   "Save"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Saves the active document"
+ },
+ {
+  "id": "Std_Undo",
+  "level": "global",
+  "label": "Undo",
+  "phrases": [
+   "Undo"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Undoes the previous action"
+ },
+ {
+  "id": "Std_Redo",
+  "level": "global",
+  "label": "Redo",
+  "phrases": [
+   "Redo"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Redoes a previously undone action"
+ },
+ {
+  "id": "Std_Refresh",
+  "level": "global",
+  "label": "Recompute",
+  "phrases": [
+   "Recompute"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Recomputes the active document"
+ },
+ {
+  "id": "Std_Cut",
+  "level": "global",
+  "label": "Cut",
+  "phrases": [
+   "Cut"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Removes the selection and copies it to the clipboard"
+ },
+ {
+  "id": "Std_Copy",
+  "level": "global",
+  "label": "Copy",
+  "phrases": [
+   "Copy"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Copies the selection to the clipboard"
+ },
+ {
+  "id": "Std_Paste",
+  "level": "global",
+  "label": "Paste",
+  "phrases": [
+   "Paste"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Pastes the contents of the clipboard"
+ },
+ {
+  "id": "Std_DlgMacroRecord",
+  "level": "global",
+  "label": "Record Macro",
+  "phrases": [
+   "Record Macro"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Opens a dialog to record a macro"
+ },
+ {
+  "id": "Std_DlgMacroExecute",
+  "level": "global",
+  "label": "Macros",
+  "phrases": [
+   "Macros"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Opens a dialog to execute a recorded macro"
+ },
+ {
+  "id": "Std_DlgMacroExecuteDirect",
+  "level": "global",
+  "label": "Execute Macro",
+  "phrases": [
+   "Execute Macro"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Executes the macro in the editor"
+ },
+ {
+  "id": "Std_ViewFitAll",
+  "level": "global",
+  "label": "Fit All",
+  "phrases": [
+   "Fit All"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Fits all content into the 3D view"
+ },
+ {
+  "id": "Std_ViewFitSelection",
+  "level": "global",
+  "label": "Fit Selection",
+  "phrases": [
+   "Fit Selection"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Fits the selected content into the 3D view"
+ },
+ {
+  "id": "Std_ViewGroup",
+  "level": "global",
+  "label": "Isometric",
+  "phrases": [
+   "Isometric",
+   "1 Front",
+   "2 Top",
+   "3 Right",
+   "4 Rear",
+   "5 Bottom",
+   "6 Left",
+   "Standard Views"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the isometric view"
+ },
+ {
+  "id": "Std_AlignToSelection",
+  "level": "global",
+  "label": "Align to Selection",
+  "phrases": [
+   "Align to Selection"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Aligns the camera view to the selected elements in the 3D view"
+ },
+ {
+  "id": "Std_DrawStyle",
+  "level": "global",
+  "label": "1 As is",
+  "phrases": [
+   "1 As is",
+   "2 Points",
+   "3 Wireframe",
+   "4 Hidden line",
+   "5 No shading",
+   "6 Shaded",
+   "7 Flat lines",
+   "Draw Style"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "Part_SelectFilter",
+  "level": "workbench",
+  "label": "Vertex Selection",
+  "phrases": [
+   "Vertex Selection",
+   "Edge Selection",
+   "Face Selection",
+   "No Selection Filters",
+   "Selection Filter"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Only allows the selection of vertices"
+ },
+ {
+  "id": "Std_TreeViewActions",
+  "level": "global",
+  "label": "1 Sync View",
+  "phrases": [
+   "1 Sync View",
+   "2 Sync Selection",
+   "3 Sync Placement",
+   "4 Preselection",
+   "5 Record Selection",
+   "Single Document",
+   "Multi Document",
+   "Collapse/Expand",
+   "Initiate Dragging",
+   "Go to Selection",
+   "Selection Back",
+   "Selection Forward",
+   "Tree View Actions"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Switches to the 3D view containing the selected item from the tree view"
+ },
+ {
+  "id": "Std_Measure",
+  "level": "global",
+  "label": "Measure",
+  "phrases": [
+   "Measure"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Measure a feature"
+ },
+ {
+  "id": "Std_ViewIsometric",
+  "level": "global",
+  "label": "Isometric",
+  "phrases": [
+   "Isometric"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the isometric view"
+ },
+ {
+  "id": "Std_ViewFront",
+  "level": "global",
+  "label": "1 Front",
+  "phrases": [
+   "1 Front"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the front view"
+ },
+ {
+  "id": "Std_ViewTop",
+  "level": "global",
+  "label": "2 Top",
+  "phrases": [
+   "2 Top"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the top view"
+ },
+ {
+  "id": "Std_ViewRight",
+  "level": "global",
+  "label": "3 Right",
+  "phrases": [
+   "3 Right"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the right view"
+ },
+ {
+  "id": "Std_ViewRear",
+  "level": "global",
+  "label": "4 Rear",
+  "phrases": [
+   "4 Rear"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the rear view"
+ },
+ {
+  "id": "Std_ViewBottom",
+  "level": "global",
+  "label": "5 Bottom",
+  "phrases": [
+   "5 Bottom"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the bottom view"
+ },
+ {
+  "id": "Std_ViewLeft",
+  "level": "global",
+  "label": "6 Left",
+  "phrases": [
+   "6 Left"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sets the camera to the left view"
+ },
+ {
+  "id": "Std_Part",
+  "level": "global",
+  "label": "New Part",
+  "phrases": [
+   "New Part"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a part, which is a general-purpose container to group objects so they act as a unit in the 3D view. It is intended to arrange objects that have a part TopoShape, like part primitives, Part Design bodies, and other parts."
+ },
+ {
+  "id": "Part_Datums",
+  "level": "workbench",
+  "label": "Coordinate System",
+  "phrases": [
+   "Coordinate System",
+   "Datum Plane",
+   "Datum Line",
+   "Datum Point",
+   "Datums"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a coordinate system that can be attached to other objects"
+ },
+ {
+  "id": "Std_Group",
+  "level": "global",
+  "label": "New Group",
+  "phrases": [
+   "New Group"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model."
+ },
+ {
+  "id": "Std_LinkActions",
+  "level": "global",
+  "label": "Make Link",
+  "phrases": [
+   "Make Link",
+   "Make Sub-Link",
+   "Replace With Link",
+   "Unlink",
+   "Import Links",
+   "Import All Links",
+   "Link Actions"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies."
+ },
+ {
+  "id": "Std_VarSet",
+  "level": "global",
+  "label": "Variable Set",
+  "phrases": [
+   "Variable Set"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a variable set, which is an object that maintains a set of properties to be used as variables"
+ },
+ {
+  "id": "Std_WhatsThis",
+  "level": "global",
+  "label": "What's This?",
+  "phrases": [
+   "What's This?"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Opens the documentation for the selected command"
+ },
+ {
+  "id": "Part_Box",
+  "level": "workbench",
+  "label": "Cube",
+  "phrases": [
+   "Cube"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a solid cube"
+ },
+ {
+  "id": "Part_Cylinder",
+  "level": "workbench",
+  "label": "Cylinder",
+  "phrases": [
+   "Cylinder"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a solid cylinder"
+ },
+ {
+  "id": "Part_Sphere",
+  "level": "workbench",
+  "label": "Sphere",
+  "phrases": [
+   "Sphere"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a solid sphere"
+ },
+ {
+  "id": "Part_Cone",
+  "level": "workbench",
+  "label": "Cone",
+  "phrases": [
+   "Cone"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a solid cone"
+ },
+ {
+  "id": "Part_Torus",
+  "level": "workbench",
+  "label": "Torus",
+  "phrases": [
+   "Torus"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a solid torus"
+ },
+ {
+  "id": "Part_Tube",
+  "level": "workbench",
+  "label": "Tube",
+  "phrases": [
+   "Tube"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a tube"
+ },
+ {
+  "id": "Part_Primitives",
+  "level": "workbench",
+  "label": "Primitive",
+  "phrases": [
+   "Primitive"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates solid geometric primitives parametrically"
+ },
+ {
+  "id": "Part_Builder",
+  "level": "workbench",
+  "label": "Shape Builder",
+  "phrases": [
+   "Shape Builder"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Advanced utility to create shapes"
+ },
+ {
+  "id": "Sketcher_NewSketch",
+  "level": "workbench",
+  "label": "New Sketch",
+  "phrases": [
+   "New Sketch"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a new sketch"
+ },
+ {
+  "id": "Part_Extrude",
+  "level": "workbench",
+  "label": "Extrude",
+  "phrases": [
+   "Extrude"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Extrudes the selected sketch or profile"
+ },
+ {
+  "id": "Part_Revolve",
+  "level": "workbench",
+  "label": "Revolve",
+  "phrases": [
+   "Revolve"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Revolves the selected shape"
+ },
+ {
+  "id": "Part_Mirror",
+  "level": "workbench",
+  "label": "Mirror",
+  "phrases": [
+   "Mirror"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Mirrors the selected shape"
+ },
+ {
+  "id": "Part_Scale",
+  "level": "workbench",
+  "label": "Scale",
+  "phrases": [
+   "Scale"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Scales the selected shape"
+ },
+ {
+  "id": "Part_Fillet",
+  "level": "workbench",
+  "label": "Fillet",
+  "phrases": [
+   "Fillet"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Fillets the selected edges of a shape"
+ },
+ {
+  "id": "Part_Chamfer",
+  "level": "workbench",
+  "label": "Chamfer",
+  "phrases": [
+   "Chamfer"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Chamfers the selected edges of a shape"
+ },
+ {
+  "id": "Part_MakeFace",
+  "level": "workbench",
+  "label": "Face From Wires",
+  "phrases": [
+   "Face From Wires"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Creates a face from the selected wires (e.g. from a sketch)"
+ },
+ {
+  "id": "Part_RuledSurface",
+  "level": "workbench",
+  "label": "Ruled Surface",
+  "phrases": [
+   "Ruled Surface"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Creates a ruled surface between 2 selected wires"
+ },
+ {
+  "id": "Part_Loft",
+  "level": "workbench",
+  "label": "Loft",
+  "phrases": [
+   "Loft"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Lofts the selected profiles"
+ },
+ {
+  "id": "Part_Sweep",
+  "level": "workbench",
+  "label": "Sweep",
+  "phrases": [
+   "Sweep"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Sweeps profiles along a wire"
+ },
+ {
+  "id": "Part_Section",
+  "level": "workbench",
+  "label": "Section",
+  "phrases": [
+   "Section"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Sections 2 selected shapes"
+ },
+ {
+  "id": "Part_CrossSections",
+  "level": "workbench",
+  "label": "Cross-Sections",
+  "phrases": [
+   "Cross-Sections"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Creates cross-sections"
+ },
+ {
+  "id": "Part_CompOffset",
+  "level": "workbench",
+  "label": "3D Offset",
+  "phrases": [
+   "3D Offset",
+   "2D Offset",
+   "Offset"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Offsets shapes in 3D"
+ },
+ {
+  "id": "Part_Thickness",
+  "level": "workbench",
+  "label": "Thickness",
+  "phrases": [
+   "Thickness"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Removes the selected faces and offsets the remaining shape outward to add thickness"
+ },
+ {
+  "id": "Part_ProjectionOnSurface",
+  "level": "workbench",
+  "label": "Project on Surface",
+  "phrases": [
+   "Project on Surface"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Projects edges, wires, or faces of one shape\nonto a face of another shape.\nThe camera view determines the direction\nof the projection."
+ },
+ {
+  "id": "Part_ColorPerFace",
+  "level": "workbench",
+  "label": "Appearance per Face",
+  "phrases": [
+   "Appearance per Face"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Sets the appearance of individual faces of the selected object"
+ },
+ {
+  "id": "Part_CompCompoundTools",
+  "level": "workbench",
+  "label": "Compound",
+  "phrases": [
+   "Compound",
+   "Explode Compound",
+   "Compound Filter",
+   "Compound Tools"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Compounds the selected shapes"
+ },
+ {
+  "id": "Part_Boolean",
+  "level": "workbench",
+  "label": "Boolean Operation",
+  "phrases": [
+   "Boolean Operation"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Applies a boolean operations with the selected shapes"
+ },
+ {
+  "id": "Part_Cut",
+  "level": "workbench",
+  "label": "Cut",
+  "phrases": [
+   "Cut"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Cuts 2 selected shapes"
+ },
+ {
+  "id": "Part_Fuse",
+  "level": "workbench",
+  "label": "Union",
+  "phrases": [
+   "Union"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Unites the selected shapes"
+ },
+ {
+  "id": "Part_Common",
+  "level": "workbench",
+  "label": "Intersection",
+  "phrases": [
+   "Intersection"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Intersects the selected shapes"
+ },
+ {
+  "id": "Part_CompJoinFeatures",
+  "level": "workbench",
+  "label": "Connect Shapes",
+  "phrases": [
+   "Connect Shapes",
+   "Embed Shapes",
+   "Cutout Shape",
+   "Join Shapes"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "Part_CompSplitFeatures",
+  "level": "workbench",
+  "label": "Boolean Fragments",
+  "phrases": [
+   "Boolean Fragments",
+   "Slice Apart",
+   "Slice to Compound",
+   "Boolean XOR",
+   "Split Shapes"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "Part_CheckGeometry",
+  "level": "workbench",
+  "label": "Check Geometry",
+  "phrases": [
+   "Check Geometry"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Analyzes the selected shapes for errors"
+ },
+ {
+  "id": "Part_Defeaturing",
+  "level": "workbench",
+  "label": "Defeaturing",
+  "phrases": [
+   "Defeaturing"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": false,
+  "description": "Removes the selected features from a shape"
+ },
+ {
+  "id": "TalkToMe_Microphone",
+  "level": "workbench",
+  "label": "Talk to me",
+  "phrases": [
+   "Talk to me"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Talk to me: switch the microphone on or off"
+ },
+ {
+  "id": "TalkToMe_Training",
+  "level": "workbench",
+  "label": "Talk to me: Training",
+  "phrases": [
+   "Talk to me: Training"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": "Teach Talk to me how the speech recognition hears you"
+ },
+ {
+  "id": "workbench:NoneWorkbench",
+  "level": "global",
+  "label": "<none>",
+  "phrases": [
+   "<none>"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:AssemblyWorkbench",
+  "level": "global",
+  "label": "Assembly",
+  "phrases": [
+   "Assembly"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:BIMWorkbench",
+  "level": "global",
+  "label": "BIM",
+  "phrases": [
+   "BIM"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:CAMWorkbench",
+  "level": "global",
+  "label": "CAM",
+  "phrases": [
+   "CAM"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:DraftWorkbench",
+  "level": "global",
+  "label": "Draft",
+  "phrases": [
+   "Draft"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:FemWorkbench",
+  "level": "global",
+  "label": "FEM",
+  "phrases": [
+   "FEM"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:InspectionWorkbench",
+  "level": "global",
+  "label": "Inspection",
+  "phrases": [
+   "Inspection"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:MaterialWorkbench",
+  "level": "global",
+  "label": "Material",
+  "phrases": [
+   "Material"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:MeshWorkbench",
+  "level": "global",
+  "label": "Mesh",
+  "phrases": [
+   "Mesh"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:OpenSCADWorkbench",
+  "level": "global",
+  "label": "OpenSCAD",
+  "phrases": [
+   "OpenSCAD"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:PartDesignWorkbench",
+  "level": "global",
+  "label": "Part Design",
+  "phrases": [
+   "Part Design"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:PointsWorkbench",
+  "level": "global",
+  "label": "Points",
+  "phrases": [
+   "Points"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:ReverseEngineeringWorkbench",
+  "level": "global",
+  "label": "Reverse Engineering",
+  "phrases": [
+   "Reverse Engineering"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:RobotWorkbench",
+  "level": "global",
+  "label": "Robot",
+  "phrases": [
+   "Robot"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SketcherWorkbench",
+  "level": "global",
+  "label": "Sketcher",
+  "phrases": [
+   "Sketcher"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SpreadsheetWorkbench",
+  "level": "global",
+  "label": "Spreadsheet",
+  "phrases": [
+   "Spreadsheet"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SurfaceWorkbench",
+  "level": "global",
+  "label": "Surface",
+  "phrases": [
+   "Surface"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:TechDrawWorkbench",
+  "level": "global",
+  "label": "TechDraw",
+  "phrases": [
+   "TechDraw"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:TestWorkbench",
+  "level": "global",
+  "label": "Test Framework",
+  "phrases": [
+   "Test Framework"
+  ],
+  "foreign": [],
+  "heard": [],
+  "active": true,
+  "description": ""
+ }
+]

@@ -84,7 +84,7 @@ def test_plane_is_not_open():
     assert d.command != "Std_Open"
 
 
-VOCAB = load(os.path.join("..", "..", "vocab", "de.json"))
+VOCAB = load(os.path.join("..", "..", "lang", "de", "vocab.json"))
 MIC_OFF = {"id": "ui:mic_off", "level": "global", "phrases": VOCAB["ui:mic_off"], "foreign": [],
            "active": True, "description": ""}
 

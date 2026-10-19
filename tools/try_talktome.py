@@ -8,7 +8,7 @@ tones are played just like they will be in FreeCAD.
     service/.venv/bin/python tools/try_talktome.py --model small
     service/.venv/bin/python tools/try_talktome.py --input-wav a.wav b.wav     # without microphone
 
-Commands and phrases come from vocab/<language>.json (command ID -> phrases); the service\ndecides exactly as it will in FreeCAD.
+Commands and phrases come from lang/<language>/vocab.json (command ID -> phrases); the service\ndecides exactly as it will in FreeCAD.
 Stop with Ctrl+C.
 """
 
@@ -87,13 +87,13 @@ def main():
     ap.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     ap.add_argument("--mic", help="input device name or index")
     ap.add_argument("--input-wav", nargs="+", help="use WAV files instead of the microphone")
-    ap.add_argument("--commands", help="vocabulary file (default: vocab/<language>.json)")
+    ap.add_argument("--commands", help="vocabulary file (default: lang/<language>/vocab.json)")
     ap.add_argument("--volume", type=float, default=0.4, help="tone volume, 0 = silent")
     ap.add_argument("--no-hotwords", action="store_true", help="don't hint the test vocabulary to Whisper")
     ap.add_argument("--exit-after", type=int, default=0, help="stop after N sentences (for scripts)")
     args = ap.parse_args()
 
-    path = args.commands or os.path.join(ROOT, "vocab", "{}.json".format(args.language))
+    path = args.commands or os.path.join(ROOT, "lang", args.language, "vocab.json")
     with open(path, encoding="utf-8") as f:
         commands = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
 

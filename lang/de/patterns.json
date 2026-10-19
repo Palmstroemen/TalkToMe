@@ -1,0 +1,44 @@
+{
+  "_about": "Sentence patterns for commands with free text: regular expressions matched against a whole clause (case-insensitive). Groups: label (a name), target (the object named), pick (a menu entry, see pick_words). Macros in braces are replaced first.",
+  "macros": {
+    "pronoun": "(?:den|die|das|ihn|sie|es|diesen|diese|dieses)"
+  },
+  "patterns": [
+    [
+      "ui:rename",
+      "(?:{pronoun}\\s+)?(?:nennen\\s+wir|nenne\\s+ich|nennen|nenne|nenn)\\s+(?:{pronoun}\\s+)?(?:jetzt\\s+|mal\\s+)?(?P<label>.+)"
+    ],
+    [
+      "ui:rename",
+      "(?:{pronoun}\\s+)?(?:benenne|benenn)\\s+(?:{pronoun}\\s+)?um\\s+(?:in|zu|auf)\\s+(?P<label>.+)"
+    ],
+    [
+      "ui:rename",
+      "(?:benenne|benenn)\\s+(?:doch\\s+)?(?:mal\\s+)?(?:bitte\\s+)?(?:(?:den|die|das)\\s+)?(?P<target>.+?)\\s+(?:um\\s+)?(?:in|zu|auf)\\s+(?P<label>.+?)(?:\\s+um)?"
+    ],
+    [
+      "ui:rename",
+      "(?:umbenennen|umbenannt)\\s+(?:in|zu|auf)\\s+(?P<label>.+)"
+    ],
+    [
+      "ui:rename",
+      "(?:der|die|das|er|sie|es|dieser|diese|dieses)\\s+(?:soll|sollte)\\s+(?P<label>.+?)\\s+heißen"
+    ],
+    [
+      "ui:rename",
+      "(?:der|die|das|er|sie|es)\\s+heißt\\s+(?P<label>.+)"
+    ],
+    [
+      "ui:rename",
+      "(?:gib|gebe|geben\\s+wir)\\s+(?:ihm|ihr)\\s+den\\s+namen\\s+(?P<label>.+)"
+    ],
+    [
+      "ui:rename",
+      "name\\s+(?P<label>.+)"
+    ],
+    [
+      "ui:pick",
+      "(?:nummer\\s+|die\\s+|den\\s+|das\\s+)?(?P<pick>\\w+)"
+    ]
+  ]
+}

@@ -1,56 +1,21 @@
-"""Language specific word lists used by the matching.
+"""Language specific word lists used by the matching, read from the language packs (lang/<code>/).
 
-Parameter words (numbers, units) belong to a command's parameters, so they are left
-out when comparing a sentence with command phrases: "Tasche 5 mm" matches "Tasche" exactly.
+Each name is a view language → value, e.g. FILLER_WORDS.get("de", set()).
+
+FILLER_WORDS      said around commands ("und zwar von hier nach hier"); a sentence of only
+                  these is narration. NOT removed when scoring phrases, so "von vorne" matches.
+PARAMETER_WORDS   numbers and units, left out when comparing with phrases ("Tasche 5 mm")
+CLAUSE_WORDS      join clauses ("Extrudiere das und ziehe es ab")
+PARTICLES         of separable verbs at the end of a clause ("zieht ... ab")
+STOP_WORDS        without meaning for identifying a command (fillers and particles included)
+NUMBER_VALUES     number words as values ("Körper zwei" → "Körper002")
 """
 
-# Words people say around commands ("Zeichne ein Rechteck ... und zwar von hier nach hier").
-# A sentence made only of these is narration, not a command: it is ignored without error tone.
-# They are NOT removed when scoring phrases, so "von vorne" still matches.
-FILLER_WORDS = {
-    "de": {
-        "und", "zwar", "von", "nach", "bis", "hier", "da", "dort", "dahin", "hierhin", "so", "genau",
-        "jetzt", "dann", "mal", "noch", "also", "eben", "halt", "ja", "nein", "nee", "gut", "naja",
-        "bitte", "danke", "äh", "ähm", "hm", "hmm", "ach", "oh", "das", "die", "der", "es", "ist",
-    },
-}
+from ttm_core.langpack import View
 
-PARAMETER_WORDS = {
-    "de": {
-        "mm", "cm", "m", "millimeter", "zentimeter", "meter", "grad", "prozent", "komma", "halb",
-        "null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn",
-        "elf", "zwölf", "zwanzig", "dreißig", "vierzig", "fünfzig", "hundert", "tausend",
-    },
-}
-
-# Words that join clauses: "Extrudiere das und ziehe es ab" has two clauses.
-CLAUSE_WORDS = {
-    "de": {"und", "dann", "danach", "anschließend"},
-}
-
-# Particles of separable verbs, standing at the end of a clause: "zieht ... ab", "fügt ... hinzu".
-PARTICLES = {
-    "de": {"ab", "an", "auf", "aus", "ein", "fest", "herum", "hinzu", "mit", "um", "weg", "zu",
-           "zurück", "zusammen"},
-}
-
-# Words without meaning for identifying a command, left out when comparing with help texts.
-STOP_WORDS = {
-    "de": FILLER_WORDS["de"] | PARTICLES["de"] | {
-        "ein", "eine", "einen", "einem", "einer", "eines", "den", "dem", "des",
-        "er", "sie", "ihn", "ihm", "ihr", "ihnen", "ich", "du", "wir", "man", "mir", "mich", "uns",
-        "dies", "diese", "dieser", "dieses", "diesen", "diesem", "sein", "seine", "seinen",
-        "in", "im", "ins", "am", "an", "auf", "aus", "bei", "beim", "für", "mit", "um", "vom",
-        "zum", "zur", "über", "unter", "vor", "hinter", "neben", "zwischen", "durch", "gegen", "ohne",
-        "oder", "aber", "wie", "wenn", "als", "auch", "nur", "nicht", "kein", "keine",
-        "bin", "sind", "war", "wird", "werden", "wurde", "hat", "haben", "kann", "soll", "will",
-        "möchte", "bitte", "mal", "doch", "einfach", "danach", "anschließend",
-        "mach", "mache", "machen", "macht", "tu", "tue", "tun",       # say nothing about the command
-    },
-}
-
-# Number words as values: "Körper zwei" names the object labelled "Körper002".
-NUMBER_VALUES = {
-    "de": {"null": 0, "ein": 1, "eins": 1, "eine": 1, "zwei": 2, "drei": 3, "vier": 4, "fünf": 5,
-           "sechs": 6, "sieben": 7, "acht": 8, "neun": 9, "zehn": 10, "elf": 11, "zwölf": 12},
-}
+FILLER_WORDS = View("filler_words")
+PARAMETER_WORDS = View("parameter_words")
+CLAUSE_WORDS = View("clause_words")
+PARTICLES = View("particles")
+STOP_WORDS = View("stop_words")
+NUMBER_VALUES = View("number_values")
