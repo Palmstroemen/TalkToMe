@@ -73,3 +73,64 @@ def unlearn(custom, command, heard, patterns=()):
         if not forms:
             del custom[key][command]
     return custom
+
+
+# --- vocabulary editor (DESIGN.md 8.9) -----------------------------------------------------------
+
+KINDS = ("pack", "phrase", "heard", "pattern")
+_KEYS = {"heard": HEARD, "pattern": PATTERNS}
+
+
+def entries(pack_vocab, custom):
+    """[(command, kind, text)] of everything that names a command, sorted by command:
+
+    pack     phrases of the language pack (read-only here)
+    phrase   the user's own phrases
+    heard    forms learned in training
+    pattern  sentence patterns learned in training
+    """
+    found = []
+    for command, phrases in pack_vocab.items():
+        found += [(command, "pack", p) for p in phrases]
+    for command, phrases in custom.items():
+        if not command.startswith("_") and isinstance(phrases, list):
+            found += [(command, "phrase", p) for p in phrases]
+    for kind, key in _KEYS.items():
+        for command, texts in custom.get(key, {}).items():
+            found += [(command, kind, t) for t in texts]
+    return sorted(found, key=lambda e: (e[0], KINDS.index(e[1])))
+
+
+def _texts(custom, command, kind):
+    if kind == "pack":
+        raise ValueError("phrases of the language pack can't be changed here")
+    if kind == "phrase":
+        return custom.get(command)
+    return custom.get(_KEYS[kind], {}).get(command)
+
+
+def remove_entry(custom, command, kind, text):
+    texts = _texts(custom, command, kind)
+    if texts is None:
+        return custom
+    texts[:] = [t for t in texts if t != text]
+    if not texts:
+        if kind == "phrase":
+            del custom[command]
+        else:
+            del custom[_KEYS[kind]][command]
+    return custom
+
+
+def move_entry(custom, kind, text, from_command, to_command):
+    """A form learned for the wrong command goes to the right one."""
+    remove_entry(custom, from_command, kind, text)
+    if kind == "phrase":
+        _add(custom.setdefault(to_command, []), [text])
+    else:
+        _add(custom.setdefault(_KEYS[kind], {}).setdefault(to_command, []), [text])
+    return custom
+
+
+def add_phrase(custom, command, text):
+    return learn(custom, command, typed=text)

@@ -66,7 +66,9 @@ When something is not clear, a small menu next to the mouse pointer offers the l
 pick one by mouse or by voice ("die zweite"). The choice is executed and remembered: next time
 the same mishearing is understood. The button "Talk to me: Training" opens a page to teach
 it on purpose: pick what you meant, say it three times. Learned forms are stored in
-`<UserAppDataDir>/TalkToMe/custom.<language>.json`.
+`<UserAppDataDir>/TalkToMe/custom.<language>.json`. The vocabulary editor (button "Vocabulary…"
+on the training page and in the settings) shows them by command: delete them, or move a form
+learned for the wrong command to the right one.
 
 Settings: Edit → Preferences → Talk to me (language, microphone, volume, model, GPU/CPU, question
 menu, speech output and voice, word lists of the language, training). Changes the speech service

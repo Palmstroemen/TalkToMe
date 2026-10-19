@@ -118,3 +118,54 @@ def test_unlearn_removes_patterns():
     custom = {"_patterns": {"ui:rename": ["nenndas {label}"]}}
     unlearn(custom, "ui:rename", [], patterns=["nenndas {label}"])
     assert custom == {"_patterns": {}}
+
+
+# --- vocabulary editor (DESIGN.md 8.9) -------------------------------------------------------------
+
+from ttm_core.training import add_phrase, entries, move_entry, remove_entry
+
+PACK = {"PartDesign_Pad": ["Polster", "extrudieren"], "Std_Undo": ["rückgängig"]}
+CUSTOM = {"PartDesign_Pad": ["hochziehen"],
+          "_heard": {XY: ["X-Upsilom-Ebene"], "Std_Undo": ["Rück gängig"]},
+          "_patterns": {"ui:rename": ["nenndas {label}"]}}
+
+
+def test_entries_by_command_and_source():
+    found = entries(PACK, CUSTOM)
+    assert ("PartDesign_Pad", "pack", "Polster") in found
+    assert ("PartDesign_Pad", "phrase", "hochziehen") in found
+    assert (XY, "heard", "X-Upsilom-Ebene") in found
+    assert ("ui:rename", "pattern", "nenndas {label}") in found
+    assert found == sorted(found, key=lambda e: e[0])          # grouped by command
+
+
+def test_remove_user_entries():
+    custom = json_copy(CUSTOM)
+    remove_entry(custom, "PartDesign_Pad", "phrase", "hochziehen")
+    remove_entry(custom, XY, "heard", "X-Upsilom-Ebene")
+    remove_entry(custom, "ui:rename", "pattern", "nenndas {label}")
+    assert custom == {"_heard": {"Std_Undo": ["Rück gängig"]}, "_patterns": {}}
+
+
+def test_pack_entries_cannot_be_removed():
+    import pytest
+    with pytest.raises(ValueError):
+        remove_entry(json_copy(CUSTOM), "PartDesign_Pad", "pack", "Polster")
+
+
+def test_move_a_wrongly_learned_form():
+    custom = json_copy(CUSTOM)
+    move_entry(custom, "heard", "X-Upsilom-Ebene", XY, YZ)
+    assert custom["_heard"] == {"Std_Undo": ["Rück gängig"], YZ: ["X-Upsilom-Ebene"]}
+
+
+def test_add_phrase():
+    custom = json_copy(CUSTOM)
+    add_phrase(custom, "Std_Undo", "mach das weg")
+    add_phrase(custom, "Std_Undo", "Mach das weg")              # once
+    assert custom["Std_Undo"] == ["mach das weg"]
+
+
+def json_copy(data):
+    import json
+    return json.loads(json.dumps(data))

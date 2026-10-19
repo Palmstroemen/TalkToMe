@@ -113,6 +113,7 @@ class Controller(QtCore.QObject):
         self.misses = []             # recent not understood utterances with their situation
         self.miss_count = 0
         self.trainer = None          # the open training page
+        self.editor = None           # the open vocabulary editor
         self.training_candidates = None
         self.training_restore = None # microphone state to restore after training
         self.asking = None           # the open question menu: {"text", "options", "candidates", "popup"}
@@ -183,6 +184,20 @@ class Controller(QtCore.QObject):
         self.trainer.show()
         self.trainer.raise_()
         self.trainer.activateWindow()
+
+    def open_vocabulary(self, parent=None):
+        """parent: a modal window it is opened from (the preferences)."""
+        if parent is not None and self.editor is not None and self.editor.parent() is not parent:
+            self.editor.close()
+        if self.editor is None:
+            from talktome.vocabulary import VocabularyEditor
+            self.editor = VocabularyEditor(self, parent or self.mw)
+            if parent is not None:
+                self.editor.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
+        self.editor.fill()
+        self.editor.show()
+        self.editor.raise_()
+        self.editor.activateWindow()
 
     def start_training(self, candidates):
         """Transcribe only, with the hints of the trained situation."""
@@ -583,6 +598,11 @@ _controller = None
 def restart_service():
     if _controller is not None:
         _controller.restart_service()
+
+
+def open_vocabulary(parent=None):
+    if _controller is not None:
+        _controller.open_vocabulary(parent)
 
 
 def open_training(parent=None):

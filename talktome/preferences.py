@@ -160,12 +160,16 @@ class PreferencesPage:
         reset.clicked.connect(self.reset_list)
         training = QtWidgets.QPushButton("Training…")
         training.clicked.connect(self.open_training)
+        vocabulary = QtWidgets.QPushButton("Vocabulary…")
+        vocabulary.setToolTip("Your phrases and what training learned, by command")
+        vocabulary.clicked.connect(self.open_vocabulary)
         folder = QtWidgets.QPushButton("Open my folder")
         folder.setToolTip(ttm_context.user_dir())
         folder.clicked.connect(self.open_folder)
         row.addWidget(reset)
         row.addStretch()
         row.addWidget(training)
+        row.addWidget(vocabulary)
         row.addWidget(folder)
         layout.addLayout(row)
         return tab
@@ -215,6 +219,10 @@ class PreferencesPage:
     def open_training(self):
         import talktome.gui
         talktome.gui.open_training(self.form.window())
+
+    def open_vocabulary(self):
+        import talktome.gui
+        talktome.gui.open_vocabulary(self.form.window())
 
     def open_folder(self):
         os.makedirs(ttm_context.user_dir(), exist_ok=True)

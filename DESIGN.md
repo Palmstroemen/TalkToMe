@@ -478,6 +478,15 @@ den besten Kandidaten:
 Ein Ringmenü (wie das Addon „PieMenu“) wäre mit der Maus schneller; für den Anfang eine kleine
 Liste, die sich auch per Stimme gut bedienen lässt.
 
+### 8.9 Wortschatz-Editor
+
+Ein Fenster zeigt pro Befehl alles, was ihn benennt, mit Herkunft: Phrasen des Sprachpakets
+(nur lesbar), eigene Phrasen, gehörte Formen und Satzmuster aus dem Training. Eigene Einträge
+lassen sich hinzufügen und löschen; **„Move to…“** verschiebt eine Form, die für den falschen
+Befehl gelernt wurde, zum richtigen. Änderungen werden sofort gespeichert und geladen.
+Erreichbar aus der Einstellungsseite und der Trainingsseite (`talktome/vocabulary.py`,
+Logik in `ttm_core/training.py`).
+
 ### 8.6 Makros
 
 - **Makros mit Toolbar-Button** sind für FreeCAD normale Befehle mit eigener QAction. Sie werden vom Lernmodus genauso erkannt und über `Gui.runCommand` ausgeführt.
@@ -721,7 +730,7 @@ System-Stummschaltung. Reihenfolge:
 2. ~~Sprachpakete de und en (13.1)~~
 3. ~~Sprachausgabe (10.1)~~
 4. ~~Einstellungsseite (13)~~
-5. Wortschatz-Editor
+5. ~~Wortschatz-Editor~~
 6. Übersetzung der Oberfläche
 
 ---

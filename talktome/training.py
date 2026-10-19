@@ -121,9 +121,13 @@ class TrainingDialog(QtWidgets.QDialog):
         self.forget_button.clicked.connect(self.forget)
         close = QtWidgets.QPushButton("Close")
         close.clicked.connect(self.close)
+        vocabulary = QtWidgets.QPushButton("Vocabulary…")
+        vocabulary.setToolTip("Everything learned so far, by command: delete or move")
+        vocabulary.clicked.connect(self.open_vocabulary)
         row.addWidget(self.assign_button)
         row.addWidget(self.forget_button)
         row.addStretch()
+        row.addWidget(vocabulary)
         row.addWidget(close)
         layout.addLayout(row)
 
@@ -365,6 +369,11 @@ class TrainingDialog(QtWidgets.QDialog):
         self.controller.status("forgot »{}« for {}".format(miss["text"], assigned["label"]))
         self.fill_misses()
         self.update_buttons()
+
+    def open_vocabulary(self):
+        """Opened from the preferences, this page is modal: the editor must be its child then."""
+        modal = self.windowModality() != QtCore.Qt.WindowModality.NonModal
+        self.controller.open_vocabulary(self if modal else None)
 
     def closeEvent(self, event):
         if self.recording:
