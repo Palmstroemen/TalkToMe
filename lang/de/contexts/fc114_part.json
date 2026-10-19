@@ -1,0 +1,858 @@
+{
+ "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
+ "context": {
+  "active": {
+   "Part_Boolean": true,
+   "Part_Box": true,
+   "Part_Builder": true,
+   "Part_Chamfer": true,
+   "Part_CheckGeometry": false,
+   "Part_ColorPerFace": false,
+   "Part_Common": false,
+   "Part_CompCompoundTools": true,
+   "Part_CompJoinFeatures": true,
+   "Part_CompOffset": false,
+   "Part_CompSplitFeatures": true,
+   "Part_Cone": true,
+   "Part_CrossSections": false,
+   "Part_Cut": false,
+   "Part_Cylinder": true,
+   "Part_Datums": true,
+   "Part_Defeaturing": false,
+   "Part_Extrude": true,
+   "Part_Fillet": true,
+   "Part_Fuse": false,
+   "Part_Loft": true,
+   "Part_MakeFace": false,
+   "Part_Mirror": true,
+   "Part_Primitives": true,
+   "Part_ProjectionOnSurface": true,
+   "Part_Revolve": true,
+   "Part_RuledSurface": true,
+   "Part_Scale": true,
+   "Part_Section": false,
+   "Part_SelectFilter": true,
+   "Part_Sphere": true,
+   "Part_Sweep": true,
+   "Part_Thickness": false,
+   "Part_Torus": true,
+   "Part_Tube": true,
+   "Sketcher_NewSketch": true,
+   "Std_AlignToSelection": true,
+   "Std_Copy": false,
+   "Std_Cut": false,
+   "Std_DlgMacroExecute": true,
+   "Std_DlgMacroExecuteDirect": false,
+   "Std_DlgMacroRecord": true,
+   "Std_DrawStyle": true,
+   "Std_Group": true,
+   "Std_LinkActions": true,
+   "Std_Measure": false,
+   "Std_New": true,
+   "Std_Open": true,
+   "Std_Part": true,
+   "Std_Paste": false,
+   "Std_Redo": false,
+   "Std_Refresh": false,
+   "Std_Save": true,
+   "Std_TreeViewActions": true,
+   "Std_Undo": false,
+   "Std_VarSet": true,
+   "Std_ViewBottom": true,
+   "Std_ViewFitAll": true,
+   "Std_ViewFitSelection": true,
+   "Std_ViewFront": true,
+   "Std_ViewGroup": true,
+   "Std_ViewIsometric": true,
+   "Std_ViewLeft": true,
+   "Std_ViewRear": true,
+   "Std_ViewRight": true,
+   "Std_ViewTop": true,
+   "Std_WhatsThis": true,
+   "Std_Workbench": true,
+   "TalkToMe_Microphone": true
+  },
+  "choices": null,
+  "current_workbench": "PartWorkbench",
+  "descriptions": {
+   "Part_Boolean": "Wendet eine boolesche Operation mit den ausgewählten Formen an",
+   "Part_Box": "Erstellt einen Festkörper-Würfel",
+   "Part_Builder": "Erweitertes Dienstprogramm um Formen zu erstellen",
+   "Part_Chamfer": "Schrägt die gewählten Kanten einer Form an",
+   "Part_CheckGeometry": "Analysiert die ausgewählten Formen auf Fehler",
+   "Part_ColorPerFace": "Legt das Aussehen einzelner Flächen des ausgewählten Objekts fest",
+   "Part_Common": "Schneidet die ausgewählten Formen",
+   "Part_CompCompoundTools": "Fügt die ausgewählten Formen zusammen",
+   "Part_CompJoinFeatures": "",
+   "Part_CompOffset": "Formen in 3D versetzen",
+   "Part_CompSplitFeatures": "",
+   "Part_Cone": "Erstellt einen Festkörper-Kegel",
+   "Part_CrossSections": "Erstellt Querschnitte",
+   "Part_Cut": "Zwei ausgewählte Formen schneiden",
+   "Part_Cylinder": "Erstellt einen Festkörper-Zylinder",
+   "Part_Datums": "Erstellt ein Koordinatensystem, das an anderen Objekten befestigt werden kann",
+   "Part_Defeaturing": "Entfernt die ausgewählten Objekte aus einer Form",
+   "Part_Extrude": "Trägt die ausgewählte Skizze oder das Profil aus",
+   "Part_Fillet": "Verrundet die ausgewählten Kanten einer Form",
+   "Part_Fuse": "Vereinigt die ausgewählten Formen",
+   "Part_Loft": "Formt die gewählten Profile aus",
+   "Part_MakeFace": "Erstellt eine Fläche aus einem Kantenzug (z. B. aus einer Skizze)",
+   "Part_Mirror": "Spiegelt die ausgewählte Form",
+   "Part_Primitives": "Erstellt parametrische solide geometrische Grundelemente",
+   "Part_ProjectionOnSurface": "Kanten, Kantenzüge oder Flächen eines Objekts\nauf eine Fläche eines anderen Objekts projizieren.\nDie Kamera-Ansicht bestimmt die Richtung\nder Projektion.",
+   "Part_Revolve": "Die gewählte Form ausdrehen",
+   "Part_RuledSurface": "Erstellt eine Regelfläche zwischen 2 ausgewählten Kantenzügen",
+   "Part_Scale": "Skaliert die ausgewählte Form",
+   "Part_Section": "Zwei ausgewählte Formen schneiden",
+   "Part_SelectFilter": "Lässt nur die Auswahl von Knoten zu",
+   "Part_Sphere": "Erstellt eine Festkörper-Kugel",
+   "Part_Sweep": "Trägt ein Profil entlang einer Spine-Kurve (Linienzug) aus",
+   "Part_Thickness": "Entfernt die ausgewählten Flächen und versetzt die restliche Form nach außen, um die Dicke hinzuzufügen",
+   "Part_Torus": "Erstellt einen Festkörper-Torus",
+   "Part_Tube": "Erstellt einen Hohlzylinder",
+   "Sketcher_NewSketch": "Erstellt eine neue Skizze",
+   "Std_AlignToSelection": "Richtet die Kameraansicht auf die in der 3D-Ansicht ausgewählten Elemente aus",
+   "Std_Copy": "Kopiert die Auswahl in die Zwischenablage",
+   "Std_Cut": "Entfernt die Auswahl und kopiert sie in die Zwischenablage",
+   "Std_DlgMacroExecute": "Öffnet einen Dialog zum Ausführen eines aufgezeichneten Makros",
+   "Std_DlgMacroExecuteDirect": "Führt das im Editor befindliche Makro aus",
+   "Std_DlgMacroRecord": "Öffnet einen Dialog zum Aufzeichnen eines Makros",
+   "Std_DrawStyle": "",
+   "Std_Group": "Erstellt eine Gruppe, die als universeller Container dient, um Objekte in der Baumansicht unabhängig von ihrem Datentyp zu gruppieren. Es handelt sich um einen einfachen Ordner, um die Objekte in einem Modell zu organisieren.",
+   "Std_LinkActions": "Ein Link ist ein Objekt, das auf ein anderes Objekt innerhalb desselben oder eines anderen Dokuments verweist. Im Gegensatz zu Klonen verweisen Links direkt auf die ursprüngliche Form, wodurch sie speichereffizienter sind, was bei der Erstellung komplexer Baugruppen hilfreich ist.",
+   "Std_Measure": "Formelement messen",
+   "Std_New": "Erstellt ein neues leeres Dokument",
+   "Std_Open": "Öffnet ein Dokument oder importiert Dateien",
+   "Std_Part": "Erstellt ein Part-Objekt, das ein universell verwendbarer Behälter ist, der Objekte gruppiert, sodass sie in der 3D-Ansicht als Einheit agieren. Es ist dazu gedacht, Objekte anzuordnen, die eine Part-Topoform enthalten, wie Part-Grundkörper, Part-Design-Körper und andere Bauteile.",
+   "Std_Paste": "Fügt den Inhalt der Zwischenablage ein",
+   "Std_Redo": "Zuletzt rückgängig gemachte Aktion wiederherstellen",
+   "Std_Refresh": "Berechnet das aktive Dokument neu",
+   "Std_Save": "Speichert das aktive Dokument",
+   "Std_TreeViewActions": "Wechselt zu der 3D-Ansicht, die das in der Baumansicht ausgewählte Objekt enthält",
+   "Std_Undo": "Die vorherige Aktion rückgängig machen",
+   "Std_VarSet": "Ein Variablensatz ist ein Objekt, das einen Satz von Eigenschaften verwaltet, die als Variablen verwendet werden können",
+   "Std_ViewBottom": "Wechselt die Kamera auf die Ansicht von unten",
+   "Std_ViewFitAll": "Passt den gesamten Inhalt in die 3D-Ansicht ein",
+   "Std_ViewFitSelection": "Passt den ausgewählten Inhalt in die 3D-Ansicht ein",
+   "Std_ViewFront": "Wechselt die Kamera auf die Ansicht von vorne",
+   "Std_ViewGroup": "Wechselt die Kamera auf die isometrische Ansicht",
+   "Std_ViewIsometric": "Wechselt die Kamera auf die isometrische Ansicht",
+   "Std_ViewLeft": "Wechselt die Kamera auf die Ansicht von links",
+   "Std_ViewRear": "Wechselt die Kamera auf die Ansicht von hinten",
+   "Std_ViewRight": "Wechselt die Kamera auf die Ansicht von rechts",
+   "Std_ViewTop": "Wechselt die Kamera auf die Ansicht von oben",
+   "Std_WhatsThis": "Öffnet die Dokumentation für den ausgewählten Befehl",
+   "Std_Workbench": "Wählt den Arbeitsbereich 'Assembly' aus",
+   "TalkToMe_Microphone": "Talk to me: Mikrofon ein- oder ausschalten"
+  },
+  "dialog_open": false,
+  "edit_prefix": null,
+  "foreign_labels": {
+   "Part_Boolean": [
+    "Boolean Operation"
+   ],
+   "Part_Box": [
+    "Cube"
+   ],
+   "Part_Builder": [
+    "Shape Builder"
+   ],
+   "Part_Chamfer": [
+    "Chamfer"
+   ],
+   "Part_CheckGeometry": [
+    "Check Geometry"
+   ],
+   "Part_ColorPerFace": [
+    "Appearance per &Face"
+   ],
+   "Part_Common": [
+    "Intersection"
+   ],
+   "Part_CompCompoundTools": [
+    "Compound Tools"
+   ],
+   "Part_CompJoinFeatures": [
+    "Join Shapes"
+   ],
+   "Part_CompOffset": [
+    "Offset"
+   ],
+   "Part_CompSplitFeatures": [
+    "Split Shapes"
+   ],
+   "Part_Cone": [
+    "Cone"
+   ],
+   "Part_CrossSections": [
+    "Cross-Sections"
+   ],
+   "Part_Cut": [
+    "Cut"
+   ],
+   "Part_Cylinder": [
+    "Cylinder"
+   ],
+   "Part_Datums": [
+    "Datums"
+   ],
+   "Part_Defeaturing": [
+    "Defeaturing"
+   ],
+   "Part_Extrude": [
+    "Extrude"
+   ],
+   "Part_Fillet": [
+    "Fillet"
+   ],
+   "Part_Fuse": [
+    "Union"
+   ],
+   "Part_Loft": [
+    "Loft"
+   ],
+   "Part_MakeFace": [
+    "Face From Wires"
+   ],
+   "Part_Mirror": [
+    "Mirror"
+   ],
+   "Part_Primitives": [
+    "Primitive"
+   ],
+   "Part_ProjectionOnSurface": [
+    "Project on Surface"
+   ],
+   "Part_Revolve": [
+    "Revolve"
+   ],
+   "Part_RuledSurface": [
+    "Ruled Surface"
+   ],
+   "Part_Scale": [
+    "Scale"
+   ],
+   "Part_Section": [
+    "Section"
+   ],
+   "Part_SelectFilter": [
+    "Selection Filter"
+   ],
+   "Part_Sphere": [
+    "Sphere"
+   ],
+   "Part_Sweep": [
+    "Sweep"
+   ],
+   "Part_Thickness": [
+    "Thickness"
+   ],
+   "Part_Torus": [
+    "Torus"
+   ],
+   "Part_Tube": [
+    "Tube"
+   ],
+   "Sketcher_NewSketch": [
+    "New Sketch"
+   ],
+   "Std_AlignToSelection": [
+    "&Align to Selection"
+   ],
+   "Std_Copy": [
+    "&Copy"
+   ],
+   "Std_Cut": [
+    "Cu&t"
+   ],
+   "Std_DlgMacroExecute": [
+    "Ma&cros"
+   ],
+   "Std_DlgMacroExecuteDirect": [
+    "&Execute Macro"
+   ],
+   "Std_DlgMacroRecord": [
+    "Record &Macro"
+   ],
+   "Std_DrawStyle": [
+    "&Draw Style"
+   ],
+   "Std_Group": [
+    "New Group"
+   ],
+   "Std_LinkActions": [
+    "Link Actions"
+   ],
+   "Std_Measure": [
+    "&Measure"
+   ],
+   "Std_New": [
+    "&New Document"
+   ],
+   "Std_Open": [
+    "&Open…"
+   ],
+   "Std_Part": [
+    "New Part"
+   ],
+   "Std_Paste": [
+    "&Paste"
+   ],
+   "Std_Redo": [
+    "&Redo"
+   ],
+   "Std_Refresh": [
+    "Recompute"
+   ],
+   "Std_Save": [
+    "&Save"
+   ],
+   "Std_TreeViewActions": [
+    "Tree View Actions"
+   ],
+   "Std_Undo": [
+    "&Undo"
+   ],
+   "Std_VarSet": [
+    "Variable Set"
+   ],
+   "Std_ViewBottom": [
+    "&5 Bottom"
+   ],
+   "Std_ViewFitAll": [
+    "&Fit All"
+   ],
+   "Std_ViewFitSelection": [
+    "Fit &Selection"
+   ],
+   "Std_ViewFront": [
+    "&1 Front"
+   ],
+   "Std_ViewGroup": [
+    "Standard &Views"
+   ],
+   "Std_ViewIsometric": [
+    "&Isometric"
+   ],
+   "Std_ViewLeft": [
+    "&6 Left"
+   ],
+   "Std_ViewRear": [
+    "&4 Rear"
+   ],
+   "Std_ViewRight": [
+    "&3 Right"
+   ],
+   "Std_ViewTop": [
+    "&2 Top"
+   ],
+   "Std_WhatsThis": [
+    "&What's This?"
+   ],
+   "Std_Workbench": [
+    "&Workbench"
+   ],
+   "TalkToMe_Microphone": [
+    "Talk to me"
+   ],
+   "workbench:AssemblyWorkbench": [
+    "Assembly"
+   ],
+   "workbench:BIMWorkbench": [
+    "BIM"
+   ],
+   "workbench:CAMWorkbench": [
+    "CAM"
+   ],
+   "workbench:DraftWorkbench": [
+    "Draft"
+   ],
+   "workbench:FemWorkbench": [
+    "FEM"
+   ],
+   "workbench:InspectionWorkbench": [
+    "Inspection"
+   ],
+   "workbench:MaterialWorkbench": [
+    "Material"
+   ],
+   "workbench:MeshWorkbench": [
+    "Mesh"
+   ],
+   "workbench:NoneWorkbench": [
+    "<none>"
+   ],
+   "workbench:OpenSCADWorkbench": [
+    "OpenSCAD"
+   ],
+   "workbench:PartDesignWorkbench": [
+    "Part Design"
+   ],
+   "workbench:PartWorkbench": [
+    "Part"
+   ],
+   "workbench:PointsWorkbench": [
+    "Points"
+   ],
+   "workbench:ReverseEngineeringWorkbench": [
+    "Reverse Engineering"
+   ],
+   "workbench:RobotWorkbench": [
+    "Robot"
+   ],
+   "workbench:SketcherWorkbench": [
+    "Sketcher"
+   ],
+   "workbench:SpreadsheetWorkbench": [
+    "Spreadsheet"
+   ],
+   "workbench:SurfaceWorkbench": [
+    "Surface"
+   ],
+   "workbench:TechDrawWorkbench": [
+    "TechDraw"
+   ],
+   "workbench:TestWorkbench": [
+    "Test Framework"
+   ]
+  },
+  "labels": {
+   "Part_Boolean": [
+    "Boolesche Verknüpfung"
+   ],
+   "Part_Box": [
+    "Quader"
+   ],
+   "Part_Builder": [
+    "Formgenerator"
+   ],
+   "Part_Chamfer": [
+    "Fase"
+   ],
+   "Part_CheckGeometry": [
+    "Geometrie überprüfen"
+   ],
+   "Part_ColorPerFace": [
+    "Aussehen &flächenweise festlegen"
+   ],
+   "Part_Common": [
+    "Schnitt"
+   ],
+   "Part_CompCompoundTools": [
+    "Verbund",
+    "Explode Compound",
+    "Compound Filter"
+   ],
+   "Part_CompJoinFeatures": [
+    "Connect Shapes",
+    "Embed Shapes",
+    "Cutout Shape"
+   ],
+   "Part_CompOffset": [
+    "3D-Versatz",
+    "2D-Versatz"
+   ],
+   "Part_CompSplitFeatures": [
+    "Boolean Fragments",
+    "Slice Apart",
+    "Slice to Compound",
+    "Boolean XOR"
+   ],
+   "Part_Cone": [
+    "Kegel"
+   ],
+   "Part_CrossSections": [
+    "Querschnitte"
+   ],
+   "Part_Cut": [
+    "Differenz"
+   ],
+   "Part_Cylinder": [
+    "Zylinder"
+   ],
+   "Part_Datums": [
+    "Koordinatensystem",
+    "Bezugsebene",
+    "Bezugslinie",
+    "Bezugspunkt"
+   ],
+   "Part_Defeaturing": [
+    "Formelement entfernen"
+   ],
+   "Part_Extrude": [
+    "Extrudieren"
+   ],
+   "Part_Fillet": [
+    "Verrundung"
+   ],
+   "Part_Fuse": [
+    "Vereinigung"
+   ],
+   "Part_Loft": [
+    "Ausformung"
+   ],
+   "Part_MakeFace": [
+    "Fläche aus Kantenzügen"
+   ],
+   "Part_Mirror": [
+    "Spiegeln"
+   ],
+   "Part_Primitives": [
+    "Grundelemente"
+   ],
+   "Part_ProjectionOnSurface": [
+    "Auf Oberfläche projizieren"
+   ],
+   "Part_Revolve": [
+    "Drehen"
+   ],
+   "Part_RuledSurface": [
+    "Regelfläche"
+   ],
+   "Part_Scale": [
+    "Skalieren"
+   ],
+   "Part_Section": [
+    "Schnittkurve"
+   ],
+   "Part_SelectFilter": [
+    "Knotenauswahl",
+    "Kantenauswahl",
+    "Flächenauswahl",
+    "Keine Auswahlfilter"
+   ],
+   "Part_Sphere": [
+    "Kugel"
+   ],
+   "Part_Sweep": [
+    "Austragung"
+   ],
+   "Part_Thickness": [
+    "Dicke"
+   ],
+   "Part_Torus": [
+    "Torus"
+   ],
+   "Part_Tube": [
+    "Rohr"
+   ],
+   "Sketcher_NewSketch": [
+    "Neue Skizze"
+   ],
+   "Std_AlignToSelection": [
+    "&Auf Auswahl ausrichten"
+   ],
+   "Std_Copy": [
+    "&Kopieren"
+   ],
+   "Std_Cut": [
+    "&Ausschneiden"
+   ],
+   "Std_DlgMacroExecute": [
+    "Ma&kros"
+   ],
+   "Std_DlgMacroExecuteDirect": [
+    "Makro ausführ&en"
+   ],
+   "Std_DlgMacroRecord": [
+    "&Makro aufzeichnen"
+   ],
+   "Std_DrawStyle": [
+    "&1 Wie es ist",
+    "&2 Punkte",
+    "&3 Drahtgitter",
+    "&4 Versteckte Linie",
+    "&5 Keine Schattierung",
+    "&6 Schattiert",
+    "&7 Flache Linien"
+   ],
+   "Std_Group": [
+    "Neue Gruppe"
+   ],
+   "Std_LinkActions": [
+    "Verknüpfung erstellen",
+    "Unterverknüpfung erstellen",
+    "Durch Verknüpfung ersetzen",
+    "Verknüpfung auflösen",
+    "Verknüpfungen importieren",
+    "Alle Verknüpfungen importieren"
+   ],
+   "Std_Measure": [
+    "&Messen"
+   ],
+   "Std_New": [
+    "&Neues Dokument"
+   ],
+   "Std_Open": [
+    "&Öffnen…"
+   ],
+   "Std_Part": [
+    "Neues Part-Objekt"
+   ],
+   "Std_Paste": [
+    "Ein&fügen"
+   ],
+   "Std_Redo": [
+    "Wieder&herstellen"
+   ],
+   "Std_Refresh": [
+    "Neuberechnen"
+   ],
+   "Std_Save": [
+    "&Speichern"
+   ],
+   "Std_TreeViewActions": [
+    "&1 Ansicht synchronisieren",
+    "&2 Auswahl synchronisieren",
+    "&3 Positionierung synchronisieren",
+    "&4 Vorauswahl",
+    "&5 Auswahl aufzeichnen",
+    "",
+    "&Einzelnes Dokument",
+    "&Mehrfach-Dokument",
+    "Reduzieren/Er&weitern",
+    "",
+    "&Ziehen initiieren",
+    "&Zur Auswahl gehen",
+    "",
+    "Auswahl &Rückwärts",
+    "Auswahl &Vorwärts"
+   ],
+   "Std_Undo": [
+    "&Rückgängig"
+   ],
+   "Std_VarSet": [
+    "Variablensatz"
+   ],
+   "Std_ViewBottom": [
+    "&5 Untersicht"
+   ],
+   "Std_ViewFitAll": [
+    "Alles &einpassen"
+   ],
+   "Std_ViewFitSelection": [
+    "Au&swahl einpassen"
+   ],
+   "Std_ViewFront": [
+    "&1 Vorderansicht"
+   ],
+   "Std_ViewGroup": [
+    "&Isometrisch",
+    "&1 Vorderansicht",
+    "&2 Draufsicht",
+    "&3 Seitenansicht von rechts",
+    "&4 Rückansicht",
+    "&5 Untersicht",
+    "&6 Seitenansicht von links"
+   ],
+   "Std_ViewIsometric": [
+    "&Isometrisch"
+   ],
+   "Std_ViewLeft": [
+    "&6 Seitenansicht von links"
+   ],
+   "Std_ViewRear": [
+    "&4 Rückansicht"
+   ],
+   "Std_ViewRight": [
+    "&3 Seitenansicht von rechts"
+   ],
+   "Std_ViewTop": [
+    "&2 Draufsicht"
+   ],
+   "Std_WhatsThis": [
+    "Dire&kthilfe"
+   ],
+   "Std_Workbench": [
+    "Assembly",
+    "BIM",
+    "CAM",
+    "Draft",
+    "FEM",
+    "Material",
+    "Mesh",
+    "Part Design",
+    "Part",
+    "Points",
+    "Reverse Engineering",
+    "Sketcher",
+    "Spreadsheet",
+    "Surface",
+    "TechDraw",
+    "Inspection",
+    "<none>",
+    "OpenSCAD",
+    "Robot",
+    "Test Framework"
+   ],
+   "TalkToMe_Microphone": [
+    "Talk to me"
+   ]
+  },
+  "toolbar_items": {
+   "Boolean Tools": [
+    "Part_CompCompoundTools",
+    "Part_Boolean",
+    "Part_Cut",
+    "Part_Fuse",
+    "Part_Common",
+    "Part_CompJoinFeatures",
+    "Part_CompSplitFeatures",
+    "Part_CheckGeometry",
+    "Part_Defeaturing"
+   ],
+   "Clipboard": [
+    "Std_Cut",
+    "Std_Copy",
+    "Std_Paste"
+   ],
+   "Edit": [
+    "Std_Undo",
+    "Std_Redo",
+    "Separator",
+    "Std_Refresh"
+   ],
+   "File": [
+    "Std_New",
+    "Std_Open",
+    "Std_Save"
+   ],
+   "Help": [
+    "Std_WhatsThis"
+   ],
+   "Individual Views": [
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft"
+   ],
+   "Macro": [
+    "Std_DlgMacroRecord",
+    "Std_DlgMacroExecute",
+    "Std_DlgMacroExecuteDirect"
+   ],
+   "Part Tools": [
+    "Sketcher_NewSketch",
+    "Part_Extrude",
+    "Part_Revolve",
+    "Part_Mirror",
+    "Part_Scale",
+    "Part_Fillet",
+    "Part_Chamfer",
+    "Part_MakeFace",
+    "Part_RuledSurface",
+    "Part_Loft",
+    "Part_Sweep",
+    "Part_Section",
+    "Part_CrossSections",
+    "Part_CompOffset",
+    "Part_Thickness",
+    "Part_ProjectionOnSurface",
+    "Part_ColorPerFace"
+   ],
+   "Solids": [
+    "Part_Box",
+    "Part_Cylinder",
+    "Part_Sphere",
+    "Part_Cone",
+    "Part_Torus",
+    "Part_Tube",
+    "Part_Primitives",
+    "Part_Builder"
+   ],
+   "Structure": [
+    "Std_Part",
+    "Part_Datums",
+    "Std_Group",
+    "Std_LinkActions",
+    "Std_VarSet"
+   ],
+   "Talk to me": [
+    "TalkToMe_Microphone"
+   ],
+   "View": [
+    "Std_ViewFitAll",
+    "Std_ViewFitSelection",
+    "Std_ViewGroup",
+    "Std_AlignToSelection",
+    "Separator",
+    "Std_DrawStyle",
+    "Part_SelectFilter",
+    "Std_TreeViewActions",
+    "Std_Measure"
+   ],
+   "Workbench": [
+    "Std_Workbench"
+   ]
+  },
+  "workbenches": {
+   "AssemblyWorkbench": [
+    "Assembly"
+   ],
+   "BIMWorkbench": [
+    "BIM"
+   ],
+   "CAMWorkbench": [
+    "CAM"
+   ],
+   "DraftWorkbench": [
+    "Draft"
+   ],
+   "FemWorkbench": [
+    "FEM"
+   ],
+   "InspectionWorkbench": [
+    "Inspection"
+   ],
+   "MaterialWorkbench": [
+    "Material"
+   ],
+   "MeshWorkbench": [
+    "Mesh"
+   ],
+   "NoneWorkbench": [
+    "<none>"
+   ],
+   "OpenSCADWorkbench": [
+    "OpenSCAD"
+   ],
+   "PartDesignWorkbench": [
+    "Part Design"
+   ],
+   "PartWorkbench": [
+    "Part"
+   ],
+   "PointsWorkbench": [
+    "Points"
+   ],
+   "ReverseEngineeringWorkbench": [
+    "Reverse Engineering"
+   ],
+   "RobotWorkbench": [
+    "Robot"
+   ],
+   "SketcherWorkbench": [
+    "Sketcher"
+   ],
+   "SpreadsheetWorkbench": [
+    "Spreadsheet"
+   ],
+   "SurfaceWorkbench": [
+    "Surface"
+   ],
+   "TechDrawWorkbench": [
+    "TechDraw"
+   ],
+   "TestWorkbench": [
+    "Test Framework"
+   ]
+  }
+ },
+ "freecad": "1.1.4",
+ "language": "de",
+ "note": "new document, Part workbench",
+ "tool_running": false
+}

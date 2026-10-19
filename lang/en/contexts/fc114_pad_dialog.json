@@ -1,0 +1,649 @@
+{
+ "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
+ "context": {
+  "active": {
+   "PartDesign_AdditiveHelix": true,
+   "PartDesign_AdditiveLoft": true,
+   "PartDesign_AdditivePipe": true,
+   "PartDesign_Body": true,
+   "PartDesign_Boolean": true,
+   "PartDesign_Chamfer": true,
+   "PartDesign_Clone": false,
+   "PartDesign_CompPrimitiveAdditive": false,
+   "PartDesign_CompPrimitiveSubtractive": false,
+   "PartDesign_CompSketches": false,
+   "PartDesign_Draft": true,
+   "PartDesign_Fillet": true,
+   "PartDesign_Groove": true,
+   "PartDesign_Hole": true,
+   "PartDesign_LinearPattern": true,
+   "PartDesign_Mirrored": true,
+   "PartDesign_MultiTransform": true,
+   "PartDesign_Pad": true,
+   "PartDesign_Pocket": true,
+   "PartDesign_PolarPattern": true,
+   "PartDesign_Revolution": true,
+   "PartDesign_SubShapeBinder": true,
+   "PartDesign_SubtractiveHelix": true,
+   "PartDesign_SubtractiveLoft": true,
+   "PartDesign_SubtractivePipe": true,
+   "PartDesign_Thickness": true,
+   "Part_CheckGeometry": false,
+   "Part_Datums": true,
+   "Part_SelectFilter": true,
+   "Sketcher_ValidateSketch": false,
+   "Std_AlignToSelection": true,
+   "Std_Copy": false,
+   "Std_Cut": false,
+   "Std_DlgMacroExecute": true,
+   "Std_DlgMacroExecuteDirect": false,
+   "Std_DlgMacroRecord": true,
+   "Std_DrawStyle": true,
+   "Std_Group": true,
+   "Std_LinkActions": true,
+   "Std_Measure": true,
+   "Std_New": true,
+   "Std_Open": true,
+   "Std_Part": true,
+   "Std_Paste": false,
+   "Std_Redo": false,
+   "Std_Refresh": true,
+   "Std_Save": true,
+   "Std_TreeViewActions": true,
+   "Std_Undo": true,
+   "Std_VarSet": true,
+   "Std_ViewBottom": true,
+   "Std_ViewFitAll": true,
+   "Std_ViewFitSelection": true,
+   "Std_ViewFront": true,
+   "Std_ViewGroup": true,
+   "Std_ViewIsometric": true,
+   "Std_ViewLeft": true,
+   "Std_ViewRear": true,
+   "Std_ViewRight": true,
+   "Std_ViewTop": true,
+   "Std_WhatsThis": true,
+   "Std_Workbench": true,
+   "TalkToMe_Microphone": true
+  },
+  "choices": [],
+  "current_workbench": "PartDesignWorkbench",
+  "descriptions": {
+   "PartDesign_AdditiveHelix": "Sweeps the selected sketch or profile along a helix and adds it to the body",
+   "PartDesign_AdditiveLoft": "Lofts the selected sketch or profile along a path and adds it to the body",
+   "PartDesign_AdditivePipe": "Sweeps the selected sketch or profile along a path and adds it to the body",
+   "PartDesign_Body": "Creates a new body and activates it",
+   "PartDesign_Boolean": "Applies boolean operations with the selected objects and the active body",
+   "PartDesign_Chamfer": "Applies a chamfer to the selected edges or faces",
+   "PartDesign_Clone": "Copies a solid object parametrically as the base feature of a new body",
+   "PartDesign_CompPrimitiveAdditive": "Creates an additive box by its width, height, and length",
+   "PartDesign_CompPrimitiveSubtractive": "Creates a subtractive box by its width, height and length",
+   "PartDesign_CompSketches": "Creates a new sketch",
+   "PartDesign_Draft": "Applies a draft to the selected faces",
+   "PartDesign_Fillet": "Applies a fillet to the selected edges or faces",
+   "PartDesign_Groove": "Revolves the sketch or profile around a line or axis and removes it from the body",
+   "PartDesign_Hole": "Creates holes in the active body at the center points of circles or arcs of the selected sketch or profile",
+   "PartDesign_LinearPattern": "Duplicates the selected features or the active body in a linear pattern",
+   "PartDesign_Mirrored": "Mirrors the selected features or active body",
+   "PartDesign_MultiTransform": "Applies multiple transformations to the selected features or active body",
+   "PartDesign_Pad": "Extrudes the selected sketch or profile and adds it to the body",
+   "PartDesign_Pocket": "Extrudes the selected sketch or profile and removes it from the body",
+   "PartDesign_PolarPattern": "Duplicates the selected features or the active body in a circular pattern",
+   "PartDesign_Revolution": "Revolves the selected sketch or profile around a line or axis and adds it to the body",
+   "PartDesign_SubShapeBinder": "Creates a reference to geometry from one or more objects, allowing it to be used inside or outside a body. It tracks relative placements, supports multiple geometry types (solids, faces, edges, vertices), and can work with objects in the same or external documents.",
+   "PartDesign_SubtractiveHelix": "Sweeps the selected sketch or profile along a helix and removes it from the body",
+   "PartDesign_SubtractiveLoft": "Lofts the selected sketch or profile along a path and removes it from the body",
+   "PartDesign_SubtractivePipe": "Sweeps the selected sketch or profile along a path and removes it from the body",
+   "PartDesign_Thickness": "Applies thickness and removes the selected faces",
+   "Part_CheckGeometry": "Analyzes the selected shapes for errors",
+   "Part_Datums": "Creates a coordinate system that can be attached to other objects",
+   "Part_SelectFilter": "Only allows the selection of vertices",
+   "Sketcher_ValidateSketch": "Validates a sketch by checking for missing coincidences,\ninvalid constraints, and degenerate geometry",
+   "Std_AlignToSelection": "Aligns the camera view to the selected elements in the 3D view",
+   "Std_Copy": "Copies the selection to the clipboard",
+   "Std_Cut": "Removes the selection and copies it to the clipboard",
+   "Std_DlgMacroExecute": "Opens a dialog to execute a recorded macro",
+   "Std_DlgMacroExecuteDirect": "Executes the macro in the editor",
+   "Std_DlgMacroRecord": "Opens a dialog to record a macro",
+   "Std_DrawStyle": "",
+   "Std_Group": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model.",
+   "Std_LinkActions": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_Measure": "Measure a feature",
+   "Std_New": "Creates a new empty document",
+   "Std_Open": "Opens a document or imports files",
+   "Std_Part": "Creates a part, which is a general-purpose container to group objects so they act as a unit in the 3D view. It is intended to arrange objects that have a part TopoShape, like part primitives, Part Design bodies, and other parts.",
+   "Std_Paste": "Pastes the contents of the clipboard",
+   "Std_Redo": "Redoes a previously undone action",
+   "Std_Refresh": "Recomputes the active document",
+   "Std_Save": "Saves the active document",
+   "Std_TreeViewActions": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_Undo": "Undoes the previous action",
+   "Std_VarSet": "Creates a variable set, which is an object that maintains a set of properties to be used as variables",
+   "Std_ViewBottom": "Sets the camera to the bottom view",
+   "Std_ViewFitAll": "Fits all content into the 3D view",
+   "Std_ViewFitSelection": "Fits the selected content into the 3D view",
+   "Std_ViewFront": "Sets the camera to the front view",
+   "Std_ViewGroup": "Sets the camera to the isometric view",
+   "Std_ViewIsometric": "Sets the camera to the isometric view",
+   "Std_ViewLeft": "Sets the camera to the left view",
+   "Std_ViewRear": "Sets the camera to the rear view",
+   "Std_ViewRight": "Sets the camera to the right view",
+   "Std_ViewTop": "Sets the camera to the top view",
+   "Std_WhatsThis": "Opens the documentation for the selected command",
+   "Std_Workbench": "Selects the 'Assembly' workbench",
+   "TalkToMe_Microphone": "Talk to me: switch the microphone on or off"
+  },
+  "dialog_open": true,
+  "edit_prefix": "PartDesign_",
+  "foreign_labels": {},
+  "labels": {
+   "PartDesign_AdditiveHelix": [
+    "Additive Helix",
+    "Additive Helix"
+   ],
+   "PartDesign_AdditiveLoft": [
+    "Additive Loft",
+    "Additive Loft"
+   ],
+   "PartDesign_AdditivePipe": [
+    "Additive Pipe",
+    "Additive Pipe"
+   ],
+   "PartDesign_Body": [
+    "New Body",
+    "New Body"
+   ],
+   "PartDesign_Boolean": [
+    "Boolean Operation",
+    "Boolean Operation"
+   ],
+   "PartDesign_Chamfer": [
+    "Chamfer",
+    "Chamfer"
+   ],
+   "PartDesign_Clone": [
+    "Clone",
+    "Clone"
+   ],
+   "PartDesign_CompPrimitiveAdditive": [
+    "Additive Box",
+    "Additive Cylinder",
+    "Additive Sphere",
+    "Additive Cone",
+    "Additive Ellipsoid",
+    "Additive Torus",
+    "Additive Prism",
+    "Additive Wedge",
+    "Additive Primitive"
+   ],
+   "PartDesign_CompPrimitiveSubtractive": [
+    "Subtractive Box",
+    "Subtractive Cylinder",
+    "Subtractive Sphere",
+    "Subtractive Cone",
+    "Subtractive Ellipsoid",
+    "Subtractive Torus",
+    "Subtractive Prism",
+    "Subtractive Wedge",
+    "Subtractive Primitive"
+   ],
+   "PartDesign_CompSketches": [
+    "New Sketch",
+    "Attach Sketch",
+    "Edit Sketch",
+    "Create Datum"
+   ],
+   "PartDesign_Draft": [
+    "Draft",
+    "Draft"
+   ],
+   "PartDesign_Fillet": [
+    "Fillet",
+    "Fillet"
+   ],
+   "PartDesign_Groove": [
+    "Groove",
+    "Groove"
+   ],
+   "PartDesign_Hole": [
+    "Hole",
+    "Hole"
+   ],
+   "PartDesign_LinearPattern": [
+    "Linear Pattern",
+    "Linear Pattern"
+   ],
+   "PartDesign_Mirrored": [
+    "Mirror",
+    "Mirror"
+   ],
+   "PartDesign_MultiTransform": [
+    "Multi-Transform",
+    "Multi-Transform"
+   ],
+   "PartDesign_Pad": [
+    "Pad",
+    "Pad"
+   ],
+   "PartDesign_Pocket": [
+    "Pocket",
+    "Pocket"
+   ],
+   "PartDesign_PolarPattern": [
+    "Polar Pattern",
+    "Polar Pattern"
+   ],
+   "PartDesign_Revolution": [
+    "Revolve",
+    "Revolve"
+   ],
+   "PartDesign_SubShapeBinder": [
+    "Sub-Shape Binder",
+    "Sub-Shape Binder"
+   ],
+   "PartDesign_SubtractiveHelix": [
+    "Subtractive Helix",
+    "Subtractive Helix"
+   ],
+   "PartDesign_SubtractiveLoft": [
+    "Subtractive Loft",
+    "Subtractive Loft"
+   ],
+   "PartDesign_SubtractivePipe": [
+    "Subtractive Pipe",
+    "Subtractive Pipe"
+   ],
+   "PartDesign_Thickness": [
+    "Thickness",
+    "Thickness"
+   ],
+   "Part_CheckGeometry": [
+    "Check Geometry",
+    "Check Geometry"
+   ],
+   "Part_Datums": [
+    "Coordinate System",
+    "Datum Plane",
+    "Datum Line",
+    "Datum Point",
+    "Datums"
+   ],
+   "Part_SelectFilter": [
+    "Vertex Selection",
+    "Edge Selection",
+    "Face Selection",
+    "No Selection Filters",
+    "Selection Filter"
+   ],
+   "Sketcher_ValidateSketch": [
+    "Validate Sketch",
+    "Validate Sketch"
+   ],
+   "Std_AlignToSelection": [
+    "&Align to Selection",
+    "&Align to Selection"
+   ],
+   "Std_Copy": [
+    "&Copy",
+    "&Copy"
+   ],
+   "Std_Cut": [
+    "Cu&t",
+    "Cu&t"
+   ],
+   "Std_DlgMacroExecute": [
+    "Ma&cros",
+    "Ma&cros"
+   ],
+   "Std_DlgMacroExecuteDirect": [
+    "&Execute Macro",
+    "&Execute Macro"
+   ],
+   "Std_DlgMacroRecord": [
+    "Record &Macro",
+    "Record &Macro"
+   ],
+   "Std_DrawStyle": [
+    "&1 As is",
+    "&2 Points",
+    "&3 Wireframe",
+    "&4 Hidden line",
+    "&5 No shading",
+    "&6 Shaded",
+    "&7 Flat lines",
+    "&Draw Style"
+   ],
+   "Std_Group": [
+    "New Group",
+    "New Group"
+   ],
+   "Std_LinkActions": [
+    "Make Link",
+    "Make Sub-Link",
+    "Replace With Link",
+    "Unlink",
+    "Import Links",
+    "Import All Links",
+    "Link Actions"
+   ],
+   "Std_Measure": [
+    "&Measure",
+    "&Measure"
+   ],
+   "Std_New": [
+    "&New Document",
+    "&New Document"
+   ],
+   "Std_Open": [
+    "&Open…",
+    "&Open…"
+   ],
+   "Std_Part": [
+    "New Part",
+    "New Part"
+   ],
+   "Std_Paste": [
+    "&Paste",
+    "&Paste"
+   ],
+   "Std_Redo": [
+    "&Redo",
+    "&Redo"
+   ],
+   "Std_Refresh": [
+    "Recompute",
+    "Recompute"
+   ],
+   "Std_Save": [
+    "&Save",
+    "&Save"
+   ],
+   "Std_TreeViewActions": [
+    "&1 Sync View",
+    "&2 Sync Selection",
+    "&3 Sync Placement",
+    "&4 Preselection",
+    "&5 Record Selection",
+    "",
+    "&Single Document",
+    "&Multi Document",
+    "Collapse/E&xpand",
+    "",
+    "Initiate &Dragging",
+    "&Go to Selection",
+    "",
+    "Selection &Back",
+    "Selection &Forward",
+    "Tree View Actions"
+   ],
+   "Std_Undo": [
+    "&Undo",
+    "&Undo"
+   ],
+   "Std_VarSet": [
+    "Variable Set",
+    "Variable Set"
+   ],
+   "Std_ViewBottom": [
+    "&5 Bottom",
+    "&5 Bottom"
+   ],
+   "Std_ViewFitAll": [
+    "&Fit All",
+    "&Fit All"
+   ],
+   "Std_ViewFitSelection": [
+    "Fit &Selection",
+    "Fit &Selection"
+   ],
+   "Std_ViewFront": [
+    "&1 Front",
+    "&1 Front"
+   ],
+   "Std_ViewGroup": [
+    "&Isometric",
+    "&1 Front",
+    "&2 Top",
+    "&3 Right",
+    "&4 Rear",
+    "&5 Bottom",
+    "&6 Left",
+    "Standard &Views"
+   ],
+   "Std_ViewIsometric": [
+    "&Isometric",
+    "&Isometric"
+   ],
+   "Std_ViewLeft": [
+    "&6 Left",
+    "&6 Left"
+   ],
+   "Std_ViewRear": [
+    "&4 Rear",
+    "&4 Rear"
+   ],
+   "Std_ViewRight": [
+    "&3 Right",
+    "&3 Right"
+   ],
+   "Std_ViewTop": [
+    "&2 Top",
+    "&2 Top"
+   ],
+   "Std_WhatsThis": [
+    "&What's This?",
+    "&What's This?"
+   ],
+   "Std_Workbench": [
+    "Assembly",
+    "BIM",
+    "CAM",
+    "Draft",
+    "FEM",
+    "Material",
+    "Mesh",
+    "Part Design",
+    "Part",
+    "Points",
+    "Reverse Engineering",
+    "Sketcher",
+    "Spreadsheet",
+    "Surface",
+    "TechDraw",
+    "Inspection",
+    "<none>",
+    "OpenSCAD",
+    "Robot",
+    "Test Framework",
+    "&Workbench"
+   ],
+   "TalkToMe_Microphone": [
+    "Talk to me",
+    "Talk to me"
+   ]
+  },
+  "toolbar_items": {
+   "Clipboard": [
+    "Std_Cut",
+    "Std_Copy",
+    "Std_Paste"
+   ],
+   "Edit": [
+    "Std_Undo",
+    "Std_Redo",
+    "Separator",
+    "Std_Refresh"
+   ],
+   "File": [
+    "Std_New",
+    "Std_Open",
+    "Std_Save"
+   ],
+   "Help": [
+    "Std_WhatsThis"
+   ],
+   "Individual Views": [
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft"
+   ],
+   "Macro": [
+    "Std_DlgMacroRecord",
+    "Std_DlgMacroExecute",
+    "Std_DlgMacroExecuteDirect"
+   ],
+   "Part Design Dress-Up Features": [
+    "PartDesign_Fillet",
+    "PartDesign_Chamfer",
+    "PartDesign_Draft",
+    "PartDesign_Thickness"
+   ],
+   "Part Design Helper Features": [
+    "PartDesign_Body",
+    "PartDesign_CompSketches",
+    "Sketcher_ValidateSketch",
+    "Part_CheckGeometry",
+    "PartDesign_SubShapeBinder",
+    "PartDesign_Clone"
+   ],
+   "Part Design Modeling Features": [
+    "PartDesign_Pad",
+    "PartDesign_Revolution",
+    "PartDesign_AdditiveLoft",
+    "PartDesign_AdditivePipe",
+    "PartDesign_AdditiveHelix",
+    "PartDesign_CompPrimitiveAdditive",
+    "Separator",
+    "PartDesign_Pocket",
+    "PartDesign_Hole",
+    "PartDesign_Groove",
+    "PartDesign_SubtractiveLoft",
+    "PartDesign_SubtractivePipe",
+    "PartDesign_SubtractiveHelix",
+    "PartDesign_CompPrimitiveSubtractive",
+    "Separator",
+    "PartDesign_Boolean"
+   ],
+   "Part Design Transformation Features": [
+    "PartDesign_Mirrored",
+    "PartDesign_LinearPattern",
+    "PartDesign_PolarPattern",
+    "PartDesign_MultiTransform"
+   ],
+   "Structure": [
+    "Std_Part",
+    "Part_Datums",
+    "Std_Group",
+    "Std_LinkActions",
+    "Std_VarSet"
+   ],
+   "Talk to me": [
+    "TalkToMe_Microphone"
+   ],
+   "View": [
+    "Std_ViewFitAll",
+    "Std_ViewFitSelection",
+    "Std_ViewGroup",
+    "Std_AlignToSelection",
+    "Separator",
+    "Std_DrawStyle",
+    "Part_SelectFilter",
+    "Std_TreeViewActions",
+    "Std_Measure"
+   ],
+   "Workbench": [
+    "Std_Workbench"
+   ]
+  },
+  "workbenches": {
+   "AssemblyWorkbench": [
+    "Assembly",
+    "Assembly"
+   ],
+   "BIMWorkbench": [
+    "BIM",
+    "BIM"
+   ],
+   "CAMWorkbench": [
+    "CAM",
+    "CAM"
+   ],
+   "DraftWorkbench": [
+    "Draft",
+    "Draft"
+   ],
+   "FemWorkbench": [
+    "FEM",
+    "FEM"
+   ],
+   "InspectionWorkbench": [
+    "Inspection",
+    "Inspection"
+   ],
+   "MaterialWorkbench": [
+    "Material",
+    "Material"
+   ],
+   "MeshWorkbench": [
+    "Mesh",
+    "Mesh"
+   ],
+   "NoneWorkbench": [
+    "<none>",
+    "<none>"
+   ],
+   "OpenSCADWorkbench": [
+    "OpenSCAD",
+    "OpenSCAD"
+   ],
+   "PartDesignWorkbench": [
+    "Part Design",
+    "Part Design"
+   ],
+   "PartWorkbench": [
+    "Part",
+    "Part"
+   ],
+   "PointsWorkbench": [
+    "Points",
+    "Points"
+   ],
+   "ReverseEngineeringWorkbench": [
+    "Reverse Engineering",
+    "Reverse Engineering"
+   ],
+   "RobotWorkbench": [
+    "Robot",
+    "Robot"
+   ],
+   "SketcherWorkbench": [
+    "Sketcher",
+    "Sketcher"
+   ],
+   "SpreadsheetWorkbench": [
+    "Spreadsheet",
+    "Spreadsheet"
+   ],
+   "SurfaceWorkbench": [
+    "Surface",
+    "Surface"
+   ],
+   "TechDrawWorkbench": [
+    "TechDraw",
+    "TechDraw"
+   ],
+   "TestWorkbench": [
+    "Test Framework",
+    "Test Framework"
+   ]
+  }
+ },
+ "freecad": "1.1.4",
+ "language": "en",
+ "note": "PartDesign: the pad dialog is open and asks for its length",
+ "tool_running": true
+}

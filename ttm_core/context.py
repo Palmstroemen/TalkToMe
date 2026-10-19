@@ -82,3 +82,14 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
             wb_id = "workbench:" + wb
             add(wb_id, "global", merge_phrases(vocab.get(wb_id), names), shown=(list(names) or [None])[0])
     return candidates
+
+
+SNAPSHOT_KEYS = ("toolbar_items", "labels", "active", "edit_prefix", "dialog_open", "choices",
+                 "workbenches", "current_workbench", "descriptions", "foreign_labels")
+
+
+def from_snapshot(snapshot, vocab=None, heard=None):
+    """Candidates of a raw context (talktome.context.snapshot), with the current vocabulary."""
+    raw = {k: snapshot.get(k) for k in SNAPSHOT_KEYS if snapshot.get(k) is not None}
+    return build_candidates(raw.pop("toolbar_items", {}), raw.pop("labels", {}), raw.pop("active", {}),
+                            vocab=vocab, heard=heard, **raw)

@@ -1,0 +1,850 @@
+{
+ "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
+ "context": {
+  "active": {
+   "Part_Datums": true,
+   "Part_SelectFilter": true,
+   "Sketcher_ArcOverlay": true,
+   "Sketcher_BSplineConvertToNURBS": false,
+   "Sketcher_BSplineDecreaseDegree": false,
+   "Sketcher_BSplineIncreaseDegree": false,
+   "Sketcher_BSplineInsertKnot": false,
+   "Sketcher_CarbonCopy": true,
+   "Sketcher_CompBSplineShowHideGeometryInformation": true,
+   "Sketcher_CompCreateArc": true,
+   "Sketcher_CompCreateBSpline": true,
+   "Sketcher_CompCreateConic": true,
+   "Sketcher_CompCreateFillets": true,
+   "Sketcher_CompCreateRectangles": true,
+   "Sketcher_CompCreateRegularPolygon": true,
+   "Sketcher_CompCurveEdition": true,
+   "Sketcher_CompDimensionTools": true,
+   "Sketcher_CompExternal": true,
+   "Sketcher_CompHorVer": true,
+   "Sketcher_CompModifyKnotMultiplicity": false,
+   "Sketcher_CompSlot": true,
+   "Sketcher_CompToggleConstraints": true,
+   "Sketcher_ConstrainBlock": true,
+   "Sketcher_ConstrainCoincidentUnified": true,
+   "Sketcher_ConstrainEqual": true,
+   "Sketcher_ConstrainParallel": true,
+   "Sketcher_ConstrainPerpendicular": true,
+   "Sketcher_ConstrainSymmetric": true,
+   "Sketcher_ConstrainTangent": true,
+   "Sketcher_CreateLine": true,
+   "Sketcher_CreatePoint": true,
+   "Sketcher_CreatePolyline": true,
+   "Sketcher_EditSketch": false,
+   "Sketcher_JoinCurves": false,
+   "Sketcher_LeaveSketch": true,
+   "Sketcher_MapSketch": false,
+   "Sketcher_MergeSketches": false,
+   "Sketcher_MirrorSketch": false,
+   "Sketcher_NewSketch": true,
+   "Sketcher_Offset": false,
+   "Sketcher_RemoveAxesAlignment": false,
+   "Sketcher_ReorientSketch": false,
+   "Sketcher_RestoreInternalAlignmentGeometry": false,
+   "Sketcher_Rotate": false,
+   "Sketcher_Scale": false,
+   "Sketcher_SelectConstraints": false,
+   "Sketcher_SelectElementsAssociatedWithConstraints": false,
+   "Sketcher_SwitchVirtualSpace": false,
+   "Sketcher_Symmetry": false,
+   "Sketcher_ToggleConstruction": true,
+   "Sketcher_Translate": false,
+   "Sketcher_ValidateSketch": false,
+   "Sketcher_ViewSection": true,
+   "Sketcher_ViewSketch": true,
+   "Std_AlignToSelection": true,
+   "Std_Copy": false,
+   "Std_Cut": false,
+   "Std_DlgMacroExecute": true,
+   "Std_DlgMacroExecuteDirect": false,
+   "Std_DlgMacroRecord": true,
+   "Std_DrawStyle": true,
+   "Std_Group": true,
+   "Std_LinkActions": true,
+   "Std_Measure": false,
+   "Std_New": true,
+   "Std_Open": true,
+   "Std_Part": true,
+   "Std_Paste": false,
+   "Std_Redo": false,
+   "Std_Refresh": false,
+   "Std_Save": true,
+   "Std_TreeViewActions": true,
+   "Std_Undo": false,
+   "Std_VarSet": true,
+   "Std_ViewBottom": true,
+   "Std_ViewFitAll": true,
+   "Std_ViewFitSelection": true,
+   "Std_ViewFront": true,
+   "Std_ViewGroup": true,
+   "Std_ViewIsometric": true,
+   "Std_ViewLeft": true,
+   "Std_ViewRear": true,
+   "Std_ViewRight": true,
+   "Std_ViewTop": true,
+   "Std_WhatsThis": true,
+   "Std_Workbench": true,
+   "TalkToMe_Microphone": true
+  },
+  "choices": [],
+  "current_workbench": "SketcherWorkbench",
+  "descriptions": {
+   "Part_Datums": "Creates a coordinate system that can be attached to other objects",
+   "Part_SelectFilter": "Only allows the selection of vertices",
+   "Sketcher_ArcOverlay": "Toggles the visibility of the circular helpers for all arcs",
+   "Sketcher_BSplineConvertToNURBS": "Converts the selected geometry to B-splines",
+   "Sketcher_BSplineDecreaseDegree": "Decreases the degree of the B-spline",
+   "Sketcher_BSplineIncreaseDegree": "Increases the degree of the B-spline",
+   "Sketcher_BSplineInsertKnot": "Inserts a knot at a given parameter. If a knot already exists at that parameter, its multiplicity is increased by 1.",
+   "Sketcher_CarbonCopy": "Copies the geometry of another sketch",
+   "Sketcher_CompBSplineShowHideGeometryInformation": "Toggles the visibility of the degree for all B-splines",
+   "Sketcher_CompCreateArc": "Creates an arc defined by a center point and an end point",
+   "Sketcher_CompCreateBSpline": "Creates a B-spline curve defined by control points",
+   "Sketcher_CompCreateConic": "Creates a circle from a center and rim point",
+   "Sketcher_CompCreateFillets": "Creates a fillet between 2 selected lines or at coincident points",
+   "Sketcher_CompCreateRectangles": "Creates a rectangle from 2 corner points",
+   "Sketcher_CompCreateRegularPolygon": "Creates an equilateral triangle from a center and corner point",
+   "Sketcher_CompCurveEdition": "Trims an edge with respect to the selected position",
+   "Sketcher_CompDimensionTools": "Constrains contextually based on the selection. The type can be changed with the M key.",
+   "Sketcher_CompExternal": "Creates the projection of external geometry in the sketch plane",
+   "Sketcher_CompHorVer": "Constrains the selected elements either horizontally or vertically, based on their closest alignment",
+   "Sketcher_CompModifyKnotMultiplicity": "Increases the multiplicity of the selected knot of a B-spline",
+   "Sketcher_CompSlot": "Creates a slot",
+   "Sketcher_CompToggleConstraints": "Toggles between driving and reference mode of the selected constraints and commands",
+   "Sketcher_ConstrainBlock": "Constrains the selected edges as fixed",
+   "Sketcher_ConstrainCoincidentUnified": "Constrains the selected elements to be coincident",
+   "Sketcher_ConstrainEqual": "Constrains the selected edges or circles to be equal",
+   "Sketcher_ConstrainParallel": "Constrains the selected lines to be parallel",
+   "Sketcher_ConstrainPerpendicular": "Constrains the selected lines to be perpendicular",
+   "Sketcher_ConstrainSymmetric": "Constrains the selected elements to be symmetric",
+   "Sketcher_ConstrainTangent": "Constrains the selected elements to be tangent or collinear",
+   "Sketcher_CreateLine": "Creates a line",
+   "Sketcher_CreatePoint": "Creates a point",
+   "Sketcher_CreatePolyline": "Creates a continuous polyline. Press the 'M' key to switch segment modes",
+   "Sketcher_EditSketch": "Opens the selected sketch for editing",
+   "Sketcher_JoinCurves": "Joins 2 curves at selected end points",
+   "Sketcher_LeaveSketch": "Exits the active sketch",
+   "Sketcher_MapSketch": "Attaches a sketch to the selected geometry element",
+   "Sketcher_MergeSketches": "Creates a new sketch by merging at least 2 selected sketches",
+   "Sketcher_MirrorSketch": "Creates a new mirrored sketch for each selected sketch\nby using the X or Y axes, or the origin point,\nas mirroring reference",
+   "Sketcher_NewSketch": "Creates a new sketch",
+   "Sketcher_Offset": "Adds an equidistant closed contour around selected geometry: positive values offset outward, negative values inward",
+   "Sketcher_RemoveAxesAlignment": "Modifies the constraints to remove axes alignment while trying to preserve the constraint relationship of the selection",
+   "Sketcher_ReorientSketch": "Places the selected sketch on one of the global coordinate planes.\nThis will clear the AttachmentSupport property.",
+   "Sketcher_RestoreInternalAlignmentGeometry": "Toggles the visibility of all internal geometry",
+   "Sketcher_Rotate": "Rotates the selected geometry by creating 'n' copies, enabling circular pattern creation",
+   "Sketcher_Scale": "Scales the selected geometries",
+   "Sketcher_SelectConstraints": "Selects the constraints associated with the selected geometrical elements",
+   "Sketcher_SelectElementsAssociatedWithConstraints": "Selects the geometrical elements associated with the selected constraints",
+   "Sketcher_SwitchVirtualSpace": "Switches the selected constraints or the view to the other virtual space",
+   "Sketcher_Symmetry": "Creates a mirrored copy of the selected geometry",
+   "Sketcher_ToggleConstruction": "Toggles between defining geometry and construction geometry modes",
+   "Sketcher_Translate": "Translates the selected geometries and enables the creation of 'i' * 'j' copies",
+   "Sketcher_ValidateSketch": "Validates a sketch by checking for missing coincidences,\ninvalid constraints, and degenerate geometry",
+   "Sketcher_ViewSection": "Toggles between section view and full view",
+   "Sketcher_ViewSketch": "Aligns the camera orientation perpendicular to the active sketch plane",
+   "Std_AlignToSelection": "Aligns the camera view to the selected elements in the 3D view",
+   "Std_Copy": "Copies the selection to the clipboard",
+   "Std_Cut": "Removes the selection and copies it to the clipboard",
+   "Std_DlgMacroExecute": "Opens a dialog to execute a recorded macro",
+   "Std_DlgMacroExecuteDirect": "Executes the macro in the editor",
+   "Std_DlgMacroRecord": "Opens a dialog to record a macro",
+   "Std_DrawStyle": "",
+   "Std_Group": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model.",
+   "Std_LinkActions": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_Measure": "Measure a feature",
+   "Std_New": "Creates a new empty document",
+   "Std_Open": "Opens a document or imports files",
+   "Std_Part": "Creates a part, which is a general-purpose container to group objects so they act as a unit in the 3D view. It is intended to arrange objects that have a part TopoShape, like part primitives, Part Design bodies, and other parts.",
+   "Std_Paste": "Pastes the contents of the clipboard",
+   "Std_Redo": "Redoes a previously undone action",
+   "Std_Refresh": "Recomputes the active document",
+   "Std_Save": "Saves the active document",
+   "Std_TreeViewActions": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_Undo": "Undoes the previous action",
+   "Std_VarSet": "Creates a variable set, which is an object that maintains a set of properties to be used as variables",
+   "Std_ViewBottom": "Sets the camera to the bottom view",
+   "Std_ViewFitAll": "Fits all content into the 3D view",
+   "Std_ViewFitSelection": "Fits the selected content into the 3D view",
+   "Std_ViewFront": "Sets the camera to the front view",
+   "Std_ViewGroup": "Sets the camera to the isometric view",
+   "Std_ViewIsometric": "Sets the camera to the isometric view",
+   "Std_ViewLeft": "Sets the camera to the left view",
+   "Std_ViewRear": "Sets the camera to the rear view",
+   "Std_ViewRight": "Sets the camera to the right view",
+   "Std_ViewTop": "Sets the camera to the top view",
+   "Std_WhatsThis": "Opens the documentation for the selected command",
+   "Std_Workbench": "Selects the 'Assembly' workbench",
+   "TalkToMe_Microphone": "Talk to me: switch the microphone on or off"
+  },
+  "dialog_open": true,
+  "edit_prefix": "Sketcher_",
+  "foreign_labels": {},
+  "labels": {
+   "Part_Datums": [
+    "Coordinate System",
+    "Datum Plane",
+    "Datum Line",
+    "Datum Point",
+    "Datums"
+   ],
+   "Part_SelectFilter": [
+    "Vertex Selection",
+    "Edge Selection",
+    "Face Selection",
+    "No Selection Filters",
+    "Selection Filter"
+   ],
+   "Sketcher_ArcOverlay": [
+    "Toggle Circular Helper for Arcs",
+    "Toggle Circular Helper for Arcs"
+   ],
+   "Sketcher_BSplineConvertToNURBS": [
+    "Geometry to B-Spline",
+    "Geometry to B-Spline"
+   ],
+   "Sketcher_BSplineDecreaseDegree": [
+    "Decrease B-Spline Degree",
+    "Decrease B-Spline Degree"
+   ],
+   "Sketcher_BSplineIncreaseDegree": [
+    "Increase B-Spline Degree",
+    "Increase B-Spline Degree"
+   ],
+   "Sketcher_BSplineInsertKnot": [
+    "Insert Knot",
+    "Insert Knot"
+   ],
+   "Sketcher_CarbonCopy": [
+    "Carbon Copy",
+    "Carbon Copy"
+   ],
+   "Sketcher_CompBSplineShowHideGeometryInformation": [
+    "Toggle B-Spline Degree",
+    "Toggle B-Spline Control Polygon",
+    "Toggle B-Spline Curvature Comb",
+    "Toggle B-Spline Knot Multiplicity",
+    "Toggle B-Spline Control Point Weight",
+    "Toggle B-Spline Information Layer"
+   ],
+   "Sketcher_CompCreateArc": [
+    "Arc From Center",
+    "Arc From 3 Points",
+    "Elliptical Arc",
+    "Hyperbolic Arc",
+    "Parabolic Arc",
+    "Arc"
+   ],
+   "Sketcher_CompCreateBSpline": [
+    "B-Spline",
+    "Periodic B-Spline",
+    "B-Spline From Knots",
+    "Periodic B-Spline From Knots",
+    "B-Spline"
+   ],
+   "Sketcher_CompCreateConic": [
+    "Circle From Center",
+    "Circle From 3 Points",
+    "Ellipse From Center",
+    "Ellipse From 3 Points",
+    "Conic"
+   ],
+   "Sketcher_CompCreateFillets": [
+    "Fillet",
+    "Chamfer",
+    "Fillet/Chamfer"
+   ],
+   "Sketcher_CompCreateRectangles": [
+    "Rectangle",
+    "Centered Rectangle",
+    "Rounded Rectangle",
+    "Rectangle"
+   ],
+   "Sketcher_CompCreateRegularPolygon": [
+    "Triangle",
+    "Square",
+    "Pentagon",
+    "Hexagon",
+    "Heptagon",
+    "Octagon",
+    "Polygon",
+    "Polygon"
+   ],
+   "Sketcher_CompCurveEdition": [
+    "Trim Edge",
+    "Split Edge",
+    "Extend Edge",
+    "Edit Edges"
+   ],
+   "Sketcher_CompDimensionTools": [
+    "Dimension",
+    "",
+    "Horizontal Dimension",
+    "Vertical Dimension",
+    "Distance Dimension",
+    "Radius/Diameter Dimension",
+    "Radius Dimension",
+    "Diameter Dimension",
+    "Angle Dimension",
+    "Lock Position",
+    "Dimension"
+   ],
+   "Sketcher_CompExternal": [
+    "External Projection",
+    "External Intersection",
+    "External Geometry"
+   ],
+   "Sketcher_CompHorVer": [
+    "Horizontal/Vertical Constraint",
+    "Horizontal Constraint",
+    "Vertical Constraint",
+    "Horizontal/Vertical Constraint"
+   ],
+   "Sketcher_CompModifyKnotMultiplicity": [
+    "Increase knot multiplicity",
+    "Decrease knot multiplicity",
+    "Modify Knot Multiplicity"
+   ],
+   "Sketcher_CompSlot": [
+    "Slot",
+    "Arc Slot",
+    "Slot"
+   ],
+   "Sketcher_CompToggleConstraints": [
+    "Toggle Driving/Reference Constraints",
+    "Toggle Constraints",
+    "Toggle Constraints"
+   ],
+   "Sketcher_ConstrainBlock": [
+    "Block Constraint",
+    "Block Constraint"
+   ],
+   "Sketcher_ConstrainCoincidentUnified": [
+    "Coincident Constraint",
+    "Coincident Constraint"
+   ],
+   "Sketcher_ConstrainEqual": [
+    "Equal Constraint",
+    "Equal Constraint"
+   ],
+   "Sketcher_ConstrainParallel": [
+    "Parallel Constraint",
+    "Parallel Constraint"
+   ],
+   "Sketcher_ConstrainPerpendicular": [
+    "Perpendicular Constraint",
+    "Perpendicular Constraint"
+   ],
+   "Sketcher_ConstrainSymmetric": [
+    "Symmetric Constraint",
+    "Symmetric Constraint"
+   ],
+   "Sketcher_ConstrainTangent": [
+    "Tangent/Collinear Constraint",
+    "Tangent/Collinear Constraint"
+   ],
+   "Sketcher_CreateLine": [
+    "Line",
+    "Line"
+   ],
+   "Sketcher_CreatePoint": [
+    "Point",
+    "Point"
+   ],
+   "Sketcher_CreatePolyline": [
+    "Polyline",
+    "Polyline"
+   ],
+   "Sketcher_EditSketch": [
+    "Edit Sketch",
+    "Edit Sketch"
+   ],
+   "Sketcher_JoinCurves": [
+    "Join Curves",
+    "Join Curves"
+   ],
+   "Sketcher_LeaveSketch": [
+    "Leave Sketch",
+    "Leave Sketch"
+   ],
+   "Sketcher_MapSketch": [
+    "Attach Sketch",
+    "Attach Sketch"
+   ],
+   "Sketcher_MergeSketches": [
+    "Merge Sketches",
+    "Merge Sketches"
+   ],
+   "Sketcher_MirrorSketch": [
+    "Mirror Sketch",
+    "Mirror Sketch"
+   ],
+   "Sketcher_NewSketch": [
+    "New Sketch",
+    "New Sketch"
+   ],
+   "Sketcher_Offset": [
+    "Offset",
+    "Offset"
+   ],
+   "Sketcher_RemoveAxesAlignment": [
+    "Remove Axes Alignment",
+    "Remove Axes Alignment"
+   ],
+   "Sketcher_ReorientSketch": [
+    "Reorient Sketch",
+    "Reorient Sketch"
+   ],
+   "Sketcher_RestoreInternalAlignmentGeometry": [
+    "Toggle Internal Geometry",
+    "Toggle Internal Geometry"
+   ],
+   "Sketcher_Rotate": [
+    "Rotate / Polar Transform",
+    "Rotate / Polar Transform"
+   ],
+   "Sketcher_Scale": [
+    "Scale",
+    "Scale"
+   ],
+   "Sketcher_SelectConstraints": [
+    "Select Associated Constraints",
+    "Select Associated Constraints"
+   ],
+   "Sketcher_SelectElementsAssociatedWithConstraints": [
+    "Select Associated Geometry",
+    "Select Associated Geometry"
+   ],
+   "Sketcher_SwitchVirtualSpace": [
+    "Switch Virtual Space",
+    "Switch Virtual Space"
+   ],
+   "Sketcher_Symmetry": [
+    "Mirror",
+    "Mirror"
+   ],
+   "Sketcher_ToggleConstruction": [
+    "Toggle Construction Geometry",
+    "Toggle Construction Geometry"
+   ],
+   "Sketcher_Translate": [
+    "Move / Array Transform",
+    "Move / Array Transform"
+   ],
+   "Sketcher_ValidateSketch": [
+    "Validate Sketch",
+    "Validate Sketch"
+   ],
+   "Sketcher_ViewSection": [
+    "Toggle Section View",
+    "Toggle Section View"
+   ],
+   "Sketcher_ViewSketch": [
+    "Align View to Sketch",
+    "Align View to Sketch"
+   ],
+   "Std_AlignToSelection": [
+    "&Align to Selection",
+    "&Align to Selection"
+   ],
+   "Std_Copy": [
+    "&Copy",
+    "&Copy"
+   ],
+   "Std_Cut": [
+    "Cu&t",
+    "Cu&t"
+   ],
+   "Std_DlgMacroExecute": [
+    "Ma&cros",
+    "Ma&cros"
+   ],
+   "Std_DlgMacroExecuteDirect": [
+    "&Execute Macro",
+    "&Execute Macro"
+   ],
+   "Std_DlgMacroRecord": [
+    "Record &Macro",
+    "Record &Macro"
+   ],
+   "Std_DrawStyle": [
+    "&1 As is",
+    "&2 Points",
+    "&3 Wireframe",
+    "&4 Hidden line",
+    "&5 No shading",
+    "&6 Shaded",
+    "&7 Flat lines",
+    "&Draw Style"
+   ],
+   "Std_Group": [
+    "New Group",
+    "New Group"
+   ],
+   "Std_LinkActions": [
+    "Make Link",
+    "Make Sub-Link",
+    "Replace With Link",
+    "Unlink",
+    "Import Links",
+    "Import All Links",
+    "Link Actions"
+   ],
+   "Std_Measure": [
+    "&Measure",
+    "&Measure"
+   ],
+   "Std_New": [
+    "&New Document",
+    "&New Document"
+   ],
+   "Std_Open": [
+    "&Open…",
+    "&Open…"
+   ],
+   "Std_Part": [
+    "New Part",
+    "New Part"
+   ],
+   "Std_Paste": [
+    "&Paste",
+    "&Paste"
+   ],
+   "Std_Redo": [
+    "&Redo",
+    "&Redo"
+   ],
+   "Std_Refresh": [
+    "Recompute",
+    "Recompute"
+   ],
+   "Std_Save": [
+    "&Save",
+    "&Save"
+   ],
+   "Std_TreeViewActions": [
+    "&1 Sync View",
+    "&2 Sync Selection",
+    "&3 Sync Placement",
+    "&4 Preselection",
+    "&5 Record Selection",
+    "",
+    "&Single Document",
+    "&Multi Document",
+    "Collapse/E&xpand",
+    "",
+    "Initiate &Dragging",
+    "&Go to Selection",
+    "",
+    "Selection &Back",
+    "Selection &Forward",
+    "Tree View Actions"
+   ],
+   "Std_Undo": [
+    "&Undo",
+    "&Undo"
+   ],
+   "Std_VarSet": [
+    "Variable Set",
+    "Variable Set"
+   ],
+   "Std_ViewBottom": [
+    "&5 Bottom",
+    "&5 Bottom"
+   ],
+   "Std_ViewFitAll": [
+    "&Fit All",
+    "&Fit All"
+   ],
+   "Std_ViewFitSelection": [
+    "Fit &Selection",
+    "Fit &Selection"
+   ],
+   "Std_ViewFront": [
+    "&1 Front",
+    "&1 Front"
+   ],
+   "Std_ViewGroup": [
+    "&Isometric",
+    "&1 Front",
+    "&2 Top",
+    "&3 Right",
+    "&4 Rear",
+    "&5 Bottom",
+    "&6 Left",
+    "Standard &Views"
+   ],
+   "Std_ViewIsometric": [
+    "&Isometric",
+    "&Isometric"
+   ],
+   "Std_ViewLeft": [
+    "&6 Left",
+    "&6 Left"
+   ],
+   "Std_ViewRear": [
+    "&4 Rear",
+    "&4 Rear"
+   ],
+   "Std_ViewRight": [
+    "&3 Right",
+    "&3 Right"
+   ],
+   "Std_ViewTop": [
+    "&2 Top",
+    "&2 Top"
+   ],
+   "Std_WhatsThis": [
+    "&What's This?",
+    "&What's This?"
+   ],
+   "Std_Workbench": [
+    "Assembly",
+    "BIM",
+    "CAM",
+    "Draft",
+    "FEM",
+    "Material",
+    "Mesh",
+    "Part Design",
+    "Part",
+    "Points",
+    "Reverse Engineering",
+    "Sketcher",
+    "Spreadsheet",
+    "Surface",
+    "TechDraw",
+    "Inspection",
+    "<none>",
+    "OpenSCAD",
+    "Robot",
+    "Test Framework",
+    "&Workbench"
+   ],
+   "TalkToMe_Microphone": [
+    "Talk to me",
+    "Talk to me"
+   ]
+  },
+  "toolbar_items": {
+   "B-Spline Tools": [
+    "Sketcher_BSplineConvertToNURBS",
+    "Sketcher_BSplineIncreaseDegree",
+    "Sketcher_BSplineDecreaseDegree",
+    "Sketcher_CompModifyKnotMultiplicity",
+    "Sketcher_BSplineInsertKnot",
+    "Sketcher_JoinCurves"
+   ],
+   "Clipboard": [
+    "Std_Cut",
+    "Std_Copy",
+    "Std_Paste"
+   ],
+   "Constraints": [
+    "Sketcher_CompDimensionTools",
+    "Separator",
+    "Sketcher_ConstrainCoincidentUnified",
+    "Sketcher_CompHorVer",
+    "Sketcher_ConstrainParallel",
+    "Sketcher_ConstrainPerpendicular",
+    "Sketcher_ConstrainTangent",
+    "Sketcher_ConstrainEqual",
+    "Sketcher_ConstrainSymmetric",
+    "Sketcher_ConstrainBlock",
+    "Separator",
+    "Sketcher_CompToggleConstraints"
+   ],
+   "Edit": [
+    "Std_Undo",
+    "Std_Redo",
+    "Separator",
+    "Std_Refresh"
+   ],
+   "Edit Mode": [
+    "Sketcher_LeaveSketch",
+    "Sketcher_ViewSketch",
+    "Sketcher_ViewSection"
+   ],
+   "File": [
+    "Std_New",
+    "Std_Open",
+    "Std_Save"
+   ],
+   "Geometries": [
+    "Sketcher_CreatePoint",
+    "Sketcher_CreatePolyline",
+    "Sketcher_CreateLine",
+    "Sketcher_CompCreateArc",
+    "Sketcher_CompCreateConic",
+    "Sketcher_CompCreateRectangles",
+    "Sketcher_CompCreateRegularPolygon",
+    "Sketcher_CompSlot",
+    "Sketcher_CompCreateBSpline",
+    "Separator",
+    "Sketcher_ToggleConstruction"
+   ],
+   "Help": [
+    "Std_WhatsThis"
+   ],
+   "Individual Views": [
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft"
+   ],
+   "Macro": [
+    "Std_DlgMacroRecord",
+    "Std_DlgMacroExecute",
+    "Std_DlgMacroExecuteDirect"
+   ],
+   "Sketcher": [
+    "Sketcher_NewSketch",
+    "Sketcher_EditSketch",
+    "Sketcher_MapSketch",
+    "Sketcher_ReorientSketch",
+    "Sketcher_ValidateSketch",
+    "Sketcher_MergeSketches",
+    "Sketcher_MirrorSketch"
+   ],
+   "Sketcher Tools": [
+    "Sketcher_CompCreateFillets",
+    "Sketcher_CompCurveEdition",
+    "Sketcher_CompExternal",
+    "Sketcher_CarbonCopy",
+    "Separator",
+    "Sketcher_Translate",
+    "Sketcher_Rotate",
+    "Sketcher_Scale",
+    "Sketcher_Offset",
+    "Sketcher_Symmetry",
+    "Sketcher_RemoveAxesAlignment"
+   ],
+   "Structure": [
+    "Std_Part",
+    "Part_Datums",
+    "Std_Group",
+    "Std_LinkActions",
+    "Std_VarSet"
+   ],
+   "Talk to me": [
+    "TalkToMe_Microphone"
+   ],
+   "View": [
+    "Std_ViewFitAll",
+    "Std_ViewFitSelection",
+    "Std_ViewGroup",
+    "Std_AlignToSelection",
+    "Separator",
+    "Std_DrawStyle",
+    "Part_SelectFilter",
+    "Std_TreeViewActions",
+    "Std_Measure"
+   ],
+   "Visual Helpers": [
+    "Sketcher_SelectConstraints",
+    "Sketcher_SelectElementsAssociatedWithConstraints",
+    "Separator",
+    "Sketcher_ArcOverlay",
+    "Sketcher_CompBSplineShowHideGeometryInformation",
+    "Sketcher_RestoreInternalAlignmentGeometry",
+    "Sketcher_SwitchVirtualSpace"
+   ],
+   "Workbench": [
+    "Std_Workbench"
+   ]
+  },
+  "workbenches": {
+   "AssemblyWorkbench": [
+    "Assembly",
+    "Assembly"
+   ],
+   "BIMWorkbench": [
+    "BIM",
+    "BIM"
+   ],
+   "CAMWorkbench": [
+    "CAM",
+    "CAM"
+   ],
+   "DraftWorkbench": [
+    "Draft",
+    "Draft"
+   ],
+   "FemWorkbench": [
+    "FEM",
+    "FEM"
+   ],
+   "InspectionWorkbench": [
+    "Inspection",
+    "Inspection"
+   ],
+   "MaterialWorkbench": [
+    "Material",
+    "Material"
+   ],
+   "MeshWorkbench": [
+    "Mesh",
+    "Mesh"
+   ],
+   "NoneWorkbench": [
+    "<none>",
+    "<none>"
+   ],
+   "OpenSCADWorkbench": [
+    "OpenSCAD",
+    "OpenSCAD"
+   ],
+   "PartDesignWorkbench": [
+    "Part Design",
+    "Part Design"
+   ],
+   "PartWorkbench": [
+    "Part",
+    "Part"
+   ],
+   "PointsWorkbench": [
+    "Points",
+    "Points"
+   ],
+   "ReverseEngineeringWorkbench": [
+    "Reverse Engineering",
+    "Reverse Engineering"
+   ],
+   "RobotWorkbench": [
+    "Robot",
+    "Robot"
+   ],
+   "SketcherWorkbench": [
+    "Sketcher",
+    "Sketcher"
+   ],
+   "SpreadsheetWorkbench": [
+    "Spreadsheet",
+    "Spreadsheet"
+   ],
+   "SurfaceWorkbench": [
+    "Surface",
+    "Surface"
+   ],
+   "TechDrawWorkbench": [
+    "TechDraw",
+    "TechDraw"
+   ],
+   "TestWorkbench": [
+    "Test Framework",
+    "Test Framework"
+   ]
+  }
+ },
+ "freecad": "1.1.4",
+ "language": "en",
+ "note": "a sketch in edit, the rectangle tool runs and waits for values",
+ "tool_running": true
+}

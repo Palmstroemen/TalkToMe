@@ -18,18 +18,13 @@ import time
 import numpy as np
 
 from talktome_service.segmenter import Segmenter
-from ttm_core.clauses import split_clauses
 from ttm_core.context import CHOOSE, LEVELS
 from ttm_core.decision import decide
 from ttm_core.matching import hotwords
-from ttm_core.params import parse
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
-from ttm_core.sequence import EXCLUSIVE, next_step
+from ttm_core.sequence import VALUES, start_utterance, step, values_step
 from ttm_core.speech import phrase
-from ttm_core.decision import Decision
-from ttm_core.values import parse_values
 
-VALUES = "ui:values"
 
 SAMPLE_RATE = 16000
 FRAME = 512
@@ -307,20 +302,16 @@ class Service:
         with self._seq_lock:
             self._utterance = text
             self._utterance_id += 1
-            self._pending = split_clauses(text, self.language)
+            self._pending = []
             self._awaiting = None
             self._last_span = None
             self._steps = 0
             if self._candidates is not None:
-                whole = decide(text, self._candidates, self.language)
-                patterns = any(parse(c, self.language, self._patterns) for c in self._pending)
-                values = self._tool.get("running") and parse_values(text, self.language)
-                if whole.kind == "ignore" and not patterns and not values:   # talk; its clauses alone would look like short attempts
-                    self._pending = []
-                    self.send("ignored", reason=whole.reason, text=text)
+                self._pending, ignored = start_utterance(text, self._candidates, self.language,
+                                                         self._patterns, self._tool.get("running"))
+                if ignored is not None:
+                    self.send("ignored", reason=ignored.reason, text=text)
                     return
-                if whole.kind == "execute" and whole.command in EXCLUSIVE:
-                    self._pending = [text]     # one step, decided as a whole below
             self._advance()
 
     def _on_result(self, msg):
@@ -359,13 +350,7 @@ class Service:
 
     def _values(self, clause):
         """Values for the running tool (DESIGN.md 6.5), or None."""
-        if not self._tool.get("running"):
-            return None
-        values = parse_values(clause, self.language)
-        if not values:
-            return None
-        return Decision("execute", VALUES, score=1.0, level="tool", via="values",
-                        args={"values": [list(v) for v in values]})
+        return values_step(clause, self.language, self._tool.get("running"))
 
     def _send_step(self, d, span):
         self._step_id += 1
@@ -383,11 +368,7 @@ class Service:
         """
         last = None
         while self._pending and self._candidates is not None:
-            d, n = next_step(self._pending, self._candidates, self.language, patterns=self._patterns)
-            if d.kind != "execute":                # a command name wins; otherwise numbers fill the tool
-                values = self._values(self._pending[0])
-                if values is not None:
-                    d, n = values, 1
+            d, n = step(self._pending, self._candidates, self.language, self._patterns, self._tool.get("running"))
             span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
             last = d
             info = dict(text=span, utterance=self._utterance, utterance_id=self._utterance_id,

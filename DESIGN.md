@@ -909,10 +909,111 @@ kommen.
 - Für die Betriebssystem-Idee (LEARNINGS.md 4) übertragbar: dasselbe Format ohne
   FreeCAD-Kontext.
 
+**Umgesetzt** (`ttm_core/corpus.py`, `tools/corpus.py`, `tools/record_context.py`):
+
+- **Kontexte als Rohdaten:** `lang/<lc>/contexts/<name>.json` enthält, was FreeCAD zeigt
+  (Symbolleisten, Beschriftungen, Hilfetexte, aktiv/inaktiv, Bearbeitungsmodus, offener
+  Dialog, Auswahl, laufendes Werkzeug), **ohne Wortschatz**. Der kommt bei jedem Lauf aus dem
+  Paket, sonst bliebe eine Änderung am Wortschatz unsichtbar. Aufgenommen mit
+  `tools/record_context.py` als Makro in FreeCAD; vorhanden für de und en: Part, PartDesign,
+  Ebenenwahl, Skizze, laufendes Rechteck-Werkzeug, Dialog der Aufpolsterung.
+- **Dieselbe Logik wie der Dienst:** `ttm_core.sequence.plan_utterance` (Gespräch als Ganzes,
+  exklusive Befehle, Schritte, Werte bei laufendem Werkzeug); der Dienst benutzt dieselben
+  Funktionen. Eine Äußerung spielt in einem Kontext; Folgen, die den Kontext wechseln, werden
+  nur bis dorthin genau geprüft.
+- **Bewertung:** richtig, unklar (Rückfrage), verpasst, Fehlauslösung, falsch. Ein erkannter,
+  aber gerade inaktiver Befehl („Rückgängig“ im neuen Dokument) zählt als richtig: Der Dienst
+  sagt „geht gerade nicht“.
+- **Bekannte Schwächen** stehen mit `"known": true` und `"note"` im Korpus: Sie erscheinen in
+  jedem Bericht, brechen aber die Tests nicht. Wird eine behoben, fällt `known` weg.
+- `python tools/corpus.py de` (Bericht), `--with <Ordner>` (ohne/mit den Änderungen und
+  gelernten Formen eines Talk-to-me-Ordners; Exit-Code 1 bei Verschlechterung),
+  `--coverage` (16.7). `tests/test_corpus.py` spielt alle Korpora bei jedem Testlauf.
+- Grenze: Der Korpus findet nur, was er an Sätzen hat. Ein schädlicher Vorschlag fällt nur
+  auf, wenn ein Satz ihn trifft; viele Gesprächs- und Wertesätze machen ihn schärfer.
+
+Erster Stand (2026-10-19): de 83 Fälle, en 54. Gefunden: „Breite 50, Höhe 30“ wechselt bei
+laufendem Werkzeug zur Part-Werkbank („Breite“ ≈ „Part“); einzelne Wörter im Sketcher
+(„Parallel“, „Rechtwinklig“) unter der Schwelle, weil die Beschriftung „… festlegen“ lautet;
+„Symmetrisch“ ≈ „Isometrisch“; Werte mit Komma werden zwei Schritte.
+
+### 16.7 Abdeckung und Trainingsspiele
+
+Andersherum gedacht: Jeder Befehl, auch aus Addons, soll über einige typische Sätze erreichbar
+sein. **Abdeckung** misst das pro Befehl, als Sicht auf den Korpus (die Sätze eines Befehls
+sind die Fälle, die ihn erwarten):
+
+- **Erkannt ohne sich selbst** (leave one out): Ein Satz, der als Phrase im Wortschatz steht,
+  beweist nichts; er wird geprüft, als stünde er nicht dort. FreeCADs eigener Name und der
+  Hilfetext bleiben, sie sind die Grundausstattung.
+- **Verschieden:** Sätze zählen nach ihren bedeutungstragenden Wörtern; „Mach eine Fase“ und
+  „Fase“ sind derselbe Satz, „Versieh die Kanten mit einer Fase“ ein anderer.
+- **Abstand** zum nächstbesten Befehl und **Verwechslungspartner** (Fase/Phase,
+  Symmetrisch/Isometrisch): oft die nützlichste Information.
+- **Ampel:** grün ab 5 verschiedenen erkannten Sätzen mit Abstand ≥ 0,1; gelb mit
+  mindestens einem; rot ohne. Befehle der Kontexte ganz ohne Sätze sind rot.
+  **Umgesetzt:** `corpus.coverage`, `python tools/corpus.py de --coverage [--context NAME]`.
+  Erster Stand PartDesign: 48 rot, 14 gelb, 0 grün.
+
+**Spiel 1: Karten (noch nicht umgesetzt, Gedanken).** Eine Karte pro Befehl: Symbol, Name,
+Hilfetext, Ampel. Rot zuerst, gewichtet nach Bedeutung (Fase vor „Grad des B-Splines
+verringern“; Gewicht aus der eigenen Nutzung per Maus oder aus der Community). Man spricht
+oder tippt, wie man den Befehl aufrufen würde; sofortige Rückmeldung („verstanden“,
+„verwechselbar mit Vertiefung – anders formulieren?“, „lernen?“ mit der Konfliktprüfung des
+Trainings). **Beispiele anderer erst nach dem eigenen Versuch zeigen**, sonst werden sie
+nachgesprochen und die Vielfalt geht verloren. Eine Gegenrunde sammelt Gesprächssätze, die
+nichts auslösen dürfen. Fortschritt pro Werkbank, kurze Runden.
+
+**Spiel 2: Bedienen und dazu sprechen (Gedanken).** Man arbeitet ganz normal mit der Maus und
+sagt dabei, was man tut: „Jetzt machen wir hier ein Rechteck“, Klick auf das Rechteck-Werkzeug.
+Der Klick ist die Grundwahrheit für den Satz davor. Das liefert beschriftete Sätze aus echter
+Arbeit, in echten Kontexten, mit der eigenen Stimme, ohne dass man an Befehlsnamen denkt.
+Details in 16.8.
+
+Beide Spiele erzeugen Korpus-Fälle (mit `model`, 16.3a) und Vorschläge für das Teilen (16.4).
+Getippte Sätze liefern Vielfalt der Formulierung (für alle teilbar), gesprochene zeigen, wie
+das Modell diese Stimme hört (gehörte Formen, eher persönlich).
+
+### 16.8 Spiel 2 im Detail: Bedienen und dazu sprechen
+
+**Beobachtungsmodus:** Das Mikrofon hört zu, erkennt und entscheidet wie immer, **führt aber
+nichts aus** (wie der Trainingsmodus). Sonst würde „ein Rechteck“ das Werkzeug starten und
+der Klick danach noch einmal.
+
+**Was beobachtet wird, jeweils mit Zeitpunkt und aufgenommenem Kontext:**
+- Befehle: das `triggered`-Signal der Befehls-QActions (dieselben, die `collect` liest).
+- Auswahl in Dialogen (Ebene), Werte in Feldern (Länge 12 mm), Umbenennen im Baum.
+Der Kontext zum Zeitpunkt des Klicks wird mit aufgenommen; so entstehen nebenbei neue
+Kontexte für den Korpus, auch aus Addons.
+
+**Zuordnung Satz → Klick:** Ein Satz gehört zum nächsten Klick, wenn er kurz davor endet
+(etwa 0–8 s) oder während des Klicks gesprochen wird. Danach drei Fälle:
+| Das System hätte … | Bedeutung | Verwendung |
+|---|---|---|
+| denselben Befehl ausgeführt | Bestätigung | zählt für die Abdeckung, nichts zu lernen |
+| nichts verstanden oder ignoriert | Lücke | Vorschlag: Satz lernen |
+| einen anderen Befehl ausgeführt | Gefahr | wichtigster Fund, immer zur Prüfung |
+Sätze ohne Klick in der Nähe sind *vielleicht* Gespräch: ein schwaches Signal für die
+Gegenrunde, nur nach Bestätigung.
+
+**Nichts wird automatisch gelernt.** Am Ende der Sitzung (oder auf der Trainingsseite) eine
+Liste: „Du sagtest »Jetzt machen wir hier ein Rechteck« und hast dann Rechteck geklickt –
+übernehmen?“, sichere Paare vorausgewählt. Falsche Paare würden den Wortschatz vergiften.
+Gespeichert wird nur Text, kein Audio.
+
+**Rückmeldung als Anreiz:** „In dieser Sitzung hätte ich 14 von 20 Schritten verstanden“,
+vorher/nachher. Das misst den Fortschritt mit echter Arbeit statt mit ausgedachten Sätzen.
+
+**Grenzen:** Nicht jeder spricht beim Arbeiten; Sätze beschreiben oft den Zweck („jetzt
+brauchen wir eine Halterung“) statt den Befehl; mehrere Klicks kurz hintereinander machen
+die Zuordnung unsicher (dann lieber verwerfen). Die Beispiele aus Spiel 2 sind gute
+Inspiration für die Karten in Spiel 1.
+
 ### 16.6 Reihenfolge
 
 1. ~~Vererbungskette `base` im Code~~; Modellprofile (16.3a) erst mit dem Korpus, der sie misst.
-2. Wahrheitskorpus und Testmodul (16.5), zuerst mit den vorhandenen Testsätzen für de und en.
+2. ~~Wahrheitskorpus und Testmodul (16.5)~~, ~~Abdeckung (16.7)~~. Als Nächstes: die gefundenen
+   Schwächen beheben, zuerst der Werkbankwechsel bei laufendem Werkzeug.
 3. Anleitung, `CONTRIBUTING.md`, Issue-Vorlagen, `check_pack.py`, Kontext-Aufnahme.
 4. Rückfall-Lautvergleich und Stammformen als Daten.
 5. Paket-Repo mit Index, Sprachauswahl aus dem Index.

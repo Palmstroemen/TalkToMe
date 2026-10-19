@@ -8,15 +8,20 @@ A command may stretch over several clauses ("Extrudiere das und ziehe es vom Kö
 the first one to max_span clauses are tried together; the span explaining the most words wins.
 """
 
+from ttm_core.clauses import split_clauses
 from ttm_core.decision import Decision, decide, explains
 from ttm_core.matching import command_words
 from ttm_core.params import parse
+from ttm_core.values import parse_values
 
 # Steps that change the candidates; what follows them is decided in the new context.
 CONTEXT_CHANGING = ("workbench:",)
 
 # Commands that replace everything else said with them: "Ok, kurze Pause" must not press OK.
 EXCLUSIVE = ("ui:mic_off",)
+
+# Values for a running tool: "50 mal 30", "Höhe 30" (DESIGN.md 6.5).
+VALUES = "ui:values"
 
 
 def _join(clauses):
@@ -54,3 +59,58 @@ def next_step(clauses, candidates, language=None, max_span=3, patterns=None, **d
     if best is not None:
         return best
     return decide(clauses[0], candidates, language, **decide_args), 1
+
+
+# --- a whole utterance ------------------------------------------------------------------------
+# The service decides step by step, each step in the context the step before left; the corpus
+# (DESIGN.md 16.5) plays a whole utterance in one context. Both use these functions.
+
+def start_utterance(text, candidates, language=None, patterns=None, tool_running=False):
+    """(clauses to decide, None) or ([], the ignore decision) when the whole is talk."""
+    pending = split_clauses(text, language)
+    whole = decide(text, candidates, language)
+    has_pattern = any(parse(c, language, patterns) for c in pending)
+    values = tool_running and parse_values(text, language)
+    if whole.kind == "ignore" and not has_pattern and not values:   # its clauses alone would look like short attempts
+        return [], whole
+    if whole.kind == "execute" and whole.command in EXCLUSIVE:
+        return [text], None                    # one step, decided as a whole
+    return pending, None
+
+
+def values_step(clause, language=None, tool_running=False):
+    """A step with values for the running tool, or None."""
+    if not tool_running:
+        return None
+    values = parse_values(clause, language)
+    if not values:
+        return None
+    return Decision("execute", VALUES, score=1.0, level="tool", via="values",
+                    args={"values": [list(v) for v in values]})
+
+
+def step(pending, candidates, language=None, patterns=None, tool_running=False):
+    """(Decision, number of clauses) for the start of pending: a command name wins; otherwise
+    numbers fill the running tool."""
+    d, n = next_step(pending, candidates, language, patterns=patterns)
+    if d.kind != "execute":
+        values = values_step(pending[0], language, tool_running)
+        if values is not None:
+            return values, 1
+    return d, n
+
+
+def plan_utterance(text, candidates, language=None, patterns=None, tool_running=False):
+    """[(Decision, span)] of an utterance, all decided in one context. Ends after an unclear
+    clause, like the service does."""
+    pending, ignored = start_utterance(text, candidates, language, patterns, tool_running)
+    if ignored is not None:
+        return [(ignored, text)]
+    steps = []
+    while pending:
+        d, n = step(pending, candidates, language, patterns, tool_running)
+        steps.append((d, _join(pending[:n])))
+        pending = pending[n:]
+        if d.kind == "not_understood":
+            break
+    return steps

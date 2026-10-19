@@ -1,0 +1,78 @@
+# Ground truth for English (DESIGN.md 16.5). One case per line: text, context, expected steps.
+# Contexts are in contexts/, recorded in FreeCAD 1.1.4 with tools/record_context.py.
+
+# --- Commands by name (PartDesign)
+{"text": "Pad", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+{"text": "Make a fillet", "context": "fc114_partdesign", "expect": ["PartDesign_Fillet"]}
+{"text": "Chamfer", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer"]}
+{"text": "Pocket", "context": "fc114_partdesign", "expect": ["PartDesign_Pocket"]}
+{"text": "Save the document", "context": "fc114_partdesign", "expect": ["Std_Save"]}
+{"text": "Undo that", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
+{"text": "Create a new body", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
+{"text": "New sketch", "context": "fc114_partdesign", "expect": ["PartDesign_CompSketches"]}
+{"text": "Pad it 12 mm", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+{"text": "Hole", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
+{"text": "Mirror", "context": "fc114_partdesign", "expect": ["PartDesign_Mirrored"]}
+{"text": "Linear pattern", "context": "fc114_partdesign", "expect": ["PartDesign_LinearPattern"]}
+{"text": "Polar pattern", "context": "fc114_partdesign", "expect": ["PartDesign_PolarPattern"]}
+{"text": "Isometric view", "context": "fc114_partdesign", "expect": ["Std_ViewIsometric"]}
+
+# --- Commands by help text
+{"text": "Extrude this and remove it from the body", "context": "fc114_partdesign", "expect": ["PartDesign_Pocket"]}
+{"text": "Extrude the sketch and add it to the body", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+{"text": "Undo the previous action", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
+
+# --- Commands by sound (spelled as heard)
+{"text": "Make a shamfur", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer"]}
+{"text": "Poquet", "context": "fc114_partdesign", "expect": ["PartDesign_Pocket"]}
+{"text": "Pat", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+
+# --- Talk: no reaction
+{"text": "I think this already looks quite good", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Let me get a coffee first", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "so from here to there", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Hang on, I need to think about this", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "That did not work last week either", "context": "fc114_partdesign", "expect": "ignore"}
+
+# --- Switching workbenches
+{"text": "Switch to Part Design", "context": "fc114_part", "expect": ["workbench:PartDesignWorkbench"]}
+{"text": "Switch to the sketcher", "context": "fc114_part", "expect": ["workbench:SketcherWorkbench"]}
+
+# --- Microphone off (exclusive) and training
+{"text": "Microphone off", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Stop listening", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Take a short break", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Mic off", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Show the training", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Let's train that", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Training", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Open the training window", "context": "fc114_partdesign", "expect": ["ui:train"]}
+
+# --- Sequences and renaming
+{"text": "Create a new body, call it base plate, and then a new sketch", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Base plate"}}, "PartDesign_CompSketches"]}
+{"text": "Call it base plate", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Base plate"}}]}
+{"text": "Let's call it lid", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Lid"}}]}
+{"text": "Name it Bracket", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bracket"}}]}
+{"text": "Rename it to base plate", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Base plate"}}]}
+{"text": "Please rename body 2 to base plate", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Base plate", "target": "body 2"}}]}
+
+# --- Choosing a plane in the dialog
+{"text": "XY plane", "context": "fc114_sketch_plane", "expect": ["ui:choose:XY-plane (Base plane)"]}
+{"text": "The XZ plane", "context": "fc114_sketch_plane", "expect": ["ui:choose:XZ-plane (Base plane)"]}
+{"text": "YZ plane", "context": "fc114_sketch_plane", "expect": ["ui:choose:YZ-plane (Base plane)"]}
+{"text": "Cancel", "context": "fc114_sketch_plane", "expect": ["ui:cancel"]}
+
+# --- Sketcher
+{"text": "Rectangle", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateRectangles"]}
+{"text": "Draw a line", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
+{"text": "Polyline", "context": "fc114_sketcher", "expect": ["Sketcher_CreatePolyline"]}
+{"text": "Leave sketch", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
+{"text": "Parallel constraint", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+
+# --- Values for a running tool
+{"text": "50 by 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}
+{"text": "width 50, height 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}], "known": true, "note": "the comma splits the values into two steps; one step with both is wanted"}
+
+# --- Values in the pad dialog
+{"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}
+{"text": "OK", "context": "fc114_pad_dialog", "expect": ["ui:ok"]}

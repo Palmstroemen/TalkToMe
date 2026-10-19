@@ -162,3 +162,16 @@ def test_rename_is_never_a_phrase_candidate():
     """Its vocabulary entry only names it in the training page; it needs a name (pattern)."""
     c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, vocab={"ui:rename": ["Umbenennen"]}))
     assert "ui:rename" not in c
+
+
+# --- raw contexts (snapshots) for the corpus ----------------------------------------------------
+
+from ttm_core.context import from_snapshot   # noqa: E402
+
+
+def test_snapshot_gets_the_current_vocabulary():
+    snap = {"toolbar_items": TOOLBARS, "labels": LABELS, "active": ACTIVE}
+    with_vocab = by_id(from_snapshot(snap, vocab={"ui:train": ["Training"]}))
+    assert "ui:train" in with_vocab
+    assert by_id(from_snapshot(snap)).keys() <= with_vocab.keys()
+    assert from_snapshot(snap) == build_candidates(TOOLBARS, LABELS, ACTIVE)

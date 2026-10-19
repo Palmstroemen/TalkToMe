@@ -1,0 +1,107 @@
+# Ground truth for German (DESIGN.md 16.5). One case per line: text, context, expected steps.
+# Contexts are in contexts/, recorded in FreeCAD 1.1.4 with tools/record_context.py.
+
+# --- Befehle per Name (PartDesign)
+{"text": "Aufpolsterung", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+{"text": "Mach eine Fase", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer"]}
+{"text": "Verrundung", "context": "fc114_partdesign", "expect": ["PartDesign_Fillet"]}
+{"text": "Vertiefung", "context": "fc114_partdesign", "expect": ["PartDesign_Pocket"]}
+{"text": "Speichere das Dokument", "context": "fc114_partdesign", "expect": ["Std_Save"]}
+{"text": "speichern", "context": "fc114_partdesign", "expect": ["Std_Save"]}
+{"text": "Rückgängig", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
+{"text": "Erstelle einen neuen Körper", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
+{"text": "Neue Skizze", "context": "fc114_partdesign", "expect": ["PartDesign_CompSketches"]}
+{"text": "Bohrung", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
+{"text": "Spiegeln", "context": "fc114_partdesign", "expect": ["PartDesign_Mirrored"]}
+{"text": "Lineares Muster", "context": "fc114_partdesign", "expect": ["PartDesign_LinearPattern"]}
+{"text": "Polares Muster", "context": "fc114_partdesign", "expect": ["PartDesign_PolarPattern"]}
+{"text": "Aushöhlung", "context": "fc114_partdesign", "expect": ["PartDesign_Thickness"], "known": true, "note": "only the help text names it; 'Aushöhlung' is not a word of it (label 'Dicke')"}
+{"text": "Isometrische Ansicht", "context": "fc114_partdesign", "expect": ["Std_ViewIsometric"]}
+{"text": "Alles anzeigen", "context": "fc114_partdesign", "expect": ["Std_ViewFitAll"]}
+
+# --- Befehle über den Hilfetext
+{"text": "Extrudiere das und ziehe es vom bestehenden Körper ab", "context": "fc114_partdesign", "expect": ["PartDesign_Pocket"]}
+{"text": "Extrudiere die Skizze und füge sie dem Körper hinzu", "context": "fc114_partdesign", "expect": ["PartDesign_Pad"]}
+{"text": "Drehe die Skizze um die Achse und zieh das ab", "context": "fc114_partdesign", "expect": ["PartDesign_Groove"]}
+{"text": "Mach die vorherige Aktion rückgängig", "context": "fc114_partdesign", "expect": ["Std_Undo"]}
+{"text": "Versieh die Kanten mit einer Verrundung", "context": "fc114_partdesign", "expect": ["PartDesign_Fillet"]}
+
+# --- Gespräch: keine Reaktion
+{"text": "Das sieht schon ganz gut aus, finde ich", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Ich trinke jetzt einen Kaffee", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "und zwar von hier nach hier", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Was meinst du, passt das so?", "context": "fc114_partdesign", "expect": "ignore", "known": true, "note": "'passt das so' sounds like 'Einfügen'/Paste (inactive): asks instead of staying silent"}
+{"text": "Moment, ich muss kurz nachdenken", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Hallo, ja, ich bin gleich wieder da", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Das hat letzte Woche schon nicht geklappt", "context": "fc114_partdesign", "expect": "ignore"}
+
+# --- Gespräch: keine Reaktion (Part)
+{"text": "Das sieht schon ganz gut aus, finde ich", "context": "fc114_part", "expect": "ignore"}
+{"text": "Ich trinke jetzt einen Kaffee", "context": "fc114_part", "expect": "ignore"}
+
+# --- Werkbank wechseln
+{"text": "Wechsle bitte zum PartDesigner", "context": "fc114_part", "expect": ["workbench:PartDesignWorkbench"]}
+{"text": "Wechsle zu Part Design", "context": "fc114_part", "expect": ["workbench:PartDesignWorkbench"]}
+{"text": "Wechsle zum Sketcher", "context": "fc114_part", "expect": ["workbench:SketcherWorkbench"]}
+
+# --- Mikrofon aus (exklusiv) und Training
+{"text": "Ok kurze Pause", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Kurze Pause", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Stoppe mal die Aufnahme", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Mach mal das Mikro zu", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Höre nicht mehr zu", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Mikro aus", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Mikrofon aus", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Hör auf zuzuhören", "context": "fc114_partdesign", "expect": ["ui:mic_off"]}
+{"text": "Zeige mal den Lerndialog", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Lass uns das mal trainieren", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Training", "context": "fc114_partdesign", "expect": ["ui:train"]}
+{"text": "Öffne das Training", "context": "fc114_partdesign", "expect": ["ui:train"]}
+
+# --- Folgen und Umbenennen
+{"text": "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene.", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Bodenplatte"}}, "PartDesign_CompSketches"]}
+{"text": "erstelle einen neuen Körper, den nennen wir Bodenplatte", "context": "fc114_partdesign", "expect": ["PartDesign_Body", {"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
+{"text": "Mach eine Fase und dann eine Verrundung", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer", "PartDesign_Fillet"]}
+{"text": "Den nennen wir Bodenplatte", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
+{"text": "Nenne ihn Deckel", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Deckel"}}]}
+{"text": "Nenn das Halter links", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Halter links"}}]}
+{"text": "Benenne ihn um in Grundkörper", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Grundkörper"}}]}
+{"text": "Der soll Bodenplatte heißen", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
+{"text": "Gib ihm den Namen Bodenplatte", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Bodenplatte"}}]}
+{"text": "Benenne doch bitte den Körper2 in Grundplatte um", "context": "fc114_partdesign", "expect": [{"command": "ui:rename", "args": {"label": "Grundplatte", "target": "Körper2"}}]}
+
+# --- Ebene wählen im Dialog
+{"text": "XY-Ebene", "context": "fc114_sketch_plane", "expect": ["ui:choose:XY-Ebene (Basis-Ebene)"]}
+{"text": "Die XZ-Ebene", "context": "fc114_sketch_plane", "expect": ["ui:choose:XZ-Ebene (Basis-Ebene)"]}
+{"text": "Y Z Ebene", "context": "fc114_sketch_plane", "expect": ["ui:choose:YZ-Ebene (Basis-Ebene)"]}
+{"text": "in der X-Y-Ebene", "context": "fc114_sketch_plane", "expect": ["ui:choose:XY-Ebene (Basis-Ebene)"]}
+{"text": "auf der Draufsicht", "context": "fc114_sketch_plane", "expect": ["ui:choose:XY-Ebene (Basis-Ebene)"]}
+{"text": "Grundriss", "context": "fc114_sketch_plane", "expect": ["ui:choose:XY-Ebene (Basis-Ebene)"]}
+{"text": "von vorne", "context": "fc114_sketch_plane", "expect": ["ui:choose:XZ-Ebene (Basis-Ebene)"]}
+{"text": "Vorderansicht", "context": "fc114_sketch_plane", "expect": ["ui:choose:XZ-Ebene (Basis-Ebene)"]}
+{"text": "Seitenansicht", "context": "fc114_sketch_plane", "expect": ["ui:choose:YZ-Ebene (Basis-Ebene)"]}
+{"text": "auf der Seite", "context": "fc114_sketch_plane", "expect": ["ui:choose:YZ-Ebene (Basis-Ebene)"]}
+{"text": "Abbrechen", "context": "fc114_sketch_plane", "expect": ["ui:cancel"]}
+
+# --- Sketcher
+{"text": "Rechteck", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateRectangles"]}
+{"text": "Zeichne eine Linie", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
+{"text": "Kreis", "context": "fc114_sketcher", "expect": ["Sketcher_CompCreateConic"], "known": true, "note": "label is 'Kreis um Mittelpunkt' (group button): one of three words"}
+{"text": "Linienzug", "context": "fc114_sketcher", "expect": ["Sketcher_CreatePolyline"]}
+{"text": "Parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"], "known": true, "note": "label 'Parallel festlegen': one of two words is below the threshold"}
+{"text": "Rechtwinklig", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainPerpendicular"], "known": true, "note": "label 'Rechtwinklig festlegen': one of two words is below the threshold"}
+{"text": "Symmetrisch", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainSymmetric"], "known": true, "note": "ambiguous with 'Isometrisch' (view) by sound"}
+{"text": "Skizze verlassen", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
+{"text": "Hilfsgeometrie umschalten", "context": "fc114_sketcher", "expect": ["Sketcher_ToggleConstruction"]}
+{"text": "Das sieht schon ganz gut aus, finde ich", "context": "fc114_sketcher", "expect": "ignore"}
+
+# --- Werte für ein laufendes Werkzeug
+{"text": "50 mal 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}
+{"text": "Breite 50, Höhe 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[0, 50.0, "length"], [1, 30.0, "length"]]}}], "known": true, "note": "BUG: 'Breite' sounds like 'Part' and switches the workbench while a tool runs"}
+{"text": "zwölf mal fünf", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"], [null, 5.0, "length"]]}}]}
+{"text": "Abbrechen", "context": "fc114_sketcher_tool", "expect": ["ui:cancel"]}
+
+# --- Werte im Dialog der Aufpolsterung
+{"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}
+{"text": "Länge 20", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[0, 20.0, "length"]]}}]}
+{"text": "OK", "context": "fc114_pad_dialog", "expect": ["ui:ok"]}

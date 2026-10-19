@@ -134,3 +134,15 @@ def move_entry(custom, kind, text, from_command, to_command):
 
 def add_phrase(custom, command, text):
     return learn(custom, command, typed=text)
+
+
+def vocabulary(pack_vocab, custom):
+    """(vocab, heard, patterns): the pack's phrases with the user's own first; the forms and
+    sentence patterns learned in training ({command: [texts]})."""
+    vocab = {}
+    for data in (pack_vocab, custom):
+        for cmd, phrases in data.items():
+            if not cmd.startswith("_") and isinstance(phrases, list):
+                vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
+    heard, patterns = custom.get(HEARD, {}), custom.get(PATTERNS, {})
+    return vocab, heard if isinstance(heard, dict) else {}, patterns if isinstance(patterns, dict) else {}

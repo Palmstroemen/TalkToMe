@@ -98,3 +98,45 @@ def test_learned_pattern_in_a_sequence():
     clauses = split_clauses("Nenndas Bodenplatte, und mach eine Fase", "de")
     d, n = next_step(clauses, PART_DESIGN, "de", patterns={"ui:rename": ["nenndas {label}"]})
     assert (d.command, d.args, n) == ("ui:rename", {"label": "Bodenplatte"}, 1)
+
+
+# --- a whole utterance, as the service decides it (used by the corpus, DESIGN.md 16.5) ----------
+
+from ttm_core.sequence import plan_utterance, start_utterance, VALUES   # noqa: E402
+
+MIC_OFF = cand("ui:mic_off", ["kurze Pause", "Ok kurze Pause"], "global")
+OK = cand("ui:ok", ["OK"], "dialog")
+
+
+def kinds(steps):
+    return [(d.kind, d.command) for d, span in steps]
+
+
+def test_plan_of_a_sequence():
+    steps = plan_utterance("Mach eine Fase und dann eine Verrundung", PART_DESIGN, "de")
+    assert kinds(steps) == [("execute", "PartDesign_Chamfer"), ("execute", "PartDesign_Fillet")]
+    assert steps[0][1] == "Mach eine Fase"
+
+
+def test_talk_is_ignored_as_a_whole():
+    pending, ignored = start_utterance("Ich trinke jetzt einen Kaffee", PART_DESIGN, "de")
+    assert pending == [] and ignored.kind == "ignore"
+    assert [d.kind for d, _ in plan_utterance("Ich trinke jetzt einen Kaffee", PART_DESIGN, "de")] == ["ignore"]
+
+
+def test_exclusive_command_replaces_the_rest():
+    assert kinds(plan_utterance("Ok, kurze Pause", PART_DESIGN + [MIC_OFF, OK], "de")) == [("execute", "ui:mic_off")]
+
+
+def test_values_only_while_a_tool_runs():
+    assert kinds(plan_utterance("50 mal 30", PART_DESIGN, "de", tool_running=True)) == [("execute", VALUES)]
+    assert plan_utterance("50 mal 30", PART_DESIGN, "de", tool_running=True)[0][0].args == \
+        {"values": [[None, 50.0, "length"], [None, 30.0, "length"]]}
+    assert kinds(plan_utterance("50 mal 30", PART_DESIGN, "de"))[0][0] != "execute"
+
+
+def test_plan_stops_at_an_unclear_clause():
+    steps = plan_utterance("Mach eine Fase, dann Blubberdings, dann Speichern", PART_DESIGN, "de")
+    assert kinds(steps)[0] == ("execute", "PartDesign_Chamfer")
+    assert steps[-1][0].kind in ("not_understood", "execute")
+    assert all(d.kind != "not_understood" for d, _ in steps[:-1])

@@ -9,8 +9,8 @@ import FreeCADGui as Gui
 
 from talktome.qt import QtCore, QtWidgets
 from ttm_core import langpack
-from ttm_core.context import build_candidates
-from ttm_core.training import HEARD, PATTERNS
+from ttm_core.context import from_snapshot
+from ttm_core.training import vocabulary
 
 def user_dir():
     """The user's Talk to me folder: own vocabulary, learned forms, changes to language packs."""
@@ -50,15 +50,7 @@ def save_custom(language, data):
 def load_vocabulary(language):
     """(vocab, heard, patterns): phrases of the addon's package, overridden by the user's own
     file; the forms and sentence patterns learned in training ({command: [texts]})."""
-    vocab = {}
-    package = langpack.pack(language).vocab
-    custom = read_custom(language)
-    for data in (package, custom):
-        for cmd, phrases in data.items():
-            if not cmd.startswith("_") and isinstance(phrases, list):
-                vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
-    heard, patterns = custom.get(HEARD, {}), custom.get(PATTERNS, {})
-    return vocab, heard if isinstance(heard, dict) else {}, patterns if isinstance(patterns, dict) else {}
+    return vocabulary(langpack.pack(language).vocab, read_custom(language))
 
 
 def _task_view(widget):
@@ -122,7 +114,7 @@ def _choices():
     for widget in task_lists():
         for row in range(widget.count()):
             item = widget.item(row)
-            if not item.isHidden() and item.flags() & QtCore.Qt.ItemFlag.ItemIsEnabled:
+            if not item.isHidden() and item.flags() & QtCore.Qt.ItemFlag.ItemIsEnabled and item.text().strip():
                 texts.append(item.text())
     return texts
 
@@ -173,6 +165,12 @@ def _describe(cmd_id, labels, english, active, descriptions):
 
 def collect(vocab, language="de", heard=None):
     """Candidates of the current context, as plain data for the speech service."""
+    return from_snapshot(snapshot(language), vocab, heard)
+
+
+def snapshot(language="de"):
+    """The raw context: what FreeCAD shows now, before the vocabulary is added. Stored as a
+    file, it is a context of the corpus (DESIGN.md 16.5, tools/record_context.py)."""
     wb = Gui.activeWorkbench()
     toolbars = {name: list(items) for name, items in wb.getToolbarItems().items()}
     labels, english, active, descriptions = {}, {}, {}, {}
@@ -212,7 +210,7 @@ def collect(vocab, language="de", heard=None):
         english = {}
 
     dialog_open = bool(Gui.Control.activeDialog())
-    return build_candidates(toolbars, labels, active, edit_prefix=edit_prefix,
-                            dialog_open=dialog_open, choices=_choices() if dialog_open else None,
-                            workbenches=workbenches, current_workbench=wb.name(), vocab=vocab,
-                            descriptions=descriptions, foreign_labels=english, heard=heard)
+    return {"toolbar_items": toolbars, "labels": labels, "active": active, "edit_prefix": edit_prefix,
+            "dialog_open": dialog_open, "choices": _choices() if dialog_open else None,
+            "workbenches": workbenches, "current_workbench": wb.name(),
+            "descriptions": descriptions, "foreign_labels": english}

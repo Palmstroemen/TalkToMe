@@ -1,0 +1,679 @@
+{
+ "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
+ "context": {
+  "active": {
+   "Part_Boolean": true,
+   "Part_Box": true,
+   "Part_Builder": true,
+   "Part_Chamfer": true,
+   "Part_CheckGeometry": false,
+   "Part_ColorPerFace": false,
+   "Part_Common": false,
+   "Part_CompCompoundTools": true,
+   "Part_CompJoinFeatures": true,
+   "Part_CompOffset": false,
+   "Part_CompSplitFeatures": true,
+   "Part_Cone": true,
+   "Part_CrossSections": false,
+   "Part_Cut": false,
+   "Part_Cylinder": true,
+   "Part_Datums": true,
+   "Part_Defeaturing": false,
+   "Part_Extrude": true,
+   "Part_Fillet": true,
+   "Part_Fuse": false,
+   "Part_Loft": true,
+   "Part_MakeFace": false,
+   "Part_Mirror": true,
+   "Part_Primitives": true,
+   "Part_ProjectionOnSurface": true,
+   "Part_Revolve": true,
+   "Part_RuledSurface": true,
+   "Part_Scale": true,
+   "Part_Section": false,
+   "Part_SelectFilter": true,
+   "Part_Sphere": true,
+   "Part_Sweep": true,
+   "Part_Thickness": false,
+   "Part_Torus": true,
+   "Part_Tube": true,
+   "Sketcher_NewSketch": true,
+   "Std_AlignToSelection": true,
+   "Std_Copy": false,
+   "Std_Cut": false,
+   "Std_DlgMacroExecute": true,
+   "Std_DlgMacroExecuteDirect": false,
+   "Std_DlgMacroRecord": true,
+   "Std_DrawStyle": true,
+   "Std_Group": true,
+   "Std_LinkActions": true,
+   "Std_Measure": false,
+   "Std_New": true,
+   "Std_Open": true,
+   "Std_Part": true,
+   "Std_Paste": false,
+   "Std_Redo": false,
+   "Std_Refresh": false,
+   "Std_Save": true,
+   "Std_TreeViewActions": true,
+   "Std_Undo": false,
+   "Std_VarSet": true,
+   "Std_ViewBottom": true,
+   "Std_ViewFitAll": true,
+   "Std_ViewFitSelection": true,
+   "Std_ViewFront": true,
+   "Std_ViewGroup": true,
+   "Std_ViewIsometric": true,
+   "Std_ViewLeft": true,
+   "Std_ViewRear": true,
+   "Std_ViewRight": true,
+   "Std_ViewTop": true,
+   "Std_WhatsThis": true,
+   "Std_Workbench": true,
+   "TalkToMe_Microphone": true
+  },
+  "choices": null,
+  "current_workbench": "PartWorkbench",
+  "descriptions": {
+   "Part_Boolean": "Applies a boolean operations with the selected shapes",
+   "Part_Box": "Creates a solid cube",
+   "Part_Builder": "Advanced utility to create shapes",
+   "Part_Chamfer": "Chamfers the selected edges of a shape",
+   "Part_CheckGeometry": "Analyzes the selected shapes for errors",
+   "Part_ColorPerFace": "Sets the appearance of individual faces of the selected object",
+   "Part_Common": "Intersects the selected shapes",
+   "Part_CompCompoundTools": "Compounds the selected shapes",
+   "Part_CompJoinFeatures": "",
+   "Part_CompOffset": "Offsets shapes in 3D",
+   "Part_CompSplitFeatures": "",
+   "Part_Cone": "Creates a solid cone",
+   "Part_CrossSections": "Creates cross-sections",
+   "Part_Cut": "Cuts 2 selected shapes",
+   "Part_Cylinder": "Creates a solid cylinder",
+   "Part_Datums": "Creates a coordinate system that can be attached to other objects",
+   "Part_Defeaturing": "Removes the selected features from a shape",
+   "Part_Extrude": "Extrudes the selected sketch or profile",
+   "Part_Fillet": "Fillets the selected edges of a shape",
+   "Part_Fuse": "Unites the selected shapes",
+   "Part_Loft": "Lofts the selected profiles",
+   "Part_MakeFace": "Creates a face from the selected wires (e.g. from a sketch)",
+   "Part_Mirror": "Mirrors the selected shape",
+   "Part_Primitives": "Creates solid geometric primitives parametrically",
+   "Part_ProjectionOnSurface": "Projects edges, wires, or faces of one shape\nonto a face of another shape.\nThe camera view determines the direction\nof the projection.",
+   "Part_Revolve": "Revolves the selected shape",
+   "Part_RuledSurface": "Creates a ruled surface between 2 selected wires",
+   "Part_Scale": "Scales the selected shape",
+   "Part_Section": "Sections 2 selected shapes",
+   "Part_SelectFilter": "Only allows the selection of vertices",
+   "Part_Sphere": "Creates a solid sphere",
+   "Part_Sweep": "Sweeps profiles along a wire",
+   "Part_Thickness": "Removes the selected faces and offsets the remaining shape outward to add thickness",
+   "Part_Torus": "Creates a solid torus",
+   "Part_Tube": "Creates a tube",
+   "Sketcher_NewSketch": "Creates a new sketch",
+   "Std_AlignToSelection": "Aligns the camera view to the selected elements in the 3D view",
+   "Std_Copy": "Copies the selection to the clipboard",
+   "Std_Cut": "Removes the selection and copies it to the clipboard",
+   "Std_DlgMacroExecute": "Opens a dialog to execute a recorded macro",
+   "Std_DlgMacroExecuteDirect": "Executes the macro in the editor",
+   "Std_DlgMacroRecord": "Opens a dialog to record a macro",
+   "Std_DrawStyle": "",
+   "Std_Group": "Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model.",
+   "Std_LinkActions": "A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies.",
+   "Std_Measure": "Measure a feature",
+   "Std_New": "Creates a new empty document",
+   "Std_Open": "Opens a document or imports files",
+   "Std_Part": "Creates a part, which is a general-purpose container to group objects so they act as a unit in the 3D view. It is intended to arrange objects that have a part TopoShape, like part primitives, Part Design bodies, and other parts.",
+   "Std_Paste": "Pastes the contents of the clipboard",
+   "Std_Redo": "Redoes a previously undone action",
+   "Std_Refresh": "Recomputes the active document",
+   "Std_Save": "Saves the active document",
+   "Std_TreeViewActions": "Switches to the 3D view containing the selected item from the tree view",
+   "Std_Undo": "Undoes the previous action",
+   "Std_VarSet": "Creates a variable set, which is an object that maintains a set of properties to be used as variables",
+   "Std_ViewBottom": "Sets the camera to the bottom view",
+   "Std_ViewFitAll": "Fits all content into the 3D view",
+   "Std_ViewFitSelection": "Fits the selected content into the 3D view",
+   "Std_ViewFront": "Sets the camera to the front view",
+   "Std_ViewGroup": "Sets the camera to the isometric view",
+   "Std_ViewIsometric": "Sets the camera to the isometric view",
+   "Std_ViewLeft": "Sets the camera to the left view",
+   "Std_ViewRear": "Sets the camera to the rear view",
+   "Std_ViewRight": "Sets the camera to the right view",
+   "Std_ViewTop": "Sets the camera to the top view",
+   "Std_WhatsThis": "Opens the documentation for the selected command",
+   "Std_Workbench": "Selects the 'Assembly' workbench",
+   "TalkToMe_Microphone": "Talk to me: switch the microphone on or off"
+  },
+  "dialog_open": false,
+  "edit_prefix": null,
+  "foreign_labels": {},
+  "labels": {
+   "Part_Boolean": [
+    "Boolean Operation",
+    "Boolean Operation"
+   ],
+   "Part_Box": [
+    "Cube",
+    "Cube"
+   ],
+   "Part_Builder": [
+    "Shape Builder",
+    "Shape Builder"
+   ],
+   "Part_Chamfer": [
+    "Chamfer",
+    "Chamfer"
+   ],
+   "Part_CheckGeometry": [
+    "Check Geometry",
+    "Check Geometry"
+   ],
+   "Part_ColorPerFace": [
+    "Appearance per &Face",
+    "Appearance per &Face"
+   ],
+   "Part_Common": [
+    "Intersection",
+    "Intersection"
+   ],
+   "Part_CompCompoundTools": [
+    "Compound",
+    "Explode Compound",
+    "Compound Filter",
+    "Compound Tools"
+   ],
+   "Part_CompJoinFeatures": [
+    "Connect Shapes",
+    "Embed Shapes",
+    "Cutout Shape",
+    "Join Shapes"
+   ],
+   "Part_CompOffset": [
+    "3D Offset",
+    "2D Offset",
+    "Offset"
+   ],
+   "Part_CompSplitFeatures": [
+    "Boolean Fragments",
+    "Slice Apart",
+    "Slice to Compound",
+    "Boolean XOR",
+    "Split Shapes"
+   ],
+   "Part_Cone": [
+    "Cone",
+    "Cone"
+   ],
+   "Part_CrossSections": [
+    "Cross-Sections",
+    "Cross-Sections"
+   ],
+   "Part_Cut": [
+    "Cut",
+    "Cut"
+   ],
+   "Part_Cylinder": [
+    "Cylinder",
+    "Cylinder"
+   ],
+   "Part_Datums": [
+    "Coordinate System",
+    "Datum Plane",
+    "Datum Line",
+    "Datum Point",
+    "Datums"
+   ],
+   "Part_Defeaturing": [
+    "Defeaturing",
+    "Defeaturing"
+   ],
+   "Part_Extrude": [
+    "Extrude",
+    "Extrude"
+   ],
+   "Part_Fillet": [
+    "Fillet",
+    "Fillet"
+   ],
+   "Part_Fuse": [
+    "Union",
+    "Union"
+   ],
+   "Part_Loft": [
+    "Loft",
+    "Loft"
+   ],
+   "Part_MakeFace": [
+    "Face From Wires",
+    "Face From Wires"
+   ],
+   "Part_Mirror": [
+    "Mirror",
+    "Mirror"
+   ],
+   "Part_Primitives": [
+    "Primitive",
+    "Primitive"
+   ],
+   "Part_ProjectionOnSurface": [
+    "Project on Surface",
+    "Project on Surface"
+   ],
+   "Part_Revolve": [
+    "Revolve",
+    "Revolve"
+   ],
+   "Part_RuledSurface": [
+    "Ruled Surface",
+    "Ruled Surface"
+   ],
+   "Part_Scale": [
+    "Scale",
+    "Scale"
+   ],
+   "Part_Section": [
+    "Section",
+    "Section"
+   ],
+   "Part_SelectFilter": [
+    "Vertex Selection",
+    "Edge Selection",
+    "Face Selection",
+    "No Selection Filters",
+    "Selection Filter"
+   ],
+   "Part_Sphere": [
+    "Sphere",
+    "Sphere"
+   ],
+   "Part_Sweep": [
+    "Sweep",
+    "Sweep"
+   ],
+   "Part_Thickness": [
+    "Thickness",
+    "Thickness"
+   ],
+   "Part_Torus": [
+    "Torus",
+    "Torus"
+   ],
+   "Part_Tube": [
+    "Tube",
+    "Tube"
+   ],
+   "Sketcher_NewSketch": [
+    "New Sketch",
+    "New Sketch"
+   ],
+   "Std_AlignToSelection": [
+    "&Align to Selection",
+    "&Align to Selection"
+   ],
+   "Std_Copy": [
+    "&Copy",
+    "&Copy"
+   ],
+   "Std_Cut": [
+    "Cu&t",
+    "Cu&t"
+   ],
+   "Std_DlgMacroExecute": [
+    "Ma&cros",
+    "Ma&cros"
+   ],
+   "Std_DlgMacroExecuteDirect": [
+    "&Execute Macro",
+    "&Execute Macro"
+   ],
+   "Std_DlgMacroRecord": [
+    "Record &Macro",
+    "Record &Macro"
+   ],
+   "Std_DrawStyle": [
+    "&1 As is",
+    "&2 Points",
+    "&3 Wireframe",
+    "&4 Hidden line",
+    "&5 No shading",
+    "&6 Shaded",
+    "&7 Flat lines",
+    "&Draw Style"
+   ],
+   "Std_Group": [
+    "New Group",
+    "New Group"
+   ],
+   "Std_LinkActions": [
+    "Make Link",
+    "Make Sub-Link",
+    "Replace With Link",
+    "Unlink",
+    "Import Links",
+    "Import All Links",
+    "Link Actions"
+   ],
+   "Std_Measure": [
+    "&Measure",
+    "&Measure"
+   ],
+   "Std_New": [
+    "&New Document",
+    "&New Document"
+   ],
+   "Std_Open": [
+    "&Open…",
+    "&Open…"
+   ],
+   "Std_Part": [
+    "New Part",
+    "New Part"
+   ],
+   "Std_Paste": [
+    "&Paste",
+    "&Paste"
+   ],
+   "Std_Redo": [
+    "&Redo",
+    "&Redo"
+   ],
+   "Std_Refresh": [
+    "Recompute",
+    "Recompute"
+   ],
+   "Std_Save": [
+    "&Save",
+    "&Save"
+   ],
+   "Std_TreeViewActions": [
+    "&1 Sync View",
+    "&2 Sync Selection",
+    "&3 Sync Placement",
+    "&4 Preselection",
+    "&5 Record Selection",
+    "",
+    "&Single Document",
+    "&Multi Document",
+    "Collapse/E&xpand",
+    "",
+    "Initiate &Dragging",
+    "&Go to Selection",
+    "",
+    "Selection &Back",
+    "Selection &Forward",
+    "Tree View Actions"
+   ],
+   "Std_Undo": [
+    "&Undo",
+    "&Undo"
+   ],
+   "Std_VarSet": [
+    "Variable Set",
+    "Variable Set"
+   ],
+   "Std_ViewBottom": [
+    "&5 Bottom",
+    "&5 Bottom"
+   ],
+   "Std_ViewFitAll": [
+    "&Fit All",
+    "&Fit All"
+   ],
+   "Std_ViewFitSelection": [
+    "Fit &Selection",
+    "Fit &Selection"
+   ],
+   "Std_ViewFront": [
+    "&1 Front",
+    "&1 Front"
+   ],
+   "Std_ViewGroup": [
+    "&Isometric",
+    "&1 Front",
+    "&2 Top",
+    "&3 Right",
+    "&4 Rear",
+    "&5 Bottom",
+    "&6 Left",
+    "Standard &Views"
+   ],
+   "Std_ViewIsometric": [
+    "&Isometric",
+    "&Isometric"
+   ],
+   "Std_ViewLeft": [
+    "&6 Left",
+    "&6 Left"
+   ],
+   "Std_ViewRear": [
+    "&4 Rear",
+    "&4 Rear"
+   ],
+   "Std_ViewRight": [
+    "&3 Right",
+    "&3 Right"
+   ],
+   "Std_ViewTop": [
+    "&2 Top",
+    "&2 Top"
+   ],
+   "Std_WhatsThis": [
+    "&What's This?",
+    "&What's This?"
+   ],
+   "Std_Workbench": [
+    "Assembly",
+    "BIM",
+    "CAM",
+    "Draft",
+    "FEM",
+    "Material",
+    "Mesh",
+    "Part Design",
+    "Part",
+    "Points",
+    "Reverse Engineering",
+    "Sketcher",
+    "Spreadsheet",
+    "Surface",
+    "TechDraw",
+    "Inspection",
+    "<none>",
+    "OpenSCAD",
+    "Robot",
+    "Test Framework",
+    "&Workbench"
+   ],
+   "TalkToMe_Microphone": [
+    "Talk to me",
+    "Talk to me"
+   ]
+  },
+  "toolbar_items": {
+   "Boolean Tools": [
+    "Part_CompCompoundTools",
+    "Part_Boolean",
+    "Part_Cut",
+    "Part_Fuse",
+    "Part_Common",
+    "Part_CompJoinFeatures",
+    "Part_CompSplitFeatures",
+    "Part_CheckGeometry",
+    "Part_Defeaturing"
+   ],
+   "Clipboard": [
+    "Std_Cut",
+    "Std_Copy",
+    "Std_Paste"
+   ],
+   "Edit": [
+    "Std_Undo",
+    "Std_Redo",
+    "Separator",
+    "Std_Refresh"
+   ],
+   "File": [
+    "Std_New",
+    "Std_Open",
+    "Std_Save"
+   ],
+   "Help": [
+    "Std_WhatsThis"
+   ],
+   "Individual Views": [
+    "Std_ViewIsometric",
+    "Std_ViewFront",
+    "Std_ViewTop",
+    "Std_ViewRight",
+    "Std_ViewRear",
+    "Std_ViewBottom",
+    "Std_ViewLeft"
+   ],
+   "Macro": [
+    "Std_DlgMacroRecord",
+    "Std_DlgMacroExecute",
+    "Std_DlgMacroExecuteDirect"
+   ],
+   "Part Tools": [
+    "Sketcher_NewSketch",
+    "Part_Extrude",
+    "Part_Revolve",
+    "Part_Mirror",
+    "Part_Scale",
+    "Part_Fillet",
+    "Part_Chamfer",
+    "Part_MakeFace",
+    "Part_RuledSurface",
+    "Part_Loft",
+    "Part_Sweep",
+    "Part_Section",
+    "Part_CrossSections",
+    "Part_CompOffset",
+    "Part_Thickness",
+    "Part_ProjectionOnSurface",
+    "Part_ColorPerFace"
+   ],
+   "Solids": [
+    "Part_Box",
+    "Part_Cylinder",
+    "Part_Sphere",
+    "Part_Cone",
+    "Part_Torus",
+    "Part_Tube",
+    "Part_Primitives",
+    "Part_Builder"
+   ],
+   "Structure": [
+    "Std_Part",
+    "Part_Datums",
+    "Std_Group",
+    "Std_LinkActions",
+    "Std_VarSet"
+   ],
+   "Talk to me": [
+    "TalkToMe_Microphone"
+   ],
+   "View": [
+    "Std_ViewFitAll",
+    "Std_ViewFitSelection",
+    "Std_ViewGroup",
+    "Std_AlignToSelection",
+    "Separator",
+    "Std_DrawStyle",
+    "Part_SelectFilter",
+    "Std_TreeViewActions",
+    "Std_Measure"
+   ],
+   "Workbench": [
+    "Std_Workbench"
+   ]
+  },
+  "workbenches": {
+   "AssemblyWorkbench": [
+    "Assembly",
+    "Assembly"
+   ],
+   "BIMWorkbench": [
+    "BIM",
+    "BIM"
+   ],
+   "CAMWorkbench": [
+    "CAM",
+    "CAM"
+   ],
+   "DraftWorkbench": [
+    "Draft",
+    "Draft"
+   ],
+   "FemWorkbench": [
+    "FEM",
+    "FEM"
+   ],
+   "InspectionWorkbench": [
+    "Inspection",
+    "Inspection"
+   ],
+   "MaterialWorkbench": [
+    "Material",
+    "Material"
+   ],
+   "MeshWorkbench": [
+    "Mesh",
+    "Mesh"
+   ],
+   "NoneWorkbench": [
+    "<none>",
+    "<none>"
+   ],
+   "OpenSCADWorkbench": [
+    "OpenSCAD",
+    "OpenSCAD"
+   ],
+   "PartDesignWorkbench": [
+    "Part Design",
+    "Part Design"
+   ],
+   "PartWorkbench": [
+    "Part",
+    "Part"
+   ],
+   "PointsWorkbench": [
+    "Points",
+    "Points"
+   ],
+   "ReverseEngineeringWorkbench": [
+    "Reverse Engineering",
+    "Reverse Engineering"
+   ],
+   "RobotWorkbench": [
+    "Robot",
+    "Robot"
+   ],
+   "SketcherWorkbench": [
+    "Sketcher",
+    "Sketcher"
+   ],
+   "SpreadsheetWorkbench": [
+    "Spreadsheet",
+    "Spreadsheet"
+   ],
+   "SurfaceWorkbench": [
+    "Surface",
+    "Surface"
+   ],
+   "TechDrawWorkbench": [
+    "TechDraw",
+    "TechDraw"
+   ],
+   "TestWorkbench": [
+    "Test Framework",
+    "Test Framework"
+   ]
+  }
+ },
+ "freecad": "1.1.4",
+ "language": "en",
+ "note": "new document, Part workbench",
+ "tool_running": false
+}
