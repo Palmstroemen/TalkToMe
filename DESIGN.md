@@ -1049,7 +1049,10 @@ Inspiration für die Karten in Spiel 1.
 1. ~~Vererbungskette `base` im Code~~; Modellprofile (16.3a) erst mit dem Korpus, der sie misst.
 2. ~~Wahrheitskorpus und Testmodul (16.5)~~, ~~Abdeckung (16.7)~~. Als Nächstes: die gefundenen
    Schwächen beheben, zuerst der Werkbankwechsel bei laufendem Werkzeug.
-3. Anleitung, `CONTRIBUTING.md`, Issue-Vorlagen, `check_pack.py`, Kontext-Aufnahme.
+3. ~~Anleitung (`docs/ADDING_A_LANGUAGE.md`), `CONTRIBUTING.md`, Issue-Vorlagen
+   (`.github/ISSUE_TEMPLATE/`), `tools/check_pack.py` (`ttm_core/packcheck.py`),
+   Kontext-Aufnahme~~. Die Diskussions-URL in `config.yml` setzt das GitHub-Repo
+   `Palmstroemen/TalkToMe` voraus.
 4. Rückfall-Lautvergleich und Stammformen als Daten.
 5. Paket-Repo mit Index, Sprachauswahl aus dem Index.
 6. „Als Vorschlag teilen…“, Hinweis ab 40 Korrekturen, „Problem melden…“, `check_proposal.py`.

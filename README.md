@@ -103,13 +103,18 @@ Everything language specific of the recognition is in a language pack, `lang/<co
 | `language.json` | word lists (fillers, stop words, number and unit words, clause words, verb particles), names of the phonetic and stemming algorithm |
 | `patterns.json` | sentence patterns for commands with free text, e.g. renaming |
 | `vocab.json` | synonyms for commands |
+| `speech.json` | what Talk to me says, and its default voice |
+| `corpus.jsonl`, `contexts/` | test sentences with their expected result, played in recorded FreeCAD states |
 
 Packs exist for German and English. Misheard words that sound like a command still find it:
 German compares by Cologne phonetics ("Richtig" ≈ "Rechteck"), English by Metaphone
 ("Pat" ≈ "Pad"); the settings page explains this for the chosen language. Your own changes go to the same files in
 `<UserAppDataDir>/TalkToMe/lang/<code>/`: a list there replaces the pack's list, patterns there
-come first. A new language starts with a copy of `lang/en/`; without a phonetic algorithm,
-words are compared by spelling only.
+come first. A variant such as `de-AT` names its base (`"base": "de"`) and holds only what differs.
+
+A new language or dialect: [docs/ADDING_A_LANGUAGE.md](docs/ADDING_A_LANGUAGE.md). Check a pack
+with `python tools/check_pack.py <code>`; `python tools/corpus.py <code> --coverage` shows how
+well each command is reached by voice.
 
 ## Translations of the user interface
 
@@ -131,6 +136,10 @@ A new language: the same with its code instead of `de`.
 ```bash
 service/.venv/bin/python -m pytest tests
 ```
+
+## Contributing
+
+Reports, corpus sentences, language packs and code are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

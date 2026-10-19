@@ -1,0 +1,55 @@
+name: Wrong command
+description: Talk to me executed something you did not mean, or reacted to talk.
+labels: ["recognition", "wrong command"]
+body:
+  - type: markdown
+    attributes:
+      value: "Executing the wrong command is the worst outcome, thank you for reporting it."
+  - type: input
+    id: said
+    attributes:
+      label: What you said
+      placeholder: "The circle is a bit too big"
+    validations:
+      required: true
+  - type: input
+    id: heard
+    attributes:
+      label: What was heard
+      description: Exactly as the training page or the status bar shows it.
+    validations:
+      required: true
+  - type: input
+    id: executed
+    attributes:
+      label: What was executed
+      description: 'The status bar shows it ("Talk to me: »…« → …").' 
+      placeholder: "Circle (Sketcher_CreateCircle)"
+    validations:
+      required: true
+  - type: input
+    id: meant
+    attributes:
+      label: What you meant
+      placeholder: "Nothing, I was talking to a colleague"
+    validations:
+      required: true
+  - type: textarea
+    id: state
+    attributes:
+      label: FreeCAD state
+      description: Workbench, what was open or selected, a tool or dialog running.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Speech model
+  - type: input
+    id: freecad
+    attributes:
+      label: FreeCAD version and installation

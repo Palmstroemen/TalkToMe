@@ -1,0 +1,31 @@
+name: New language or dialect
+description: Propose or announce a language pack (see docs/ADDING_A_LANGUAGE.md).
+labels: ["language pack", "new language"]
+body:
+  - type: input
+    id: code
+    attributes:
+      label: Language code (BCP 47)
+      placeholder: "fr, es, pt-BR, de-AT, de-x-saxon"
+    validations:
+      required: true
+  - type: input
+    id: base
+    attributes:
+      label: Base pack, for a variant or dialect
+      placeholder: "de"
+  - type: dropdown
+    id: role
+    attributes:
+      label: Your part
+      options:
+        - I want to write the pack
+        - I can review or test a pack
+        - I would like to use it
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: A Piper voice you would use, peculiarities of the language (compounds, numbers, …), questions.

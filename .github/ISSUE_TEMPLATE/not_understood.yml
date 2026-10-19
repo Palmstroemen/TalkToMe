@@ -1,0 +1,61 @@
+name: Not understood
+description: Talk to me did nothing or asked back, but you meant a command.
+labels: ["recognition", "not understood"]
+body:
+  - type: input
+    id: said
+    attributes:
+      label: What you said
+      placeholder: "Make a chamfer on that edge"
+    validations:
+      required: true
+  - type: input
+    id: heard
+    attributes:
+      label: What was heard
+      description: Exactly as the training page or the status bar shows it, misspellings included.
+      placeholder: "Make a shamfur on that edge"
+    validations:
+      required: true
+  - type: input
+    id: meant
+    attributes:
+      label: The command you meant
+      description: Its name, or its ID from Tools → Customize → Commands if you know it.
+      placeholder: "Chamfer (PartDesign_Chamfer)"
+    validations:
+      required: true
+  - type: dropdown
+    id: reaction
+    attributes:
+      label: What happened
+      options:
+        - Nothing
+        - It asked back (question menu or "Do you mean …?")
+        - Error tone
+    validations:
+      required: true
+  - type: textarea
+    id: state
+    attributes:
+      label: FreeCAD state
+      description: Workbench, what was open or selected, a tool or dialog running.
+      placeholder: "PartDesign, a body with a pad, one edge selected"
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "en, de, de-AT, …"
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Speech model
+      description: The settings page shows it (Talk to me → Recognition).
+      placeholder: "base"
+  - type: input
+    id: freecad
+    attributes:
+      label: FreeCAD version and installation
+      placeholder: "1.1.4 AppImage"
