@@ -798,16 +798,19 @@ ein sprachneutraler Rückfall-Lautvergleich und Stammformen als Endungsliste in
 
 ### 16.2 Sprachen gezielt auswählen
 
-Gewicht pro Sprache: Paket 10–30 KB, Übersetzung ca. 10 KB, Spracherkennungsmodell ab 50 MB,
-Stimme ca. 60 MB. Modell und Stimme werden schon heute nur für die gewählte Sprache geladen.
+Gewicht pro Sprache: Paket 10–30 KB, Übersetzung ca. 10 KB, Stimme ca. 60 MB (nur für die
+gewählte Sprache geladen). Das Whisper-Modell ist mehrsprachig und wird von allen Sprachen
+geteilt (`tiny` ca. 75 MB, `base` ca. 145 MB, `small` ca. 480 MB).
 Trotzdem werden Pakete getrennt, damit sie sich unabhängig vom Addon weiterentwickeln:
 
 - Das Addon bringt nur Englisch (Rückfall) und Deutsch mit.
 - Alle Pakete liegen in einem eigenen Repo `TalkToMe-languages` mit `index.json`: Code,
   Anzeigename, Version, `base`, Spracherkennungsmodell, Stimme.
 - **Die Sprachauswahl auf der Einstellungsseite zeigt alle Sprachen aus dem Index**, die
-  installierten zuerst. Die Wahl einer neuen Sprache lädt Paket, Modell und Stimme in einem
-  Schritt in den Benutzerordner (`<UserAppData>/TalkToMe/lang/<lc>/`, wie die Überlagerung).
+  installierten zuerst. Die Wahl einer neuen Sprache lädt das Paket (mit seiner Basis) und die
+  Stimme in einem Schritt nach `<UserAppData>/TalkToMe/packs/<lc>/`. Getrennt von
+  `<UserAppData>/TalkToMe/lang/<lc>/`: Dort liegen die eigenen Änderungen (Überlagerung), die
+  ein Update des Pakets nicht überschreiben darf.
 - Pakete lassen sich auf Wunsch aktualisieren, unabhängig von Addon-Releases.
 - Ohne Netz: die installierten Sprachen, der Index wird zwischengespeichert.
 
@@ -817,7 +820,19 @@ Trotzdem werden Pakete getrennt, damit sie sich unabhängig vom Addon weiterentw
 erben. Kette: `de` → `de-AT` → Benutzer-Überlagerung (die gibt es heute schon).
 
 - Ein Variantenpaket enthält nur Abweichungen: `"base": "de"` in `language.json` plus Phrasen
-  und gehörte Formen.
+  und gehörte Formen. **Umgesetzt** (`ttm_core/langpack.py`), Regeln entlang der Kette von der
+  Basis zur Variante:
+  - `language.json`: ein Wert ersetzt, eine Tabelle (`number_values`, `unit_factors`, …) wird
+    gemischt, eine Liste ersetzt; `"+filler_words": [...]` ergänzt die geerbte Liste. `name`
+    wird nicht geerbt.
+  - `patterns.json`: die Muster der Variante zuerst, Makros (`{pronoun}`) werden geerbt.
+  - `vocab.json`: die Phrasen der Variante zuerst, die der Basis folgen.
+  - `speech.json`: einzelne Meldungen und die Stimme ersetzen die der Basis.
+  - Die Benutzer-Überlagerung liegt obenauf; „wie ausgeliefert“ auf der Einstellungsseite
+    meint die gemischte Kette.
+  - Fehlende oder zirkuläre Basis beendet die Kette, ohne Fehler.
+  - Whisper erhält `recognition_language`: die Wurzel der Kette (`de` für `de-AT`) oder ein
+    ausdrücklicher Eintrag in `language.json`.
 - Codes nach BCP 47: `de-AT`, `de-CH`; ohne offiziellen Code die private Erweiterung,
   z. B. `de-x-saxon`.
 - Die Auswahl „Deutsch (Österreich)“ lädt `de` und `de-AT`.
@@ -826,6 +841,30 @@ erben. Kette: `de` → `de-AT` → Benutzer-Überlagerung (die gibt es heute sch
   modellabhängig: Sie tragen das Modell als Markierung.
 - Konfliktprüfung innerhalb der ganzen Kette: Ein Eintrag in `de-AT` darf in `de-AT` nichts
   Falsches auslösen; andere Varianten berührt er nicht.
+
+### 16.3a Was vom Spracherkennungsmodell abhängt
+
+Nicht alles in einem Paket ist Sprache; manches ist eine Eigenheit des Modells:
+
+| Inhalt | hängt ab von | Beispiel |
+|---|---|---|
+| Füllwörter, Satzmuster, Zahlwörter, Einheiten | Sprache (Variante) | „halt“, „gell“, „nenn das …“ |
+| Gehörte Formen | Modell **und** Sprecher/Dialekt | „Öpsilon“ für Y bei `tiny` |
+| Was das Modell weglässt oder hinzufügt | Modell | Whisper glättet „äh“ meist weg; kleine Modelle erfinden bei Stille Sätze aus ihren Trainingsdaten (Untertitel-Abspann wie „Vielen Dank fürs Zuschauen“) |
+| Schreibweise von Zahlen und Begriffen | Modell | „zwölf“ oder „12“, „Mikro“ oder „Micro“, „Part Design“ oder „PartDesigner“ |
+| Ausnahmen im Lautvergleich | Sprache | „Ebene“ ≈ „oben“ |
+
+Darum eine zweite Achse neben der Sprache: **Modellprofile** im Paket,
+`lang/<lc>/models/<modell>.json` (z. B. `whisper-tiny.json`), mit gehörten Formen,
+zusätzlichen Füllwörtern (`+filler_words`) und einer Liste erfundener Sätze, die immer
+ignoriert werden. Geladen wird das Profil des aktiven Modells, eingereiht zwischen
+Sprachkette und Benutzer: `de` → `de-AT` → `de/models/whisper-tiny` → Benutzer. Dieselben
+Mischregeln wie bei Varianten. Gelernte Formen im Benutzerordner und geteilte Vorschläge
+tragen das Modell, mit dem sie entstanden sind; wechselt man das Modell, gelten sie weiter,
+werden aber im Wortschatz-Editor als „von einem anderen Modell“ markiert, damit man sie
+prüfen und aufräumen kann. Welche Einträge wirklich modellabhängig sind, zeigt der
+Wahrheitskorpus (16.5), wenn er mit mehreren Modellen läuft: Was nur bei `tiny` nötig ist,
+gehört ins Modellprofil, nicht ins Sprachpaket.
 
 ### 16.4 Korrekturen mit der Community teilen
 
@@ -843,7 +882,7 @@ Gelernte Formen und Satzmuster (`custom.<lc>.json`) sind der wertvollste Rohstof
   Sprache, Variante, Modell, FreeCAD-Version. Wird fast unverändert zum Testfall (16.5).
 - **Datenschutz:** Der Kontext enthält Objektnamen aus dem Dokument. Alles ist vor dem
   Absenden lesbar und editierbar.
-- Jeder Vorschlag trägt Sprache, Variante und Modell, z. B. `de-x-saxon`, `vosk-small-de-0.15`.
+- Jeder Vorschlag trägt Sprache, Variante und Modell, z. B. `de-x-saxon`, `whisper-tiny`.
   Er landet zuerst im spezifischsten Paket. Taucht dieselbe Form in mehreren Varianten auf,
   schlägt ein Skript vor, sie ins Basispaket zu befördern.
 
@@ -872,7 +911,7 @@ kommen.
 
 ### 16.6 Reihenfolge
 
-1. Vererbungskette `base` im Code (Architekturfrage, baut auf der Überlagerung auf).
+1. ~~Vererbungskette `base` im Code~~; Modellprofile (16.3a) erst mit dem Korpus, der sie misst.
 2. Wahrheitskorpus und Testmodul (16.5), zuerst mit den vorhandenen Testsätzen für de und en.
 3. Anleitung, `CONTRIBUTING.md`, Issue-Vorlagen, `check_pack.py`, Kontext-Aufnahme.
 4. Rückfall-Lautvergleich und Stammformen als Daten.

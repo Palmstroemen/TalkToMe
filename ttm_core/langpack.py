@@ -5,9 +5,17 @@
     lang/<code>/vocab.json      phrases for commands (synonyms)
     lang/<code>/speech.json     sentences of the speech output and the default voice
 
-The user's changes live in <user dir>/lang/<code>/ with the same files: a list there replaces the
-pack's list, patterns there come before the pack's. Algorithms (phonetics, stemming) stay code;
-a pack names the one it uses.
+A variant ("de-AT", "de-x-saxon") names its base in language.json ("base": "de") and holds only
+what differs (DESIGN.md 16.3). The chain is read from the base to the variant:
+    language.json   a value replaces, a table (number_values, ...) is merged, a list replaces;
+                    "+filler_words" adds to the inherited list. "name" is not inherited.
+    patterns.json   the variant's patterns come first; macros are inherited
+    vocab.json      the variant's phrases come first, the base's follow
+    speech.json     single messages and the voice replace the base's
+
+The user's changes live in <user dir>/lang/<code>/ with the same files, on top of the chain: a
+list there replaces the pack's list, patterns there come before the pack's. Algorithms
+(phonetics, stemming) stay code; a pack names the one it uses.
 """
 
 import json
@@ -45,10 +53,49 @@ def _read(directory, language, name):
     return data if isinstance(data, dict) else {}
 
 
+def _merge(data, layer):
+    """Apply one layer of language.json to the data inherited so far."""
+    for key, value in layer.items():
+        if key.startswith("+"):
+            continue
+        if isinstance(value, dict) and isinstance(data.get(key), dict):
+            data[key] = dict(data[key], **value)
+        else:
+            data[key] = value
+    for key, value in layer.items():
+        if key.startswith("+") and isinstance(value, list):
+            inherited = list(data.get(key[1:], []))
+            data[key[1:]] = inherited + [v for v in value if v not in inherited]
+    return data
+
+
+def chain(language):
+    """Codes from the root pack to language: ["de", "de-AT"]. A missing or circular base ends it."""
+    result = [language]
+    while True:
+        base = _read(LANG_DIR, result[0], "language.json").get("base")
+        if not base or base in result or not os.path.isfile(os.path.join(LANG_DIR, base, "language.json")):
+            return result
+        result.insert(0, base)
+
+
+def _shipped(language):
+    """language.json as the packs ship it, the chain merged, without the user's changes."""
+    data = {}
+    for code in chain(language):
+        layer = _read(LANG_DIR, code, "language.json")
+        data.pop("name", None)
+        _merge(data, layer)
+    return data
+
+
 class Pack:
-    def __init__(self, language, data, patterns, vocab, speech):
+    def __init__(self, language, data, patterns, vocab, speech, chain=None):
         self.language = language
+        self.chain = chain or [language]
         self.name = data.get("name", language)
+        # What the speech recognition is told: Whisper knows "de", not "de-AT".
+        self.recognition_language = data.get("recognition_language") or self.chain[0]
         self.phonetics = data.get("phonetics")
         self.stemmer = data.get("stemmer")
         self.filler_words = set(data.get("filler_words", []))
@@ -73,11 +120,10 @@ class Pack:
         self.messages = speech.get("messages", {})
 
 
-def _patterns(*sources):
+def _patterns(sources, macros):
     """[(command, regex)] in order, macros replaced."""
     result = []
     for source in sources:
-        macros = source.get("macros", {})
         for command, regex in source.get("patterns", []):
             for name, value in macros.items():
                 regex = regex.replace("{" + name + "}", value)
@@ -88,20 +134,30 @@ def _patterns(*sources):
 def pack(language):
     if language not in _cache:
         user_dir = os.path.join(_user_dir, "lang") if _user_dir else None
-        data = dict(_read(LANG_DIR, language, "language.json"))
-        data.update(_read(user_dir, language, "language.json"))
-        user_patterns = _read(user_dir, language, "patterns.json")
-        pack_patterns = _read(LANG_DIR, language, "patterns.json")
-        user_patterns.setdefault("macros", pack_patterns.get("macros", {}))
-        patterns = _patterns(user_patterns, pack_patterns)
-        vocab = {k: v for k, v in _read(LANG_DIR, language, "vocab.json").items()
-                 if not k.startswith("_") and isinstance(v, list)}
-        speech = dict(_read(LANG_DIR, language, "speech.json"))
-        user_speech = _read(user_dir, language, "speech.json")
-        speech["messages"] = dict(speech.get("messages", {}), **user_speech.get("messages", {}))
-        if user_speech.get("voice"):
-            speech["voice"] = user_speech["voice"]
-        _cache[language] = Pack(language, data, patterns, vocab, speech)
+        codes = chain(language)
+        data = _merge(_shipped(language), _read(user_dir, language, "language.json"))
+        if "name" not in _read(LANG_DIR, language, "language.json"):
+            data.pop("name", None)
+
+        sources = [_read(user_dir, language, "patterns.json")]
+        sources += [_read(LANG_DIR, code, "patterns.json") for code in reversed(codes)]
+        macros = {}
+        for source in reversed(sources):                     # the more specific wins
+            macros.update(source.get("macros", {}))
+        patterns = _patterns(sources, macros)
+
+        vocab = {}
+        for code in codes:
+            for cmd, phrases in _read(LANG_DIR, code, "vocab.json").items():
+                if not cmd.startswith("_") and isinstance(phrases, list):
+                    vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
+
+        speech = {"messages": {}}
+        for source in [_read(LANG_DIR, code, "speech.json") for code in codes] + [_read(user_dir, language, "speech.json")]:
+            speech["messages"].update(source.get("messages", {}))
+            if source.get("voice"):
+                speech["voice"] = source["voice"]
+        _cache[language] = Pack(language, data, patterns, vocab, speech, codes)
     return _cache[language]
 
 
@@ -110,8 +166,8 @@ EDITABLE_LISTS = ("filler_words", "stop_words", "parameter_words", "clause_words
 
 
 def pack_list(language, key):
-    """A word list as the pack ships it, without the user's changes."""
-    return sorted(_read(LANG_DIR, language, "language.json").get(key, []))
+    """A word list as the packs ship it (the chain merged), without the user's changes."""
+    return sorted(_shipped(language).get(key, []))
 
 
 def save_list(language, key, words):
@@ -128,7 +184,7 @@ def save_list(language, key, words):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    _cache.pop(language, None)
+    _cache.clear()                      # variants of this language inherit the list
 
 
 class View:

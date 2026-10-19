@@ -98,3 +98,109 @@ def test_pack_list_ignores_user_changes(tmp_path):
 def test_save_list_needs_a_user_dir():
     with pytest.raises(RuntimeError):
         langpack.save_list("de", "filler_words", ["x"])
+
+
+# --- variants: a pack inherits from its base (DESIGN.md 16.3) --------------------------------------
+
+def write(directory, name, data):
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / name).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+
+
+@pytest.fixture
+def packs(tmp_path, monkeypatch):
+    """The real packs plus a variant de-AT, in a copy of the lang folder."""
+    import shutil
+    lang = tmp_path / "packs"
+    shutil.copytree(langpack.LANG_DIR, lang)
+    monkeypatch.setattr(langpack, "LANG_DIR", str(lang))
+    langpack.configure(None)
+    write(lang / "de-AT", "language.json", {
+        "name": "Deutsch (Österreich)", "base": "de",
+        "+filler_words": ["gell", "eh"],
+        "number_values": {"zwoa": 2},
+    })
+    write(lang / "de-AT", "vocab.json", {"Std_Save": ["sicher das"]})
+    write(lang / "de-AT", "patterns.json", {"patterns": [["ui:rename", "tauf(?:e)? {pronoun} (?P<label>.+)"]]})
+    write(lang / "de-AT", "speech.json", {"messages": {"ready": {"level": "important", "text": ["Servus, ich höre zu."]}}})
+    yield lang
+    langpack.configure(None)
+
+
+def test_variant_inherits_everything_it_does_not_change(packs):
+    at, de = langpack.pack("de-AT"), langpack.pack("de")
+    assert at.name == "Deutsch (Österreich)"
+    assert at.phonetics == "cologne" and at.stemmer == de.stemmer
+    assert at.parameter_words == de.parameter_words
+    assert at.voice == de.voice
+
+
+def test_variant_extends_lists_and_merges_tables(packs):
+    at, de = langpack.pack("de-AT"), langpack.pack("de")
+    assert at.filler_words == de.filler_words | {"gell", "eh"}
+    assert at.stop_words >= {"gell", "eh"}
+    assert at.number_values["zwoa"] == 2 and at.number_values["zwei"] == 2
+
+
+def test_variant_phrases_come_first(packs):
+    assert langpack.pack("de-AT").vocab["Std_Save"][0] == "sicher das"
+    assert "speichern" in langpack.pack("de-AT").vocab["Std_Save"]
+    assert langpack.pack("de-AT").vocab["ui:cancel"] == langpack.pack("de").vocab["ui:cancel"]
+
+
+def test_variant_patterns_come_first_and_use_base_macros(packs):
+    patterns = langpack.pack("de-AT").patterns
+    assert patterns[0][0] == "ui:rename" and patterns[0][1].startswith("tauf")
+    assert "{pronoun}" not in patterns[0][1]
+    assert patterns[1:] == langpack.pack("de").patterns
+
+
+def test_variant_messages_override_single_entries(packs):
+    at = langpack.pack("de-AT")
+    assert at.messages["ready"]["text"] == ["Servus, ich höre zu."]
+    assert at.messages["not_understood"] == langpack.pack("de").messages["not_understood"]
+
+
+def test_base_is_not_changed_by_its_variant(packs):
+    de = langpack.pack("de")
+    assert "gell" not in de.filler_words and "zwoa" not in de.number_values
+
+
+def test_chain_and_recognition_language(packs):
+    at = langpack.pack("de-AT")
+    assert at.chain == ["de", "de-AT"]
+    assert at.recognition_language == "de"           # Whisper knows "de", not "de-AT"
+    assert langpack.pack("de").recognition_language == "de"
+    assert "de-AT" in langpack.languages()
+
+
+def test_deeper_chain(packs):
+    write(packs / "de-AT-x-wien", "language.json", {"base": "de-AT", "+filler_words": ["oida"]})
+    v = langpack.pack("de-AT-x-wien")
+    assert v.chain == ["de", "de-AT", "de-AT-x-wien"]
+    assert {"gell", "oida", "und"} <= v.filler_words
+    assert v.name == "de-AT-x-wien"                   # the name is not inherited
+    assert v.recognition_language == "de"
+
+
+def test_missing_or_circular_base_is_harmless(packs):
+    write(packs / "xx", "language.json", {"base": "nope", "filler_words": ["a"]})
+    write(packs / "yy", "language.json", {"base": "zz"})
+    write(packs / "zz", "language.json", {"base": "yy"})
+    assert langpack.pack("xx").filler_words == {"a"}
+    assert langpack.pack("yy").chain == ["zz", "yy"]
+
+
+def test_user_changes_apply_on_top_of_the_variant(packs, tmp_path):
+    user = tmp_path / "user"
+    write(user / "lang" / "de-AT", "language.json", {"filler_words": ["nur"]})
+    langpack.configure(str(user))
+    assert langpack.pack("de-AT").filler_words == {"nur"}
+    assert "gell" in langpack.pack_list("de-AT", "filler_words")    # as the packs ship it
+
+
+def test_save_list_compares_with_the_inherited_list(packs, tmp_path):
+    langpack.configure(str(tmp_path / "user"))
+    langpack.save_list("de-AT", "filler_words", langpack.pack_list("de-AT", "filler_words"))
+    assert not (tmp_path / "user" / "lang" / "de-AT" / "language.json").exists() or \
+        "filler_words" not in json.loads((tmp_path / "user" / "lang" / "de-AT" / "language.json").read_text())

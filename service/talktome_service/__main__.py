@@ -96,7 +96,8 @@ def main(argv=None):
     if profile.fallback:
         log("no usable GPU found, falling back to the CPU profile")
     log("loading model '{}' on {} ({}) ...".format(profile.model, profile.device, profile.compute_type))
-    transcriber = Transcriber(profile, args.language, beam_size=args.beam, cpu_threads=args.threads)
+    # A variant ("de-AT") is recognized in its base's language: Whisper only knows "de".
+    transcriber = Transcriber(profile, langpack.pack(args.language).recognition_language, beam_size=args.beam, cpu_threads=args.threads)
     log("model loaded")
 
     mic = args.mic
