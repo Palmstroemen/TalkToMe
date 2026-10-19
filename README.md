@@ -64,7 +64,9 @@ Tools → Customize → Keyboard. The microphone key of a laptop keyboard mutes 
 the system; the button then turns orange.
 While a sketcher tool runs, say its values: after the first corner of a rectangle "50 mal 30"
 or "Breite 50, Höhe 30", for a line "40 mm und 30 Grad", for a circle "Radius 20". Said with
-the command ("Zeichne ein Rechteck 50 mal 30"), they wait for your first click.
+the command ("Zeichne ein Rechteck 50 mal 30"), they wait for your first click. The same goes
+for PartDesign dialogs: "Aufpolsterung 12 mm", "Verrundung Radius 3", "Fase 2"; the dialog stays
+open, confirm with "OK".
 
 When something is not clear, a small menu next to the mouse pointer offers the likely commands;
 pick one by mouse or by voice ("die zweite"). The choice is executed and remembered: next time

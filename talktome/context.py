@@ -93,6 +93,30 @@ def tool_running():
                for w in mw.findChildren(QtWidgets.QWidget))
 
 
+def dialog_value_fields():
+    """Number fields of an open PartDesign task dialog (Pad: length, taper; Fillet: radius; ...).
+    Other task panels are left out: the sketcher's has a grid size, for instance."""
+    if not Gui.Control.activeDialog():
+        return []
+    mw = Gui.getMainWindow()
+    return [w for w in mw.findChildren(QtWidgets.QAbstractSpinBox)
+            if w.metaObject().className().endswith("QuantitySpinBox") and w.isEnabled()
+            and in_task_dialog(w) and _in_partdesign_task(w)]
+
+
+def _in_partdesign_task(widget):
+    while widget is not None:
+        if widget.metaObject().className().startswith("PartDesignGui::"):
+            return True
+        widget = widget.parentWidget()
+    return False
+
+
+def values_expected():
+    """Whether spoken numbers are values now: a sketcher tool runs or a PartDesign dialog asks."""
+    return tool_running() or bool(dialog_value_fields())
+
+
 def _choices():
     texts = []
     for widget in task_lists():

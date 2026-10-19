@@ -167,7 +167,7 @@ class Controller(QtCore.QObject):
             return
         self.last_candidates = candidates
         self.send("context", candidates=candidates, patterns=self.patterns,
-                  tool={"running": ttm_context.tool_running()})
+                  tool={"running": ttm_context.values_expected()})
 
     def reload_vocabulary(self):
         self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
@@ -586,7 +586,7 @@ class Controller(QtCore.QObject):
             ok, reason = True, translate("TalkToMe", "dry run, not executed")
         elif command == "ui:values":
             values = [tuple(v) for v in args.get("values", [])]
-            if executor.value_fields():
+            if executor.value_fields() or ttm_context.dialog_value_fields():
                 ok, reason = executor.fill_values(values, self.tool_command) > 0, ""
             elif ttm_context.tool_running():
                 self.pending_values = values

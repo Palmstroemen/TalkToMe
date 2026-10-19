@@ -6,7 +6,7 @@ changed since the utterance started.
 """
 
 import FreeCADGui as Gui
-from talktome.context import in_task_dialog, task_lists
+from talktome.context import dialog_value_fields, in_task_dialog, task_lists
 from talktome.qt import QtCore, QtGui, QtWidgets, translate
 from ttm_core.context import CHOOSE
 
@@ -95,7 +95,8 @@ def _slots(fields, values):
 
 
 def fill_values(values, tool=None):
-    """Type spoken values into the tool's fields: [(position or None, value, kind)] (ttm_core.values).
+    """Spoken values into the fields of a sketcher tool or a PartDesign dialog:
+    [(position or None, value, kind)] (ttm_core.values).
 
     Lengths go to the fields in mm, angles to those in °; named values to their position in the
     tool's order (width 0, height 1), the others in the order spoken. A radius is doubled for
@@ -103,6 +104,10 @@ def fill_values(values, tool=None):
     is confirmed with Enter, as typed. Returns the number of values entered.
     """
     fields = value_fields()
+    enter = _enter                             # sketcher fields in the view: Enter moves the tool on
+    if not fields:
+        fields = dialog_value_fields()
+        enter = _set                           # a dialog: set the value, OK stays with the user
     lengths = [f for f in fields if f.property("unit") != "°"]
     angles = [f for f in fields if f.property("unit") == "°"]
     factor = 2 if tool in DIAMETER_TOOLS else 1
@@ -112,9 +117,15 @@ def fill_values(values, tool=None):
     for group, group_values in ((lengths, length_values), (angles, angle_values)):
         for field, value in zip(group, _slots(group, group_values)):
             if value is not None:
-                _enter(field, value)
+                enter(field, value)
                 entered += 1
     return entered
+
+
+def _set(field, value):
+    """A value field of a task dialog: set its value directly (no text, no locale, no Enter)."""
+    field.setProperty("rawValue", float(value))
+    QtWidgets.QApplication.processEvents()
 
 
 def _confirms(widget):

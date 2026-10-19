@@ -205,8 +205,16 @@ er keinen Befehl nennt (`ttm_core/values.py`: „50 mal 30“, „Breite 50, Hö
 30“: Das Werkzeug startet, die Werte folgen als Nachschritt des Teilsatzes; erscheinen die
 Felder erst nach dem Klick, hält das Addon die Werte bis dahin fest.
 
-Offen: PartDesign-Werkzeuge (Aufpolsterung „12 mm“ im Aufgabendialog), weitere Sketcher-
-Werkzeuge im Alltag prüfen.
+**PartDesign-Dialoge** (Aufpolsterung, Vertiefung, Verrundung, Fase, Drehteil, …) haben dieselbe
+Struktur: Zahlenfelder mit Einheit im Aufgabendialog (`lengthEdit`, `taperEdit`, `filletRadius`,
+`chamferSize`, `revolveAngle`). Dieselbe Regel gilt: Längen ins erste mm-Feld, Winkel ins erste
+°-Feld. Gesetzt wird über die Eigenschaft `rawValue` des Feldes, ohne Enter: Der Dialog bleibt
+offen, die Vorschau zeigt den Wert, „OK“ bleibt beim Nutzer. (Nur Text ins Feld schreiben genügt
+bei der Aufpolsterung nicht.) Berücksichtigt werden nur Felder in `PartDesignGui::`-Dialogen; der
+Sketcher hat im Bearbeitungsmodus z. B. ein Feld für die Rastergröße.
+„Aufpolsterung 12 mm und 5 Grad“: Länge 12 mm, Verjüngung 5°.
+
+Offen: Dialoge anderer Workbenches, weitere Sketcher-Werkzeuge im Alltag prüfen.
 
 ### 6.6 Kontext-Synchronisation
 
