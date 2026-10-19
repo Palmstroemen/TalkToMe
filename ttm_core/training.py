@@ -57,3 +57,15 @@ def options(alternatives, candidates, min_score=0.6, limit=3):
         if score >= min_score and command in active and command not in [r[0] for r in result]:
             result.append((command, active[command]))
     return result[:limit]
+
+
+def unlearn(custom, command, heard):
+    """Remove heard forms of command again (a wrong assignment in training)."""
+    forms = custom.get(HEARD, {}).get(command)
+    if forms is None:
+        return custom
+    drop = {h.lower() for h in heard}
+    forms[:] = [f for f in forms if f.lower() not in drop]
+    if not forms:
+        del custom[HEARD][command]
+    return custom

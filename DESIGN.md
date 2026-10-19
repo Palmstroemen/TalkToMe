@@ -409,15 +409,20 @@ Nicht jede Fehlerkennung lässt sich mit einer Regel beheben. Wie Whisper eine S
 hängt von Sprecher, Mikrofon und Modell ab (das gesprochene „Ypsilon“ wird bei einem Nutzer zu
 „Upsilom“, „Upsalon“, „Öpsilon“). Statt Sonderregeln lernt das System diese Formen pro Nutzer.
 
-**Trainingsseite** (eigenes, nicht-modales Fenster, Befehl `TalkToMe_Training`):
+**Trainingsseite** (eigenes, nicht-modales Fenster, Befehl `TalkToMe_Training`), von oben
+nach unten, jeweils mit kurzem Hilfetext:
 
-1. **Was war gemeint?** Aus den zuletzt nicht verstandenen Äußerungen (mit den Kandidaten von
-   damals, denn ein Dialog kann inzwischen geschlossen sein), aus der Befehlsliste mit Filter,
-   oder durch Eintippen des gemeinten Satzes.
-2. **Mehrmals sprechen** (3×). Der Dienst schaltet in den Trainingsmodus (`train`): Er erkennt
-   nur und führt nichts aus. Jede Aufnahme wird eingeordnet: ✓ schon verstanden, ＋ wird
-   gelernt, ⚠ würde einen anderen Befehl treffen (wird nicht gespeichert), – nichts erkannt.
-3. **Speichern** in `custom.<lang>.json`.
+1. **Nicht verstandene Sätze** als Tabelle *Zeit | Gehört | Gemeint*. Was schon zugewiesen ist
+   (auch über das Rückfrage-Menü), steht als „→ XY-Ebene ✓“ in der letzten Spalte. Jeder Satz
+   bringt die Kandidaten seines Moments mit, denn ein Dialog kann inzwischen geschlossen sein.
+2. **Noch einmal sprechen** (optional, 3×). Der Dienst schaltet in den Trainingsmodus
+   (`train`): Er erkennt nur und führt nichts aus. Man kann auch hier mit einem neuen Satz
+   beginnen.
+3. **Welcher Befehl war gemeint?** Liste der Befehle der Situation, die wahrscheinlichen oben,
+   mit Filter; alternativ den Satz eintippen und suchen. **Assign** oder Doppelklick speichert
+   sofort: den gehörten Satz und die Aufnahmen. Jede Form wird eingeordnet: ＋ gelernt,
+   ✓ schon verstanden, ⚠ würde einen anderen Befehl treffen (nicht gespeichert).
+   **Forget** nimmt eine Zuweisung zurück.
 
 **Gelernte Formen** (`_heard` in der Benutzerdatei) zählen beim Vergleich wie Phrasen, mit
 Lautvergleich, sodass auch ähnliche Verhörer passen. Sie gehen aber **nicht als Hinweiswörter**

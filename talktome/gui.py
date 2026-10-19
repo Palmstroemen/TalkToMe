@@ -76,6 +76,7 @@ class Controller(QtCore.QObject):
         self.vocab, self.heard = ttm_context.load_vocabulary(self.language)
         self.last_candidates = None  # the context sent last; a training situation is taken from it
         self.misses = []             # recent not understood utterances with their situation
+        self.miss_count = 0
         self.trainer = None          # the open training page
         self.training_candidates = None
         self.training_restore = None # microphone state to restore after training
@@ -162,9 +163,12 @@ class Controller(QtCore.QObject):
         self.send_context()
 
     def remember_miss(self, msg):
-        self.misses = (self.misses + [{"time": time.time(), "text": msg.get("text", ""),
+        self.miss_count += 1
+        self.misses = (self.misses + [{"id": self.miss_count, "time": time.time(), "text": msg.get("text", ""),
                                        "alternatives": msg.get("alternatives") or [],
                                        "candidates": self.last_candidates}])[-MISSES_KEEP:]
+        if self.trainer is not None:
+            self.trainer.fill_misses()
 
     def on_toggled(self, checked):
         self.want_listen = checked
@@ -392,11 +396,22 @@ class Controller(QtCore.QObject):
         command = asking["options"][index]
         ok, reason, shown = self.run_command(command, {}, None)
         self.report(asking["text"], shown, ok, reason)
-        if ok and classify(asking["text"], command, asking["candidates"], self.language) == "learn":
+        if not ok:
+            return ok, reason
+        learned = classify(asking["text"], command, asking["candidates"], self.language) == "learn"
+        if learned:
             data = ttm_context.read_custom(self.language)
             ttm_context.save_custom(self.language, learn(data, command, heard=[asking["text"]]))
             self.reload_vocabulary()
             log("learned »{}« for {}".format(asking["text"], command))
+        label = next((c.get("label") or c["id"] for c in asking["candidates"] if c["id"] == command), command)
+        for miss in reversed(self.misses):     # shown as assigned in the training page
+            if miss["text"] == asking["text"] and not miss.get("assigned"):
+                miss["assigned"] = {"command": command, "label": label,
+                                    "forms": [asking["text"]] if learned else []}
+                break
+        if self.trainer is not None:
+            self.trainer.fill_misses()
         return ok, reason
 
     # --- executing ------------------------------------------------------------------------------

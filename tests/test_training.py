@@ -97,3 +97,11 @@ def test_options_are_limited_and_unique():
 
 def test_options_unknown_in_the_situation_are_left_out():
     assert options([("Gone_Command", 0.9)], plane_dialog()) == []
+
+
+def test_unlearn_removes_heard_forms_and_empty_entries():
+    from ttm_core.training import unlearn
+    custom = {"_heard": {XY: ["X-Upsilom-Ebene", "Öx Y-Lebenen"], YZ: ["Öpsel"]}}
+    unlearn(custom, XY, ["x-upsilom-ebene"])
+    unlearn(custom, YZ, ["Öpsel"])
+    assert custom == {"_heard": {XY: ["Öx Y-Lebenen"]}}

@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Training page: teach Talk to me how the speech recognition hears you (DESIGN.md 8.7).
 
-1. Pick what was meant: a recently not understood utterance, a command from the list, or type
-   the sentence.
-2. Say it a few times. The service only transcribes meanwhile; each recording shows whether it is
-   understood already, will be learned, or would mean another command.
-3. Save: learned forms go to the user's vocabulary file.
+From top to bottom:
+1. Sentences that were not understood, with the command assigned to them so far.
+2. Say it again (optional): more recordings of the same sentence teach more forms.
+3. Which command was meant: pick from the list (or type the sentence), then Assign or
+   double-click. Assigning stores right away; Forget takes it back.
+
+While recording, the service only transcribes, nothing is executed.
 """
 
 import time
@@ -13,21 +15,23 @@ import time
 from talktome import context as ttm_context
 from talktome.qt import QtCore, QtWidgets
 from ttm_core.decision import decide
-from ttm_core.training import classify, learn
+from ttm_core.training import classify, learn, unlearn
 
 RECORDINGS = 3
-MARKS = {
-    "ok":       ("✓", "understood already"),
-    "learn":    ("+", "will be learned"),
-    "conflict": ("⚠", "means {other}, not stored"),
-    "empty":    ("–", "nothing recognized"),
-}
+ROLE = QtCore.Qt.ItemDataRole.UserRole
 
 
 def describe(candidate):
-    """A command as shown in the list: its first phrase and its ID."""
+    """A command as shown in the list: FreeCAD's label and its ID."""
     label = candidate.get("label") or (candidate.get("phrases") or candidate.get("foreign") or [candidate["id"]])[0]
     return "{}   ({})".format(label, candidate["id"])
+
+
+def hint(text):
+    label = QtWidgets.QLabel(text)
+    label.setWordWrap(True)
+    label.setStyleSheet("color: gray;")
+    return label
 
 
 class TrainingDialog(QtWidgets.QDialog):
@@ -37,122 +41,129 @@ class TrainingDialog(QtWidgets.QDialog):
         self.setWindowTitle("Talk to me – Training")
         self.setModal(False)
         self.candidates = list(controller.last_candidates or [])
-        self.recordings = []            # (text, verdict)
+        self.recordings = []            # texts heard while recording
         self.recording = False
 
         layout = QtWidgets.QVBoxLayout(self)
 
-        layout.addWidget(QtWidgets.QLabel("<b>1. What did you mean?</b>"))
-        layout.addWidget(QtWidgets.QLabel("Recently not understood:"))
-        self.misses = QtWidgets.QListWidget()
-        self.misses.setMaximumHeight(90)
-        for miss in reversed(controller.misses):
-            item = QtWidgets.QListWidgetItem("{}  »{}«".format(
-                time.strftime("%H:%M:%S", time.localtime(miss["time"])), miss["text"]))
-            item.setData(QtCore.Qt.ItemDataRole.UserRole, miss)
-            self.misses.addItem(item)
+        # 1. not understood sentences
+        layout.addWidget(QtWidgets.QLabel("<b>Sentences I didn't understand</b>"))
+        layout.addWidget(hint("Select one and show me below what you meant. "
+                              "Next time I will understand it."))
+        self.misses = QtWidgets.QTreeWidget()
+        self.misses.setColumnCount(3)
+        self.misses.setHeaderLabels(["Time", "Heard", "Meant"])
+        self.misses.setRootIsDecorated(False)
+        self.misses.setMaximumHeight(140)
         self.misses.currentItemChanged.connect(self.on_miss)
         layout.addWidget(self.misses)
+        self.fill_misses()
 
+        # 2. say it again
+        layout.addWidget(QtWidgets.QLabel("<b>Say it again</b> (optional)"))
+        layout.addWidget(hint("Each recording teaches me another way the speech recognition hears you. "
+                              "You can also start here with a new sentence. Nothing is executed meanwhile."))
+        row = QtWidgets.QHBoxLayout()
+        self.record = QtWidgets.QPushButton("Say it {} times".format(RECORDINGS))
+        self.record.setCheckable(True)
+        self.record.toggled.connect(self.on_record)
+        row.addWidget(self.record)
+        row.addStretch()
+        layout.addLayout(row)
+        self.results = QtWidgets.QListWidget()
+        self.results.setMaximumHeight(80)
+        layout.addWidget(self.results)
+
+        # 3. what was meant
+        layout.addWidget(QtWidgets.QLabel("<b>Which command did you mean?</b>"))
+        layout.addWidget(hint("Pick it and press Assign, or double-click it. The likely ones are on top. "
+                              "You may also type the sentence you said to find it."))
         row = QtWidgets.QHBoxLayout()
         self.typed = QtWidgets.QLineEdit()
-        self.typed.setPlaceholderText("or type the sentence you meant, e.g. »Skizze in der XY-Ebene«")
+        self.typed.setPlaceholderText("type the sentence, e.g. »Skizze in der XY-Ebene«")
         self.typed.returnPressed.connect(self.on_typed)
         find = QtWidgets.QPushButton("Find")
         find.clicked.connect(self.on_typed)
         row.addWidget(self.typed)
         row.addWidget(find)
         layout.addLayout(row)
-
         self.filter = QtWidgets.QLineEdit()
         self.filter.setPlaceholderText("Filter commands")
         self.filter.textChanged.connect(self.fill_commands)
         layout.addWidget(self.filter)
         self.commands = QtWidgets.QListWidget()
         self.commands.currentItemChanged.connect(self.update_buttons)
+        self.commands.itemDoubleClicked.connect(self.assign)
         layout.addWidget(self.commands)
 
-        layout.addWidget(QtWidgets.QLabel("<b>2. Say it {} times</b>".format(RECORDINGS)))
-        self.record = QtWidgets.QPushButton("Start recording")
-        self.record.setCheckable(True)
-        self.record.toggled.connect(self.on_record)
-        layout.addWidget(self.record)
-        self.results = QtWidgets.QListWidget()
-        self.results.setMaximumHeight(110)
-        layout.addWidget(self.results)
-
-        buttons = QtWidgets.QDialogButtonBox()
-        self.save = buttons.addButton("Save", QtWidgets.QDialogButtonBox.ButtonRole.AcceptRole)
-        close = buttons.addButton("Close", QtWidgets.QDialogButtonBox.ButtonRole.RejectRole)
-        self.save.clicked.connect(self.on_save)
+        row = QtWidgets.QHBoxLayout()
+        self.assign_button = QtWidgets.QPushButton("Assign")
+        self.assign_button.clicked.connect(self.assign)
+        self.forget_button = QtWidgets.QPushButton("Forget")
+        self.forget_button.setToolTip("Take back the assignment of the selected sentence")
+        self.forget_button.clicked.connect(self.forget)
+        close = QtWidgets.QPushButton("Close")
         close.clicked.connect(self.close)
-        layout.addWidget(buttons)
+        row.addWidget(self.assign_button)
+        row.addWidget(self.forget_button)
+        row.addStretch()
+        row.addWidget(close)
+        layout.addLayout(row)
 
-        self.resize(560, 620)
+        self.resize(600, 720)
         self.fill_commands()
-        if self.misses.count():
-            self.misses.setCurrentRow(0)
+        if self.misses.topLevelItemCount():
+            self.misses.setCurrentItem(self.misses.topLevelItem(0))
 
-    # --- step 1: what was meant ----------------------------------------------------------
+    # --- 1. not understood sentences ---------------------------------------------------------
 
-    def target(self):
-        item = self.commands.currentItem()
-        return item.data(QtCore.Qt.ItemDataRole.UserRole) if item else None
+    def fill_misses(self):
+        """Rebuild the table, keeping the selection (without reacting to it as a new choice)."""
+        current = self.miss()
+        self.misses.blockSignals(True)
+        self.misses.clear()
+        for miss in reversed(self.controller.misses):
+            assigned = miss.get("assigned")
+            item = QtWidgets.QTreeWidgetItem([
+                time.strftime("%H:%M:%S", time.localtime(miss["time"])),
+                "»{}«".format(miss["text"]),
+                "→ {}  ✓".format(assigned["label"]) if assigned else ""])
+            item.setData(0, ROLE, miss["id"])  # not the dict: Qt would store a copy of it
+            self.misses.addTopLevelItem(item)
+            if miss is current:
+                self.misses.setCurrentItem(item)
+        self.misses.blockSignals(False)
+        for column in range(3):
+            self.misses.resizeColumnToContents(column)
 
-    def fill_commands(self, *args, first=()):
-        """The candidates of the situation, the given ones first, filtered by the filter text."""
-        current = self.target()
-        words = self.filter.text().lower().split()
-        ordered = [c for c in self.candidates if c["id"] in first]
-        ordered.sort(key=lambda c: list(first).index(c["id"]))
-        ordered += [c for c in self.candidates if c["id"] not in first]
-        self.commands.clear()
-        for c in ordered:
-            label = describe(c)
-            if all(w in label.lower() for w in words):
-                item = QtWidgets.QListWidgetItem(label)
-                item.setData(QtCore.Qt.ItemDataRole.UserRole, c["id"])
-                self.commands.addItem(item)
-                if c["id"] == current:
-                    self.commands.setCurrentItem(item)
-        self.update_buttons()
-
-    def select_command(self, command):
-        for row in range(self.commands.count()):
-            if self.commands.item(row).data(QtCore.Qt.ItemDataRole.UserRole) == command:
-                self.commands.setCurrentRow(row)
-                return True
-        return False
+    def miss(self):
+        """The selected sentence: the controller's own record, so changes are kept."""
+        item = self.misses.currentItem()
+        if item is None:
+            return None
+        number = item.data(0, ROLE)
+        return next((m for m in self.controller.misses if m["id"] == number), None)
 
     def on_miss(self, item, *args):
-        """A missed utterance brings its own situation: the candidates of that moment (a dialog
-        may have been open then), its likely commands first."""
-        if item is None:
+        """A sentence brings its own situation: the commands of that moment (a dialog may have
+        been open then), its likely commands first."""
+        self.recordings = []
+        self.results.clear()
+        miss = self.miss()
+        if miss is None:
             return
-        miss = item.data(QtCore.Qt.ItemDataRole.UserRole)
         self.candidates = miss["candidates"] or self.candidates
         likely = [cmd for cmd, _ in miss.get("alternatives") or []]
-        self.fill_commands(first=likely)
-        if likely:
-            self.select_command(likely[0])
+        assigned = miss.get("assigned")
+        self.fill_commands(first=([assigned["command"]] if assigned else []) + likely)
+        if self.commands.count():
+            self.commands.setCurrentRow(0)
 
-    def on_typed(self):
-        text = self.typed.text().strip()
-        if not text:
-            return
-        everything_active = [dict(c, active=True) for c in self.candidates]
-        d = decide(text, everything_active, self.controller.language)
-        if d.command and d.kind != "ignore":
-            self.fill_commands(first=[cmd for cmd, _ in d.alternatives])
-            self.select_command(d.command)
-        else:
-            self.controller.status("no command found for »{}«, pick one from the list".format(text))
-
-    # --- step 2: recordings ----------------------------------------------------------------
+    # --- 2. recordings ------------------------------------------------------------------------
 
     def on_record(self, on):
         self.recording = on
-        self.record.setText("Stop recording" if on else "Start recording")
+        self.record.setText("Stop" if on else "Say it {} times".format(RECORDINGS))
         if on:
             self.recordings = []
             self.results.clear()
@@ -163,44 +174,108 @@ class TrainingDialog(QtWidgets.QDialog):
 
     def add_recording(self, text):
         """Called by the controller for each transcript while recording."""
-        target = self.target()
-        if not self.recording or target is None:
+        if not self.recording:
             return
-        verdict = classify(text, target, self.candidates, self.controller.language)
-        mark, note = MARKS[verdict]
-        if verdict == "conflict":
-            everything_active = [dict(c, active=True) for c in self.candidates]
-            note = note.format(other=decide(text, everything_active, self.controller.language).command)
-        self.recordings.append((text, verdict))
-        self.results.addItem("{}  »{}«  {}".format(mark, text, note))
+        self.recordings.append(text)
+        self.results.addItem("»{}«".format(text) if text.strip() else "– nothing recognized")
         if len(self.recordings) >= RECORDINGS:
             self.record.setChecked(False)
         self.update_buttons()
 
-    # --- step 3: save ---------------------------------------------------------------------------
+    # --- 3. what was meant -------------------------------------------------------------------
+
+    def target(self):
+        item = self.commands.currentItem()
+        return item.data(ROLE) if item else None
+
+    def fill_commands(self, *args, first=()):
+        """The commands of the situation, the given ones first, filtered by the filter text."""
+        current = self.target()
+        first = list(dict.fromkeys(first))
+        words = self.filter.text().lower().split()
+        ordered = sorted((c for c in self.candidates if c["id"] in first), key=lambda c: first.index(c["id"]))
+        ordered += [c for c in self.candidates if c["id"] not in first]
+        self.commands.clear()
+        for c in ordered:
+            label = describe(c)
+            if all(w in label.lower() for w in words):
+                item = QtWidgets.QListWidgetItem(label)
+                item.setData(ROLE, c["id"])
+                self.commands.addItem(item)
+                if c["id"] == current:
+                    self.commands.setCurrentItem(item)
+        self.update_buttons()
+
+    def on_typed(self):
+        text = self.typed.text().strip()
+        if not text:
+            return
+        everything_active = [dict(c, active=True) for c in self.candidates]
+        d = decide(text, everything_active, self.controller.language)
+        if d.command and d.kind != "ignore":
+            self.fill_commands(first=[cmd for cmd, _ in d.alternatives])
+            self.commands.setCurrentRow(0)
+        else:
+            self.controller.status("no command found for »{}«, pick one from the list".format(text))
+        self.update_buttons()
 
     def update_buttons(self, *args):
-        has_target = self.target() is not None
-        self.record.setEnabled(has_target or self.recording)
-        learned = [t for t, v in self.recordings if v == "learn"]
-        self.save.setEnabled(has_target and not self.recording and bool(learned or self.typed.text().strip()))
+        miss = self.miss()
+        open_miss = miss is not None and not miss.get("assigned")
+        something = open_miss or bool(self.recordings) or bool(self.typed.text().strip())
+        self.assign_button.setEnabled(self.target() is not None and something and not self.recording)
+        self.forget_button.setEnabled(miss is not None and bool(miss.get("assigned")) and not self.recording)
 
-    def on_save(self):
+    def assign(self, *args):
+        """Store what was heard for the selected command, right away."""
         target = self.target()
-        learned = [t for t, v in self.recordings if v == "learn"]
+        if target is None or self.recording:
+            return
         language = self.controller.language
+        miss = self.miss()
+        heard = ([miss["text"]] if miss is not None and not miss.get("assigned") else []) + self.recordings
+        unique = {}
+        for text in heard:                     # each once, in the order heard
+            unique.setdefault(text.lower(), text)
+        heard = list(unique.values())
+        verdicts = [(text, classify(text, target, self.candidates, language)) for text in heard]
+        learned = [text for text, verdict in verdicts if verdict == "learn"]
+        conflicts = [text for text, verdict in verdicts if verdict == "conflict"]
         typed = self.typed.text().strip() or None
         if typed and classify(typed, target, self.candidates, language) != "learn":
             typed = None                       # already understood (or another command's words)
+
         data = ttm_context.read_custom(language)
         learn(data, target, heard=learned, typed=typed)
         ttm_context.save_custom(language, data)
         self.controller.reload_vocabulary()
-        self.controller.status("learned {} form(s){} for {}".format(
-            len(learned), " and »{}«".format(typed) if typed else "", target))
-        self.recordings = []
+
+        label = next((c.get("label") or c["id"] for c in self.candidates if c["id"] == target), target)
+        if miss is not None:
+            miss["assigned"] = {"command": target, "label": label, "forms": learned}
         self.results.clear()
+        for text, verdict in verdicts:
+            mark = {"learn": "+ learned", "ok": "✓ understood already",
+                    "conflict": "⚠ means another command, not stored", "empty": "– nothing recognized"}[verdict]
+            self.results.addItem("{}  »{}«".format(mark, text))
+        self.recordings = []
         self.typed.clear()
+        self.fill_misses()
+        self.controller.status("learned {} form(s) for {}{}".format(
+            len(learned), label, ", {} not stored (another command)".format(len(conflicts)) if conflicts else ""))
+        self.update_buttons()
+
+    def forget(self):
+        miss = self.miss()
+        if miss is None or not miss.get("assigned"):
+            return
+        assigned = miss.pop("assigned")
+        language = self.controller.language
+        data = ttm_context.read_custom(language)
+        ttm_context.save_custom(language, unlearn(data, assigned["command"], assigned["forms"] + [miss["text"]]))
+        self.controller.reload_vocabulary()
+        self.controller.status("forgot »{}« for {}".format(miss["text"], assigned["label"]))
+        self.fill_misses()
         self.update_buttons()
 
     def closeEvent(self, event):
