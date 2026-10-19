@@ -31,6 +31,9 @@
 
     "ui:cancel":                ["Abbrechen", "Abbruch", "Stopp"],
     "ui:ok":                    ["OK", "Okay", "Bestätigen", "Fertig"],
+    "ui:choose:XY-Ebene (Basis-Ebene)": ["X Y Ebene", "Draufsicht", "Grundriss", "von oben", "oben", "Boden"],
+    "ui:choose:XZ-Ebene (Basis-Ebene)": ["X Z Ebene", "Vorderansicht", "von vorne", "vorne", "Front"],
+    "ui:choose:YZ-Ebene (Basis-Ebene)": ["Y Z Ebene", "Seitenansicht", "von der Seite", "Seite", "seitlich"],
     "ui:mic_off":               ["Mikro aus", "Mikrofon aus", "Micro aus", "kurze Pause", "Ok kurze Pause",
                                  "Pause machen", "Stoppe die Aufnahme", "Aufnahme stoppen", "Aufnahme aus",
                                  "Mach das Mikro zu", "Mikro zu", "Höre nicht mehr zu", "Hör auf zuzuhören",

@@ -6,7 +6,12 @@ changed since the utterance started.
 """
 
 import FreeCADGui as Gui
+from talktome.context import in_task_dialog, task_lists
 from talktome.qt import QtCore, QtGui, QtWidgets
+from ttm_core.context import CHOOSE
+
+# Task dialogs whose list asks for exactly one thing: choosing confirms the dialog.
+AUTO_CONFIRM = {"PartDesignGui__TaskFeaturePick"}       # e.g. the plane for a new sketch
 
 
 def _task_button(which):
@@ -14,7 +19,7 @@ def _task_button(which):
     std = QtWidgets.QDialogButtonBox.StandardButton
     wanted = std.Ok if which == "ok" else std.Cancel
     for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox):
-        if box.isVisible():
+        if box.isVisible() or in_task_dialog(box):
             button = box.button(wanted)
             if button is not None and button.isEnabled():
                 return button
@@ -27,6 +32,30 @@ def _press_escape():
     for kind in (QtCore.QEvent.Type.KeyPress, QtCore.QEvent.Type.KeyRelease):
         event = QtGui.QKeyEvent(kind, QtCore.Qt.Key.Key_Escape, QtCore.Qt.KeyboardModifier.NoModifier)
         QtWidgets.QApplication.sendEvent(target, event)
+
+
+def _confirms(widget):
+    while widget is not None:
+        if widget.objectName() in AUTO_CONFIRM:
+            return True
+        widget = widget.parentWidget()
+    return False
+
+
+def choose(text):
+    """Select the entry text in a list of the task dialog; confirm dialogs in AUTO_CONFIRM."""
+    for widget in task_lists():
+        for row in range(widget.count()):
+            item = widget.item(row)
+            if item.text() == text and not item.isHidden():
+                widget.setCurrentItem(item)
+                if _confirms(widget):
+                    button = _task_button("ok")
+                    if button is None:
+                        return False, "selected, but OK is not available"
+                    button.click()
+                return True, ""
+    return False, "choice no longer offered"
 
 
 def rename(obj, label):
@@ -54,6 +83,9 @@ def execute(command):
             return False, "unknown workbench"
         Gui.activateWorkbench(name)
         return True, ""
+
+    if command.startswith(CHOOSE):
+        return choose(command[len(CHOOSE):])
 
     if command in ("ui:ok", "ui:cancel"):
         button = _task_button("ok" if command == "ui:ok" else "cancel")

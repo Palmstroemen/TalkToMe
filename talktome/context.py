@@ -7,6 +7,7 @@ import os
 import FreeCAD as App
 import FreeCADGui as Gui
 
+from talktome.qt import QtCore, QtWidgets
 from ttm_core.context import build_candidates
 
 ADDON_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,6 +31,39 @@ def load_vocabulary(language):
             if not cmd.startswith("_") and isinstance(phrases, list):
                 vocab[cmd] = phrases + [p for p in vocab.get(cmd, []) if p not in phrases]
     return vocab
+
+
+def _task_view(widget):
+    while widget is not None:
+        if widget.metaObject().className() == "Gui::TaskView::TaskView":
+            return widget
+        widget = widget.parentWidget()
+    return None
+
+
+def in_task_dialog(widget):
+    """Whether widget is shown in the task view. FreeCAD fades a new task dialog in after
+    some 300 ms, so isVisible() is still False right after the command that opened it."""
+    view = _task_view(widget)
+    return view is not None and widget.isVisibleTo(view)
+
+
+def task_lists():
+    """Lists of the open task dialog, e.g. the planes offered for a new sketch."""
+    if not Gui.Control.activeDialog():
+        return []
+    mw = Gui.getMainWindow()
+    return [w for w in mw.findChildren(QtWidgets.QListWidget) if in_task_dialog(w)]
+
+
+def _choices():
+    texts = []
+    for widget in task_lists():
+        for row in range(widget.count()):
+            item = widget.item(row)
+            if not item.isHidden() and item.flags() & QtCore.Qt.ItemFlag.ItemIsEnabled:
+                texts.append(item.text())
+    return texts
 
 
 def _command_name(action):
@@ -116,7 +150,8 @@ def collect(vocab, language="de"):
             target.setdefault(key, []).extend(texts)
         english = {}
 
+    dialog_open = bool(Gui.Control.activeDialog())
     return build_candidates(toolbars, labels, active, edit_prefix=edit_prefix,
-                            dialog_open=bool(Gui.Control.activeDialog()),
+                            dialog_open=dialog_open, choices=_choices() if dialog_open else None,
                             workbenches=workbenches, current_workbench=wb.name(), vocab=vocab,
                             descriptions=descriptions, foreign_labels=english)

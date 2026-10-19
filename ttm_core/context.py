@@ -3,7 +3,7 @@
 The FreeCAD addon collects raw data (toolbars, button texts, edit mode, ...) and this module
 turns it into a list of candidates, each with a priority level:
 
-    dialog     an open task dialog: OK / cancel
+    dialog     an open task dialog: its choices (e.g. the planes for a new sketch), OK / cancel
     edit       commands belonging to the object being edited (e.g. Sketcher_* in a sketch)
     workbench  the other commands of the active workbench
     global     Std_* commands, switching workbenches, cancel, microphone off
@@ -16,11 +16,12 @@ SEPARATOR = "Separator"
 # The workbench selector carries the names of all workbenches; switching is offered as
 # workbench:<name> instead.
 EXCLUDED = {"Std_Workbench"}
+CHOOSE = "ui:choose:"
 
 
 def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_open=False,
                      workbenches=None, current_workbench=None, vocab=None, descriptions=None,
-                     foreign_labels=None):
+                     foreign_labels=None, choices=None):
     """
     toolbar_items      {toolbar name: [command ids]} of the active workbench
     labels             {command id: [button texts]} in the user's language
@@ -33,6 +34,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     descriptions       {command id: help text} in the user's language (status tips)
     foreign_labels     {command id: [texts]} in another language, usually FreeCAD's English
                        names; compared by spelling only, the sound rules are the user's language's
+    choices            entries of the lists in the open task dialog; command "ui:choose:<text>"
     """
     vocab = vocab or {}
     descriptions = descriptions or {}
@@ -48,6 +50,8 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
                                "active": is_active, "description": descriptions.get(id_, "")})
 
     if dialog_open:
+        for text in choices or []:
+            add(CHOOSE + text, "dialog", merge_phrases(vocab.get(CHOOSE + text), [text]))
         add("ui:ok", "dialog", merge_phrases(vocab.get("ui:ok")))
         add("ui:cancel", "dialog", merge_phrases(vocab.get("ui:cancel")))
 

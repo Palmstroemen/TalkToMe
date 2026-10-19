@@ -17,7 +17,7 @@ import numpy as np
 
 from talktome_service.segmenter import Segmenter
 from ttm_core.clauses import split_clauses
-from ttm_core.context import LEVELS
+from ttm_core.context import CHOOSE, LEVELS
 from ttm_core.decision import decide
 from ttm_core.matching import hotwords
 from ttm_core.params import parse
@@ -62,6 +62,7 @@ class Service:
         self._step_id = 0
         self._awaiting = None                 # id of the plan the addon is executing
         self._steps = 0
+        self._last_span = None                # clause(s) of the step just executed, for a follow-up
         self._stop = threading.Event()
         self._threads = []
 
@@ -283,6 +284,7 @@ class Service:
             self._utterance_id += 1
             self._pending = split_clauses(text, self.language)
             self._awaiting = None
+            self._last_span = None
             self._steps = 0
             if self._candidates is not None:
                 whole = decide(text, self._candidates, self.language)
@@ -307,9 +309,33 @@ class Service:
                 self._pending = []
                 self._play("error")
                 return
+            if self._follow_up():
+                return
             last = self._advance()
             if self._awaiting is None and (last is None or last.kind == "ignore"):
                 self._play("ok")               # all steps done
+
+    def _follow_up(self):
+        """Did the step open a dialog asking for what its clause said already? "Mach eine Skizze
+        in der XY-Ebene": the sketch command opens the plane choice, the clause names the plane.
+        Sends the choice as one more step; uses the addon's context sent before its result."""
+        span, self._last_span = self._last_span, None
+        choices = [c for c in self._candidates or [] if c["id"].startswith(CHOOSE)]
+        if span is None or not choices:
+            return False
+        d = decide(span, choices, self.language)
+        if d.kind != "execute":
+            return False
+        self._send_step(d, span)
+        return True
+
+    def _send_step(self, d, span):
+        self._step_id += 1
+        self._awaiting = self._step_id
+        self._steps += 1
+        self.send("plan", id=self._step_id, more=bool(self._pending), text=span,
+                  utterance=self._utterance, utterance_id=self._utterance_id, command=d.command,
+                  args=d.args, score=d.score, level=d.level, alternatives=d.alternatives, via=d.via)
 
     def _advance(self):
         """Decide clauses until one step is sent, the sequence fails, or nothing is left.
@@ -326,10 +352,8 @@ class Service:
                         command=d.command, args=d.args, score=d.score, level=d.level,
                         alternatives=d.alternatives, via=d.via)
             if d.kind == "execute":
-                self._step_id += 1
-                self._awaiting = self._step_id
-                self._steps += 1
-                self.send("plan", id=self._step_id, more=bool(self._pending), **info)
+                self._last_span = span
+                self._send_step(d, span)
                 return d                       # the addon executes and answers with "result"
             if d.kind == "not_understood":
                 self._pending = []

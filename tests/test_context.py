@@ -118,3 +118,26 @@ def test_microphone_off_is_always_offered():
     for dialog_open in (False, True):
         c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=dialog_open, vocab=vocab))
         assert c["ui:mic_off"]["level"] == "global"
+
+
+# --- choices in an open dialog ---------------------------------------------------------------
+
+PLANES = ["XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)"]
+
+
+def test_dialog_choices_are_candidates_on_top():
+    c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, choices=PLANES))
+    choice = c["ui:choose:XY-Ebene (Basis-Ebene)"]
+    assert choice["level"] == "dialog"
+    assert choice["phrases"] == ["XY-Ebene"]
+
+
+def test_no_choices_without_dialog():
+    c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=False, choices=PLANES))
+    assert not any(k.startswith("ui:choose:") for k in c)
+
+
+def test_vocabulary_adds_phrases_to_choices():
+    vocab = {"ui:choose:XY-Ebene (Basis-Ebene)": ["Draufsicht"]}
+    c = by_id(build_candidates(TOOLBARS, LABELS, ACTIVE, dialog_open=True, choices=PLANES, vocab=vocab))
+    assert c["ui:choose:XY-Ebene (Basis-Ebene)"]["phrases"] == ["Draufsicht", "XY-Ebene"]

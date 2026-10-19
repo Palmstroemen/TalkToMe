@@ -270,7 +270,28 @@ Schritte. Ablauf (`ttm_core/clauses.py`, `ttm_core/sequence.py`):
    Schritt beendet die Sequenz mit Fehlerton, denn die folgenden Schritte liefen in einem
    unerwarteten Zustand. Der Bestätigungston kommt einmal am Ende.
 
-Noch nicht möglich: Auswahl in Folgedialogen („in der XY-Ebene“, siehe 6.5).
+### Auswahl in Dialogen
+
+Ist ein Aufgabendialog mit Liste offen, sind ihre Einträge Kandidaten auf der höchsten Ebene
+(`ui:choose:<Text>`), z. B. die Ebenen für eine neue Skizze: „XY-Ebene“. Der Wortschatz kann
+ihnen weitere Phrasen geben, Schlüssel ist der übersetzte Text („Draufsicht“, „von oben“ für
+die XY-Ebene).
+
+Steht die Auswahl im selben Teilsatz wie der Befehl, der den Dialog öffnet („mach eine Skizze in
+der XY-Ebene“), schickt das Addon nach dem Schritt den neuen Kontext, und der Dienst prüft den
+Teilsatz noch einmal gegen die Auswahl des Dialogs. Passt sie sicher, folgt sie als eigener
+Schritt.
+
+Die Auswahl markiert den Eintrag. Dialoge, deren Liste genau eine Frage stellt, werden gleich
+bestätigt (`AUTO_CONFIRM` im Executor, derzeit die Merkmalsauswahl von PartDesign). Sonst folgt
+„OK“.
+
+FreeCAD blendet Aufgabendialoge mit etwa 300 ms Verzögerung ein; ob ein Element zum Dialog
+gehört, prüft das Addon deshalb mit `isVisibleTo(TaskView)` statt `isVisible()`.
+
+Erkennung: Buchstaben wie „XY“ versteht Whisper schlecht („Exerzielern eben“, „x-Zylanebene“),
+mit Hinweiswörtern teils als die falsche Ebene („XZ“). Deshalb die Ausweichwörter, und
+deshalb wird bei unsicherem Treffer nichts gewählt. Mit echter Stimme noch zu messen.
 
 ### Befehle mit freiem Text: Umbenennen
 

@@ -103,3 +103,24 @@ def test_full_example_steps():
     text = "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene."
     assert [(k, c) for k, c, _ in steps(text, PART_DESIGN)] == [
         ("execute", "PartDesign_Body"), ("execute", "ui:rename"), ("execute", "PartDesign_CompSketches")]
+
+
+def test_choice_by_name_in_dialog():
+    dialog = PART_DESIGN + [
+        {"id": "ui:choose:" + p, "level": "dialog", "phrases": [p.split(" (")[0]], "foreign": [],
+         "active": True, "description": ""}
+        for p in ("XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)")]
+    for text, plane in [("XY-Ebene", "XY"), ("Die XZ-Ebene", "XZ"), ("Y Z Ebene", "YZ"), ("in der X-Y-Ebene", "XY")]:
+        d = decide(text, dialog, "de")
+        assert (d.kind, d.command) == ("execute", "ui:choose:{}-Ebene (Basis-Ebene)".format(plane)), text
+
+
+def test_planes_by_other_words():
+    planes = ("XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)")
+    dialog = PART_DESIGN + [
+        {"id": "ui:choose:" + p, "level": "dialog", "phrases": VOCAB.get("ui:choose:" + p, []) + [p.split(" (")[0]],
+         "foreign": [], "active": True, "description": ""} for p in planes]
+    for text, plane in [("auf der Draufsicht", "XY"), ("Grundriss", "XY"), ("von vorne", "XZ"),
+                        ("Vorderansicht", "XZ"), ("Seitenansicht", "YZ"), ("auf der Seite", "YZ")]:
+        d = decide(text, dialog, "de")
+        assert (d.kind, d.command) == ("execute", "ui:choose:{}-Ebene (Basis-Ebene)".format(plane)), text

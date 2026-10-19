@@ -463,3 +463,50 @@ def test_rename_alone_is_not_talk(parts):
     assert msg["utterance_id"] >= 1
     c.close()
     s.stop()
+
+
+# --- follow-up choice from the same clause ------------------------------------------------
+
+SKETCH = [{"id": "PartDesign_NewSketch", "level": "workbench", "phrases": ["Skizze"], "active": True}]
+PLANE_DIALOG = SKETCH + [
+    {"id": "ui:choose:" + p, "level": "dialog", "phrases": [p.split(" (")[0]], "active": True}
+    for p in ("XY-Ebene (Basis-Ebene)", "XZ-Ebene (Basis-Ebene)", "YZ-Ebene (Basis-Ebene)")]
+
+
+def sketch_service(parts, text):
+    parts["transcriber"] = FakeTranscriber(text)
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=SKETCH)
+    c.send("listen", on=True)
+    return s, c
+
+
+def test_clause_chooses_in_the_dialog_its_command_opened(parts):
+    s, c = sketch_service(parts, "Mach eine Skizze in der XY-Ebene")
+    first = c.wait_for("plan")
+    assert (first["command"], first["more"]) == ("PartDesign_NewSketch", False)
+    c.send("context", candidates=PLANE_DIALOG)          # the sketch command opened the plane dialog
+    c.send("result", ok=True, id=first["id"])
+    second = c.wait_for("plan")
+    assert second["command"] == "ui:choose:XY-Ebene (Basis-Ebene)"
+    assert parts["tones"].played == []
+    c.send("result", ok=True, id=second["id"])
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["ok"]
+    c.close()
+    s.stop()
+
+
+def test_no_follow_up_without_a_matching_choice(parts):
+    s, c = sketch_service(parts, "Mach eine Skizze")
+    first = c.wait_for("plan")
+    c.send("context", candidates=PLANE_DIALOG)
+    c.send("result", ok=True, id=first["id"])
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["ok"]
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.3)
+    c.close()
+    s.stop()

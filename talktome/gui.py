@@ -317,8 +317,10 @@ class Controller(QtCore.QObject):
                 ok, reason = False, str(e)
             if ok:
                 self.remember_created(doc_name, before, msg.get("utterance_id"))
-        if ok and msg.get("more"):
-            self.send_context()                # the next step is decided in the new context
+        if ok:
+            # The next step is decided in the new context; a dialog the step opened may ask
+            # for what was said already ("Skizze in der XY-Ebene").
+            self.send_context()
         if msg.get("via") == "description":
             command += " (from help text)"
         if ok:
