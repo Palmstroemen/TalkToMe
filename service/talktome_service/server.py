@@ -20,6 +20,7 @@ from ttm_core.clauses import split_clauses
 from ttm_core.context import LEVELS
 from ttm_core.decision import decide
 from ttm_core.matching import hotwords
+from ttm_core.params import parse
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 from ttm_core.sequence import EXCLUSIVE, next_step
 
@@ -57,6 +58,7 @@ class Service:
         self._seq_lock = threading.Lock()     # the sequence advances from the STT and the client thread
         self._pending = []                    # clauses of the current utterance not decided yet
         self._utterance = ""
+        self._utterance_id = 0
         self._step_id = 0
         self._awaiting = None                 # id of the plan the addon is executing
         self._steps = 0
@@ -278,12 +280,14 @@ class Service:
         """Start a new utterance; it replaces what is left of the previous one."""
         with self._seq_lock:
             self._utterance = text
+            self._utterance_id += 1
             self._pending = split_clauses(text, self.language)
             self._awaiting = None
             self._steps = 0
             if self._candidates is not None:
                 whole = decide(text, self._candidates, self.language)
-                if whole.kind == "ignore":     # talk; its clauses alone would look like short attempts
+                patterns = any(parse(c, self.language) for c in self._pending)
+                if whole.kind == "ignore" and not patterns:   # talk; its clauses alone would look like short attempts
                     self._pending = []
                     self.send("ignored", reason=whole.reason, text=text)
                     return
@@ -318,8 +322,9 @@ class Service:
             d, n = next_step(self._pending, self._candidates, self.language)
             span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
             last = d
-            info = dict(text=span, utterance=self._utterance, command=d.command, score=d.score,
-                        level=d.level, alternatives=d.alternatives, via=d.via)
+            info = dict(text=span, utterance=self._utterance, utterance_id=self._utterance_id,
+                        command=d.command, args=d.args, score=d.score, level=d.level,
+                        alternatives=d.alternatives, via=d.via)
             if d.kind == "execute":
                 self._step_id += 1
                 self._awaiting = self._step_id

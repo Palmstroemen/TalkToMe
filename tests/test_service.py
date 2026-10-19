@@ -453,3 +453,13 @@ def test_muted_frames_skip_the_vad(parts):
         c.wait_for("speech_start", timeout=0.3)
     c.close()
     s.stop()
+
+
+def test_rename_alone_is_not_talk(parts):
+    """Four words without any command name would be ignored as talk."""
+    s, c = sequence_service(parts, "Den nennen wir Bodenplatte")
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["args"]) == ("ui:rename", {"label": "Bodenplatte"})
+    assert msg["utterance_id"] >= 1
+    c.close()
+    s.stop()

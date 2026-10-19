@@ -270,8 +270,25 @@ Schritte. Ablauf (`ttm_core/clauses.py`, `ttm_core/sequence.py`):
    Schritt beendet die Sequenz mit Fehlerton, denn die folgenden Schritte liefen in einem
    unerwarteten Zustand. Der Bestätigungston kommt einmal am Ende.
 
-Noch nicht möglich: Schritte mit freien Parametern („den nennen wir Bodenplatte“, wird derzeit
-als Gerede übersprungen) und Auswahl in Folgedialogen („in der XY-Ebene“, siehe 6.5).
+Noch nicht möglich: Auswahl in Folgedialogen („in der XY-Ebene“, siehe 6.5).
+
+### Befehle mit freiem Text: Umbenennen
+
+„Den nennen wir Bodenplatte“: Der Name ist freier Text, er lässt sich nicht unscharf mit
+Befehlsnamen vergleichen. Solche Befehle erkennen Satzmuster je Sprache mit einer Lücke für den
+Parameter (`ttm_core/params.py`): „nenne ihn X“, „benenne ihn um in X“, „der soll X heißen“,
+„gib ihm den Namen X“, „Name X“. Die Muster werden pro Teilsatz vor dem normalen Abgleich
+geprüft; ein Teilsatz mit Muster ist nie Gerede.
+
+Worauf sich „den“, „das“, „ihn“ beziehen, entscheidet das Addon:
+1. ein Objekt, das ein Schritt derselben Äußerung erzeugt hat („erstelle einen Körper, den nennen
+   wir Bodenplatte“),
+2. sonst das eine ausgewählte Objekt,
+3. sonst das zuletzt per Sprache erzeugte Objekt (auch aus einer früheren Äußerung).
+
+Was ein Schritt erzeugt hat, ergibt der Vergleich der Dokumentobjekte vorher und nachher, ohne
+Kinder der neuen Objekte (ein neuer Körper bringt seinen Ursprung mit). Das Label wird in einer
+Transaktion gesetzt, „Rückgängig“ stellt den alten Namen wieder her.
 
 ### Plan-Format
 

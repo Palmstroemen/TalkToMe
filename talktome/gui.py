@@ -73,6 +73,7 @@ class Controller(QtCore.QObject):
         self.vocab = ttm_context.load_vocabulary(self.language)
         self.process = None
         self.stderr_tail = []
+        self.created = None          # (utterance id, document, object) of the last object a step created
         self.sock = None
         self.decoder = LineDecoder()
         self.token = secrets.token_hex(16)
@@ -270,18 +271,52 @@ class Controller(QtCore.QObject):
         elif kind == "error":
             App.Console.PrintWarning("Talk to me: {}\n".format(msg.get("message")))
 
+    def rename_target(self, utterance_id):
+        """What "den", "das", "ihn" refer to: an object created in the same utterance, else the
+        single selected object, else the object created last."""
+        doc = App.ActiveDocument
+        created = None
+        if self.created is not None and doc is not None and self.created[1] == doc.Name:
+            created = doc.getObject(self.created[2])
+        if created is not None and self.created[0] == utterance_id:
+            return created
+        selection = Gui.Selection.getSelection()
+        if len(selection) == 1:
+            return selection[0]
+        return created
+
+    def remember_created(self, doc_name, before, utterance_id):
+        doc = App.ActiveDocument
+        if doc is None or doc.Name != doc_name:
+            return
+        created = executor.created_objects(doc, before)
+        if len(created) == 1:
+            self.created = (utterance_id, doc.Name, created[0].Name)
+
     def on_plan(self, msg):
         command, text = msg.get("command", ""), msg.get("text", "")
+        args = msg.get("args") or {}
+        doc = App.ActiveDocument
+        doc_name, before = (doc.Name, {o.Name for o in doc.Objects}) if doc else (None, set())
         if command == "ui:mic_off":
             self.action.setChecked(False)      # switching on again is the button's job
             ok, reason = True, ""
         elif PARAMS.GetBool("DryRun", False):
             ok, reason = True, "dry run, not executed"
+        elif command == "ui:rename":
+            target = self.rename_target(msg.get("utterance_id"))
+            if target is None:
+                ok, reason = False, "nothing to rename: select an object"
+            else:
+                ok, reason = executor.rename(target, args.get("label", ""))
+                command = "rename {} to »{}«".format(target.Name, target.Label)
         else:
             try:
                 ok, reason = executor.execute(command)
             except Exception as e:
                 ok, reason = False, str(e)
+            if ok:
+                self.remember_created(doc_name, before, msg.get("utterance_id"))
         if ok and msg.get("more"):
             self.send_context()                # the next step is decided in the new context
         if msg.get("via") == "description":

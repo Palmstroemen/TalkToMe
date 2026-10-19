@@ -87,3 +87,8 @@ def test_workbench_switch_is_a_step_of_its_own():
     assert step("Wechsle zu Part Design, und erstelle einen neuen Körper", part_workbench) == \
         ("execute", "workbench:PartDesignWorkbench", 1)
 
+
+
+def test_rename_is_a_step_with_its_label():
+    d, n = next_step(split_clauses("den nennen wir Bodenplatte, und mach eine Fase", "de"), PART_DESIGN, "de")
+    assert (d.kind, d.command, d.args, n) == ("execute", "ui:rename", {"label": "Bodenplatte"}, 1)

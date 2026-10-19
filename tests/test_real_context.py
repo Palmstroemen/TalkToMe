@@ -96,3 +96,10 @@ MIC_OFF = {"id": "ui:mic_off", "level": "global", "phrases": VOCAB["ui:mic_off"]
 def test_microphone_off(text):
     d = decide(text, PART_DESIGN + [MIC_OFF], "de")
     assert (d.kind, d.command) == ("execute", "ui:mic_off")
+
+
+def test_full_example_steps():
+    """The user's example, after the switch to Part Design."""
+    text = "erstelle einen neuen Körper. Den nennen wir Bodenplatte, und mach eine Skizze in der XY-Ebene."
+    assert [(k, c) for k, c, _ in steps(text, PART_DESIGN)] == [
+        ("execute", "PartDesign_Body"), ("execute", "ui:rename"), ("execute", "PartDesign_CompSketches")]

@@ -8,7 +8,9 @@ A command may stretch over several clauses ("Extrudiere das und ziehe es vom Kö
 the first one to max_span clauses are tried together; the span explaining the most words wins.
 """
 
-from ttm_core.decision import decide, explains
+from ttm_core.decision import Decision, decide, explains
+from ttm_core.matching import command_words
+from ttm_core.params import parse
 
 # Steps that change the candidates; what follows them is decided in the new context.
 CONTEXT_CHANGING = ("workbench:",)
@@ -28,6 +30,11 @@ def next_step(clauses, candidates, language=None, max_span=3, **decide_args):
     the span finds Save, but so does "Speichern" alone; in "erstelle einen Körper, den nennen wir
     Bodenplatte" the second clause explains nothing more about the body.
     """
+    pattern = parse(clauses[0], language)
+    if pattern is not None:                    # a command with free text: one clause, no rivals
+        command, args = pattern
+        return Decision("execute", command, score=1.0, level="global", via="pattern",
+                        words=len(command_words(clauses[0], language)), args=args), 1
     by_id = {c["id"]: c for c in candidates}
     best = None
     for n in range(1, min(max_span, len(clauses)) + 1):

@@ -34,6 +34,7 @@ class Decision:
     reason: str = None             # for not_understood / ignore
     via: str = None                # "name" or "description": how the command was found
     words: int = 0                 # meaningful words of the sentence explained by the command
+    args: dict = field(default_factory=dict)            # parameters, e.g. {"label": "Bodenplatte"}
     alternatives: list = field(default_factory=list)   # [(command, score)], best first
 
 

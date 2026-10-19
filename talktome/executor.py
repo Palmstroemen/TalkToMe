@@ -29,6 +29,24 @@ def _press_escape():
         QtWidgets.QApplication.sendEvent(target, event)
 
 
+def rename(obj, label):
+    """Set an object's label, undoable. Returns (ok, reason); FreeCAD may adapt duplicate labels."""
+    doc = obj.Document
+    doc.openTransaction("Rename")
+    try:
+        obj.Label = label
+    finally:
+        doc.commitTransaction()
+    return True, "" if obj.Label == label else "named {}".format(obj.Label)
+
+
+def created_objects(doc, before):
+    """Objects added to doc since before (a set of names), without their own children:
+    a new body brings its origin, but the body is what was created."""
+    new = [o for o in doc.Objects if o.Name not in before]
+    return [o for o in new if not any(parent in new for parent in o.InList)]
+
+
 def execute(command):
     if command.startswith("workbench:"):
         name = command.split(":", 1)[1]
