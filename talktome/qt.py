@@ -14,3 +14,13 @@ except ImportError:
 
 # QAction moved from QtWidgets (Qt5) to QtGui (Qt6).
 QAction = getattr(QtWidgets, "QAction", None) or QtGui.QAction
+
+
+def translate(context, text):
+    """Text of the user interface in FreeCAD's language (translations/TalkToMe_<lang>.qm)."""
+    return QtCore.QCoreApplication.translate(context, text)
+
+
+def QT_TRANSLATE_NOOP(context, text):
+    """Marks text for translation where it is defined; translate() it where it is shown."""
+    return text

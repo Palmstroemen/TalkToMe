@@ -18,7 +18,7 @@ import FreeCADGui as Gui
 from talktome import command
 from talktome import context as ttm_context
 from talktome import executor
-from talktome.qt import QtCore, QtGui, QtWidgets
+from talktome.qt import QT_TRANSLATE_NOOP, QtCore, QtGui, QtWidgets, translate
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
 from ttm_core.objects import find_object
 from ttm_core.training import classify, learn, options
@@ -30,6 +30,11 @@ PARAMS      = App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe")
 POLL_MS     = 50
 STATUS_MS   = 8000
 STDERR_KEEP = 20
+REASONS = {                  # why something was not understood, as shown in the status bar
+    "no_match": QT_TRANSLATE_NOOP("TalkToMe", "no matching command"),
+    "ambiguous": QT_TRANSLATE_NOOP("TalkToMe", "ambiguous"),
+    "inactive": QT_TRANSLATE_NOOP("TalkToMe", "not available now"),
+}
 MISSES_KEEP = 8              # not understood utterances offered in the training page
 
 # Set by FreeCAD's AppImage or bundle for its own Python; the service runs on another Python.
@@ -45,13 +50,13 @@ ICONS = {
     "error":      "mic_error.svg",
 }
 TOOLTIPS = {
-    "off":        "Talk to me: microphone off",
-    "starting":   "Talk to me: starting speech service ...",
-    "idle":       "Talk to me: connected, microphone off",
-    "listening":  "Talk to me: listening",
-    "muted":      "Talk to me: microphone muted by the system (e.g. its keyboard key)",
-    "processing": "Talk to me: recognizing ...",
-    "error":      "Talk to me: speech service not available",
+    "off":        QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: microphone off"),
+    "starting":   QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: starting speech service ..."),
+    "idle":       QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: connected, microphone off"),
+    "listening":  QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: listening"),
+    "muted":      QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: microphone muted by the system (e.g. its keyboard key)"),
+    "processing": QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: recognizing ..."),
+    "error":      QT_TRANSLATE_NOOP("TalkToMe", "Talk to me: speech service not available"),
 }
 
 
@@ -134,7 +139,7 @@ class Controller(QtCore.QObject):
     def set_state(self, state):
         self.state = state
         self.action.setIcon(QtGui.QIcon(os.path.join(ICON_DIR, ICONS[state])))
-        self.action.setToolTip(TOOLTIPS[state])
+        self.action.setToolTip(translate("TalkToMe", TOOLTIPS[state]))
         self.action.setText("Talk to me")
 
     def status(self, text):
@@ -252,7 +257,7 @@ class Controller(QtCore.QObject):
             return True
         python = service_python()
         if not os.path.exists(python):
-            self.fail("speech service not installed ({} not found), see README".format(python))
+            self.fail(translate("TalkToMe", "speech service not installed ({} not found), see README").format(python))
             return False
         args = ["-m", "talktome_service",
                 "--volume", str(PARAMS.GetInt("Volume", 40) / 100.0),
@@ -280,7 +285,7 @@ class Controller(QtCore.QObject):
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
         self.set_state("starting")
-        self.status("starting speech service (the first start downloads the model) ...")
+        self.status(translate("TalkToMe", "starting speech service (the first start downloads the model) ..."))
         self.process.start(python, args)
         return True
 
@@ -301,9 +306,9 @@ class Controller(QtCore.QObject):
         self.process = None
         if self.state != "off":
             if self.stderr_tail:
-                App.Console.PrintWarning("Talk to me: speech service output:\n  {}\n".format(
+                App.Console.PrintWarning(translate("TalkToMe", "Talk to me: speech service output:\n  {}\n").format(
                     "\n  ".join(self.stderr_tail)))
-            self.fail("speech service stopped, see Report view for details")
+            self.fail(translate("TalkToMe", "speech service stopped, see Report view for details"))
 
     def restart_service(self):
         """Apply changed settings: language and vocabulary now, the service on its next start;
@@ -335,7 +340,7 @@ class Controller(QtCore.QObject):
         try:
             self.sock = socket.create_connection(("127.0.0.1", port), timeout=5)
         except OSError as e:
-            self.fail("cannot connect to speech service: {}".format(e))
+            self.fail(translate("TalkToMe", "cannot connect to speech service: {}").format(e))
             return
         self.sock.setblocking(False)
         self.decoder = LineDecoder()
@@ -379,7 +384,7 @@ class Controller(QtCore.QObject):
             if not data:
                 self.disconnect_socket()
                 if self.state != "off":
-                    self.fail("connection to speech service lost")
+                    self.fail(translate("TalkToMe", "connection to speech service lost"))
                 return
             for msg in self.decoder.feed(data):
                 self.on_message(msg)
@@ -389,7 +394,7 @@ class Controller(QtCore.QObject):
         if kind == "welcome":
             log("model {model} on {device} ({compute_type}), language {language}".format(**msg))
             if msg.get("fallback"):
-                self.status("no usable GPU found, using the CPU")
+                self.status(translate("TalkToMe", "no usable GPU found, using the CPU"))
         elif kind == "state":
             self.set_state(msg.get("state", "idle"))
         elif kind == "speech_start":
@@ -403,7 +408,9 @@ class Controller(QtCore.QObject):
         elif kind == "not_understood":
             self.remember_miss(msg)
             self.ask(msg)
-            self.status("not understood: »{}« ({})".format(msg.get("text", ""), msg.get("reason")))
+            reason = REASONS.get(msg.get("reason"), msg.get("reason") or "")
+            self.status(translate("TalkToMe", "not understood: »{}« ({})").format(msg.get("text", ""),
+                                                                               translate("TalkToMe", reason)))
             log("not understood »{}«, reason {}, candidates {}".format(
                 msg.get("text"), msg.get("reason"), msg.get("alternatives")))
         elif kind == "said":
@@ -502,7 +509,7 @@ class Controller(QtCore.QObject):
         """Run the command picked in the question menu and learn what was heard for it."""
         asking = self.asking
         if asking is None or not 0 <= index < len(asking["options"]):
-            return False, "nothing to pick"
+            return False, translate("TalkToMe", "nothing to pick")
         asking["popup"].close()
         command = asking["options"][index]
         ok, reason, shown = self.run_command(command, {}, None)
@@ -532,8 +539,8 @@ class Controller(QtCore.QObject):
             self.status("»{}« → {}{}".format(text, shown, "  ({})".format(reason) if reason else ""))
             App.Console.PrintMessage("Talk to me: »{}« → {}\n".format(text, shown))
         else:
-            self.status("»{}« → {} failed: {}".format(text, shown, reason))
-            App.Console.PrintWarning("Talk to me: »{}« → {} failed: {}\n".format(text, shown, reason))
+            self.status(translate("TalkToMe", "»{}« → {} failed: {}").format(text, shown, reason))
+            App.Console.PrintWarning(translate("TalkToMe", "Talk to me: »{}« → {} failed: {}\n").format(text, shown, reason))
 
     def on_plan(self, msg):
         command, text = msg.get("command", ""), msg.get("text", "")
@@ -549,7 +556,7 @@ class Controller(QtCore.QObject):
             # for what was said already ("Skizze in der XY-Ebene").
             self.send_context()
         if msg.get("via") == "description":
-            shown += " (from help text)"
+            shown += translate("TalkToMe", " (from help text)")
         self.report(text, shown, ok, reason)
         self.send("result", ok=ok, id=msg.get("id"))
 
@@ -561,7 +568,7 @@ class Controller(QtCore.QObject):
             self.action.setChecked(False)      # switching on again is the button's job
             ok, reason = True, ""
         elif PARAMS.GetBool("DryRun", False):
-            ok, reason = True, "dry run, not executed"
+            ok, reason = True, translate("TalkToMe", "dry run, not executed")
         elif command == "ui:rename":
             label = args.get("label", "")
             if args.get("target"):             # "Benenne den Körper2 in Grundplatte um"
@@ -569,19 +576,19 @@ class Controller(QtCore.QObject):
             else:
                 kind, target = self.rename_target(utterance_id) or (None, None)
             if kind is None:
-                ok, reason = False, ("no object »{}« in the document".format(args["target"])
-                                     if args.get("target") else "nothing to rename: select an object")
+                ok, reason = False, (translate("TalkToMe", "no object »{}« in the document").format(args["target"])
+                                     if args.get("target") else translate("TalkToMe", "nothing to rename: select an object"))
             elif kind == "dialog":
                 field = executor.datum_name_field(target)
                 field.setText(executor.constraint_name(label))
-                ok, reason, command = True, "", "dimension name »{}«".format(field.text())
+                ok, reason, command = True, "", translate("TalkToMe", "dimension name »{}«").format(field.text())
             elif kind == "constraint":
                 sketch, index = target
                 ok, reason = executor.rename_constraint(sketch, index, label)
-                command = "rename dimension {} to »{}«".format(index + 1, sketch.Constraints[index].Name)
+                command = translate("TalkToMe", "rename dimension {} to »{}«").format(index + 1, sketch.Constraints[index].Name)
             else:
                 ok, reason = executor.rename(target, label)
-                command = "rename {} to »{}«".format(target.Name, target.Label)
+                command = translate("TalkToMe", "rename {} to »{}«").format(target.Name, target.Label)
         else:
             try:
                 ok, reason = executor.execute(command)

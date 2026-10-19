@@ -10,6 +10,8 @@ import os
 
 import FreeCADGui as Gui
 
+from talktome.qt import QT_TRANSLATE_NOOP
+
 NAME = "TalkToMe_Microphone"
 TRAINING = "TalkToMe_Training"
 ICON_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "icons")
@@ -21,8 +23,8 @@ class MicrophoneCommand:
     def GetResources(self):
         return {
             "Pixmap": ICON,
-            "MenuText": "Talk to me",
-            "ToolTip": "Talk to me: switch the microphone on or off",
+            "MenuText": QT_TRANSLATE_NOOP("TalkToMe_Microphone", "Talk to me"),
+            "ToolTip": QT_TRANSLATE_NOOP("TalkToMe_Microphone", "Talk to me: switch the microphone on or off"),
             "Checkable": False,      # the key makes the command checkable, the value is its start state
         }
 
@@ -44,8 +46,8 @@ class TrainingCommand:
     def GetResources(self):
         return {
             "Pixmap": TRAIN_ICON,
-            "MenuText": "Talk to me: Training",
-            "ToolTip": "Teach Talk to me how the speech recognition hears you",
+            "MenuText": QT_TRANSLATE_NOOP("TalkToMe_Training", "Talk to me: Training"),
+            "ToolTip": QT_TRANSLATE_NOOP("TalkToMe_Training", "Teach Talk to me how the speech recognition hears you"),
         }
 
     def IsActive(self):

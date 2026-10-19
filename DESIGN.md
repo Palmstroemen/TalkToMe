@@ -731,7 +731,7 @@ System-Stummschaltung. Reihenfolge:
 3. ~~Sprachausgabe (10.1)~~
 4. ~~Einstellungsseite (13)~~
 5. ~~Wortschatz-Editor~~
-6. Übersetzung der Oberfläche
+6. ~~Übersetzung der Oberfläche~~ (Deutsch; `translations/`, siehe README)
 
 ---
 

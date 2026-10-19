@@ -13,7 +13,7 @@ While recording, the service only transcribes, nothing is executed.
 import time
 
 from talktome import context as ttm_context
-from talktome.qt import QtCore, QtWidgets
+from talktome.qt import QT_TRANSLATE_NOOP, QtCore, QtWidgets, translate
 from ttm_core.decision import decide
 from ttm_core.params import make_template, parse
 from ttm_core.training import classify, learn, unlearn
@@ -23,7 +23,7 @@ ROLE = QtCore.Qt.ItemDataRole.UserRole
 
 # Commands with a free-text parameter, recognized by sentence patterns, not by phrases. Training
 # them learns a pattern: the heard sentence with the parameter cut out.
-PARAMETER_COMMANDS = {"ui:rename": "Rename"}
+PARAMETER_COMMANDS = {"ui:rename": QT_TRANSLATE_NOOP("TalkToMe", "Rename")}
 
 
 def describe(candidate):
@@ -43,7 +43,7 @@ class TrainingDialog(QtWidgets.QDialog):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
         self.controller = controller
-        self.setWindowTitle("Talk to me – Training")
+        self.setWindowTitle(translate("TalkToMe", "Talk to me – Training"))
         self.setModal(False)
         self.candidates = self.situation(controller.last_candidates)
         self.recordings = []            # texts heard while recording
@@ -52,12 +52,12 @@ class TrainingDialog(QtWidgets.QDialog):
         layout = QtWidgets.QVBoxLayout(self)
 
         # 1. not understood sentences
-        layout.addWidget(QtWidgets.QLabel("<b>Sentences I didn't understand</b>"))
-        layout.addWidget(hint("Select one and show me below what you meant. "
-                              "Next time I will understand it."))
+        layout.addWidget(QtWidgets.QLabel(translate("TalkToMe", "<b>Sentences I didn't understand</b>")))
+        layout.addWidget(hint(translate("TalkToMe", "Select one and show me below what you meant. "
+                              "Next time I will understand it.")))
         self.misses = QtWidgets.QTreeWidget()
         self.misses.setColumnCount(3)
-        self.misses.setHeaderLabels(["Time", "Heard", "Meant"])
+        self.misses.setHeaderLabels([translate("TalkToMe", "Time"), translate("TalkToMe", "Heard"), translate("TalkToMe", "Meant")])
         self.misses.setRootIsDecorated(False)
         self.misses.setMaximumHeight(140)
         self.misses.currentItemChanged.connect(self.on_miss)
@@ -65,11 +65,11 @@ class TrainingDialog(QtWidgets.QDialog):
         self.fill_misses()
 
         # 2. say it again
-        layout.addWidget(QtWidgets.QLabel("<b>Say it again</b> (optional)"))
-        layout.addWidget(hint("Each recording teaches me another way the speech recognition hears you. "
-                              "You can also start here with a new sentence. Nothing is executed meanwhile."))
+        layout.addWidget(QtWidgets.QLabel(translate("TalkToMe", "<b>Say it again</b> (optional)")))
+        layout.addWidget(hint(translate("TalkToMe", "Each recording teaches me another way the speech recognition hears you. "
+                              "You can also start here with a new sentence. Nothing is executed meanwhile.")))
         row = QtWidgets.QHBoxLayout()
-        self.record = QtWidgets.QPushButton("Say it {} times".format(RECORDINGS))
+        self.record = QtWidgets.QPushButton(translate("TalkToMe", "Say it {} times").format(RECORDINGS))
         self.record.setCheckable(True)
         self.record.toggled.connect(self.on_record)
         row.addWidget(self.record)
@@ -80,20 +80,20 @@ class TrainingDialog(QtWidgets.QDialog):
         layout.addWidget(self.results)
 
         # 3. what was meant
-        layout.addWidget(QtWidgets.QLabel("<b>Which command did you mean?</b>"))
-        layout.addWidget(hint("Pick it and press Assign, or double-click it. The likely ones are on top. "
-                              "You may also type the sentence you said to find it."))
+        layout.addWidget(QtWidgets.QLabel(translate("TalkToMe", "<b>Which command did you mean?</b>")))
+        layout.addWidget(hint(translate("TalkToMe", "Pick it and press Assign, or double-click it. The likely ones are on top. "
+                              "You may also type the sentence you said to find it.")))
         row = QtWidgets.QHBoxLayout()
         self.typed = QtWidgets.QLineEdit()
-        self.typed.setPlaceholderText("type the sentence, e.g. »Skizze in der XY-Ebene«")
+        self.typed.setPlaceholderText(translate("TalkToMe", "type the sentence, e.g. »Skizze in der XY-Ebene«"))
         self.typed.returnPressed.connect(self.on_typed)
-        find = QtWidgets.QPushButton("Find")
+        find = QtWidgets.QPushButton(translate("TalkToMe", "Find"))
         find.clicked.connect(self.on_typed)
         row.addWidget(self.typed)
         row.addWidget(find)
         layout.addLayout(row)
         self.filter = QtWidgets.QLineEdit()
-        self.filter.setPlaceholderText("Filter commands")
+        self.filter.setPlaceholderText(translate("TalkToMe", "Filter commands"))
         self.filter.textChanged.connect(self.fill_commands)
         layout.addWidget(self.filter)
         self.commands = QtWidgets.QListWidget()
@@ -104,25 +104,25 @@ class TrainingDialog(QtWidgets.QDialog):
         self.name_row = QtWidgets.QWidget()
         row = QtWidgets.QHBoxLayout(self.name_row)
         row.setContentsMargins(0, 0, 0, 0)
-        row.addWidget(QtWidgets.QLabel("Which part is the name?"))
+        row.addWidget(QtWidgets.QLabel(translate("TalkToMe", "Which part is the name?")))
         self.name = QtWidgets.QLineEdit()
-        self.name.setToolTip("The words of the sentence that were the name, e.g. »Bodenplatte«. "
-                             "I learn the rest as a sentence pattern.")
+        self.name.setToolTip(translate("TalkToMe", "The words of the sentence that were the name, e.g. »Bodenplatte«. "
+                             "I learn the rest as a sentence pattern."))
         self.name.textChanged.connect(self.update_buttons)
         row.addWidget(self.name)
         self.name_row.setVisible(False)
         layout.addWidget(self.name_row)
 
         row = QtWidgets.QHBoxLayout()
-        self.assign_button = QtWidgets.QPushButton("Assign")
+        self.assign_button = QtWidgets.QPushButton(translate("TalkToMe", "Assign"))
         self.assign_button.clicked.connect(self.assign)
-        self.forget_button = QtWidgets.QPushButton("Forget")
-        self.forget_button.setToolTip("Take back the assignment of the selected sentence")
+        self.forget_button = QtWidgets.QPushButton(translate("TalkToMe", "Forget"))
+        self.forget_button.setToolTip(translate("TalkToMe", "Take back the assignment of the selected sentence"))
         self.forget_button.clicked.connect(self.forget)
-        close = QtWidgets.QPushButton("Close")
+        close = QtWidgets.QPushButton(translate("TalkToMe", "Close"))
         close.clicked.connect(self.close)
-        vocabulary = QtWidgets.QPushButton("Vocabulary…")
-        vocabulary.setToolTip("Everything learned so far, by command: delete or move")
+        vocabulary = QtWidgets.QPushButton(translate("TalkToMe", "Vocabulary…"))
+        vocabulary.setToolTip(translate("TalkToMe", "Everything learned so far, by command: delete or move"))
         vocabulary.clicked.connect(self.open_vocabulary)
         row.addWidget(self.assign_button)
         row.addWidget(self.forget_button)
@@ -142,7 +142,7 @@ class TrainingDialog(QtWidgets.QDialog):
         vocab = self.controller.vocab
         for command, label in PARAMETER_COMMANDS.items():
             if command not in [c["id"] for c in candidates]:
-                candidates.append({"id": command, "label": (vocab.get(command) or [label])[0],
+                candidates.append({"id": command, "label": (vocab.get(command) or [translate("TalkToMe", label)])[0],
                                    "phrases": [], "active": True})
         return candidates
 
@@ -195,7 +195,7 @@ class TrainingDialog(QtWidgets.QDialog):
 
     def on_record(self, on):
         self.recording = on
-        self.record.setText("Stop" if on else "Say it {} times".format(RECORDINGS))
+        self.record.setText(translate("TalkToMe", "Stop") if on else translate("TalkToMe", "Say it {} times").format(RECORDINGS))
         if on:
             self.recordings = []
             self.results.clear()
@@ -209,7 +209,7 @@ class TrainingDialog(QtWidgets.QDialog):
         if not self.recording:
             return
         self.recordings.append(text)
-        self.results.addItem("»{}«".format(text) if text.strip() else "– nothing recognized")
+        self.results.addItem("»{}«".format(text) if text.strip() else translate("TalkToMe", "– nothing recognized"))
         remaining = RECORDINGS - len(self.recordings)
         if remaining > 0:
             self.controller.send("say", kind="train_again", n=remaining)
@@ -251,7 +251,7 @@ class TrainingDialog(QtWidgets.QDialog):
             self.fill_commands(first=[cmd for cmd, _ in d.alternatives])
             self.commands.setCurrentRow(0)
         else:
-            self.controller.status("no command found for »{}«, pick one from the list".format(text))
+            self.controller.status(translate("TalkToMe", "no command found for »{}«, pick one from the list").format(text))
         self.update_buttons()
 
     def on_target(self, *args):
@@ -310,16 +310,16 @@ class TrainingDialog(QtWidgets.QDialog):
             miss["assigned"] = {"command": target, "label": label, "forms": learned}
         self.results.clear()
         for text, verdict in verdicts:
-            mark = {"learn": "+ learned", "ok": "✓ understood already",
-                    "conflict": "⚠ means another command, not stored", "empty": "– nothing recognized"}[verdict]
+            mark = {"learn": translate("TalkToMe", "+ learned"), "ok": translate("TalkToMe", "✓ understood already"),
+                    "conflict": translate("TalkToMe", "⚠ means another command, not stored"), "empty": translate("TalkToMe", "– nothing recognized")}[verdict]
             self.results.addItem("{}  »{}«".format(mark, text))
         self.recordings = []
         self.typed.clear()
         self.fill_misses()
         if learned:
             self.controller.send("say", kind="train_done")
-        self.controller.status("learned {} form(s) for {}{}".format(
-            len(learned), label, ", {} not stored (another command)".format(len(conflicts)) if conflicts else ""))
+        self.controller.status(translate("TalkToMe", "learned {} form(s) for {}{}").format(
+            len(learned), label, translate("TalkToMe", ", {} not stored (another command)").format(len(conflicts)) if conflicts else ""))
         self.update_buttons()
 
     def assign_pattern(self, target):
@@ -330,14 +330,14 @@ class TrainingDialog(QtWidgets.QDialog):
         templates, marks = [], []
         for text in self.heard_texts():
             if parse(text, language, self.controller.patterns) is not None:
-                marks.append("✓ understood already  »{}«".format(text))
+                marks.append(translate("TalkToMe", "✓ understood already  »{}«").format(text))
                 continue
             template = make_template(text, name, language)
             if template is None:
-                marks.append("⚠ »{}« not found in »{}«".format(name, text))
+                marks.append(translate("TalkToMe", "⚠ »{}« not found in »{}«").format(name, text))
             else:
                 templates.append(template)
-                marks.append("+ learned  »{}«".format(template.replace("{label}", "…")))
+                marks.append(translate("TalkToMe", "+ learned  »{}«").format(template.replace("{label}", "…")))
 
         data = ttm_context.read_custom(language)
         learn(data, target, patterns=templates)
@@ -353,7 +353,7 @@ class TrainingDialog(QtWidgets.QDialog):
         self.recordings = []
         self.name.clear()
         self.fill_misses()
-        self.controller.status("learned {} sentence pattern(s) for {}".format(len(templates), label))
+        self.controller.status(translate("TalkToMe", "learned {} sentence pattern(s) for {}").format(len(templates), label))
         self.update_buttons()
 
     def forget(self):
@@ -366,7 +366,7 @@ class TrainingDialog(QtWidgets.QDialog):
         ttm_context.save_custom(language, unlearn(data, assigned["command"], assigned["forms"] + [miss["text"]],
                                                   patterns=assigned.get("patterns", [])))
         self.controller.reload_vocabulary()
-        self.controller.status("forgot »{}« for {}".format(miss["text"], assigned["label"]))
+        self.controller.status(translate("TalkToMe", "forgot »{}« for {}").format(miss["text"], assigned["label"]))
         self.fill_misses()
         self.update_buttons()
 

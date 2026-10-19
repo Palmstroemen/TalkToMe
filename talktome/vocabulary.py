@@ -7,16 +7,16 @@ Changes are saved right away to the user's vocabulary file.
 """
 
 from talktome import context as ttm_context
-from talktome.qt import QtCore, QtWidgets
+from talktome.qt import QT_TRANSLATE_NOOP, QtCore, QtWidgets, translate
 from ttm_core import langpack
 from ttm_core.training import add_phrase, entries, move_entry, remove_entry
 
 COMMAND, KIND, TEXT = (QtCore.Qt.ItemDataRole.UserRole + i for i in range(3))
 KIND_NAMES = {
-    "pack": "language pack",
-    "phrase": "my phrase",
-    "heard": "heard (learned)",
-    "pattern": "sentence pattern (learned)",
+    "pack": QT_TRANSLATE_NOOP("TalkToMe", "language pack"),
+    "phrase": QT_TRANSLATE_NOOP("TalkToMe", "my phrase"),
+    "heard": QT_TRANSLATE_NOOP("TalkToMe", "heard (learned)"),
+    "pattern": QT_TRANSLATE_NOOP("TalkToMe", "sentence pattern (learned)"),
 }
 
 
@@ -28,40 +28,40 @@ class VocabularyEditor(QtWidgets.QDialog):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
         self.controller = controller
-        self.setWindowTitle("Talk to me – Vocabulary")
+        self.setWindowTitle(translate("TalkToMe", "Talk to me – Vocabulary"))
         self.setModal(False)
 
         layout = QtWidgets.QVBoxLayout(self)
-        note = QtWidgets.QLabel("What I understand for each command. Phrases of the language pack can't be "
+        note = QtWidgets.QLabel(translate("TalkToMe", "What I understand for each command. Phrases of the language pack can't be "
                                 "changed here; your own phrases and what I learned in training can be deleted "
-                                "or moved to the right command.")
+                                "or moved to the right command."))
         note.setWordWrap(True)
         note.setStyleSheet("color: gray;")
         layout.addWidget(note)
 
         self.filter = QtWidgets.QLineEdit()
-        self.filter.setPlaceholderText("Filter commands and phrases")
+        self.filter.setPlaceholderText(translate("TalkToMe", "Filter commands and phrases"))
         self.filter.textChanged.connect(self.fill)
         layout.addWidget(self.filter)
-        self.only_mine = QtWidgets.QCheckBox("Only my phrases and learned forms")
+        self.only_mine = QtWidgets.QCheckBox(translate("TalkToMe", "Only my phrases and learned forms"))
         self.only_mine.toggled.connect(self.fill)
         layout.addWidget(self.only_mine)
 
         self.tree = QtWidgets.QTreeWidget()
         self.tree.setColumnCount(2)
-        self.tree.setHeaderLabels(["Command / phrase", "Source"])
+        self.tree.setHeaderLabels([translate("TalkToMe", "Command / phrase"), translate("TalkToMe", "Source")])
         self.tree.currentItemChanged.connect(self.update_buttons)
         layout.addWidget(self.tree)
 
         row = QtWidgets.QHBoxLayout()
-        self.add_button = QtWidgets.QPushButton("Add phrase…")
+        self.add_button = QtWidgets.QPushButton(translate("TalkToMe", "Add phrase…"))
         self.add_button.clicked.connect(self.add)
-        self.delete_button = QtWidgets.QPushButton("Delete")
+        self.delete_button = QtWidgets.QPushButton(translate("TalkToMe", "Delete"))
         self.delete_button.clicked.connect(self.delete)
-        self.move_button = QtWidgets.QPushButton("Move to…")
-        self.move_button.setToolTip("A form learned for the wrong command goes to the right one")
+        self.move_button = QtWidgets.QPushButton(translate("TalkToMe", "Move to…"))
+        self.move_button.setToolTip(translate("TalkToMe", "A form learned for the wrong command goes to the right one"))
         self.move_button.clicked.connect(self.move)
-        close = QtWidgets.QPushButton("Close")
+        close = QtWidgets.QPushButton(translate("TalkToMe", "Close"))
         close.clicked.connect(self.close)
         for button in (self.add_button, self.delete_button, self.move_button):
             row.addWidget(button)
@@ -88,7 +88,7 @@ class VocabularyEditor(QtWidgets.QDialog):
     def labels(self):
         """Display names of the commands: FreeCAD's labels from the current context."""
         from talktome.training import PARAMETER_COMMANDS
-        names = {command: (self.controller.vocab.get(command) or [label])[0]
+        names = {command: (self.controller.vocab.get(command) or [translate("TalkToMe", label)])[0]
                  for command, label in PARAMETER_COMMANDS.items()}
         for c in self.controller.last_candidates or []:
             names[c["id"]] = c.get("label") or c["id"]
@@ -118,7 +118,7 @@ class VocabularyEditor(QtWidgets.QDialog):
             parent.setData(0, COMMAND, command)
             self.tree.addTopLevelItem(parent)
             for kind, text in items:
-                child = QtWidgets.QTreeWidgetItem([shown(kind, text), KIND_NAMES[kind]])
+                child = QtWidgets.QTreeWidgetItem([shown(kind, text), translate("TalkToMe", KIND_NAMES[kind])])
                 for role, value in ((COMMAND, command), (KIND, kind), (TEXT, text)):
                     child.setData(0, role, value)
                 if kind == "pack":
@@ -150,7 +150,7 @@ class VocabularyEditor(QtWidgets.QDialog):
     def add(self):
         command = self.selected()[0]
         text, ok = QtWidgets.QInputDialog.getText(
-            self, "Add phrase", "Another way to say {}:".format(self.command_name(command, self.labels())))
+            self, translate("TalkToMe", "Add phrase"), translate("TalkToMe", "Another way to say {}:").format(self.command_name(command, self.labels())))
         if ok and text.strip():
             self.save(add_phrase(self.custom(), command, text.strip()))
 
@@ -163,7 +163,7 @@ class VocabularyEditor(QtWidgets.QDialog):
         names = self.labels()
         choices = sorted((self.command_name(c, names), c) for c in names if c != command)
         title, ok = QtWidgets.QInputDialog.getItem(
-            self, "Move to", "»{}« means:".format(shown(kind, text)), [t for t, _ in choices], 0, False)
+            self, translate("TalkToMe", "Move to"), translate("TalkToMe", "»{}« means:").format(shown(kind, text)), [t for t, _ in choices], 0, False)
         if ok:
             target = dict(choices)[title]
             self.save(move_entry(self.custom(), kind, text, command, target))

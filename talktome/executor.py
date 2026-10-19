@@ -7,7 +7,7 @@ changed since the utterance started.
 
 import FreeCADGui as Gui
 from talktome.context import in_task_dialog, task_lists
-from talktome.qt import QtCore, QtGui, QtWidgets
+from talktome.qt import QtCore, QtGui, QtWidgets, translate
 from ttm_core.context import CHOOSE
 
 # Task dialogs whose list asks for exactly one thing: choosing confirms the dialog.
@@ -52,10 +52,10 @@ def choose(text):
                 if _confirms(widget):
                     button = _task_button("ok")
                     if button is None:
-                        return False, "selected, but OK is not available"
+                        return False, translate("TalkToMe", "selected, but OK is not available")
                     button.click()
                 return True, ""
-    return False, "choice no longer offered"
+    return False, translate("TalkToMe", "choice no longer offered")
 
 
 def datum_dialog():
@@ -105,7 +105,7 @@ def rename(obj, label):
         obj.Label = label
     finally:
         doc.commitTransaction()
-    return True, "" if obj.Label == label else "named {}".format(obj.Label)
+    return True, "" if obj.Label == label else translate("TalkToMe", "named {}").format(obj.Label)
 
 
 def created_objects(doc, before):
@@ -119,7 +119,7 @@ def execute(command):
     if command.startswith("workbench:"):
         name = command.split(":", 1)[1]
         if name not in Gui.listWorkbenches():
-            return False, "unknown workbench"
+            return False, translate("TalkToMe", "unknown workbench")
         Gui.activateWorkbench(name)
         return True, ""
 
@@ -134,12 +134,12 @@ def execute(command):
         if command == "ui:cancel":
             _press_escape()
             return True, ""
-        return False, "no dialog to confirm"
+        return False, translate("TalkToMe", "no dialog to confirm")
 
     cmd = Gui.Command.get(command)
     if cmd is None:
-        return False, "unknown command"
+        return False, translate("TalkToMe", "unknown command")
     if not cmd.isActive():
-        return False, "not available right now"
+        return False, translate("TalkToMe", "not available right now")
     Gui.runCommand(command, 0)
     return True, ""

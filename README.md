@@ -102,6 +102,21 @@ Packs exist for German and English. Your own changes go to the same files in
 come first. A new language starts with a copy of `lang/en/`; without a phonetic algorithm,
 words are compared by spelling only.
 
+## Translations of the user interface
+
+The user interface follows FreeCAD's language (Edit → Preferences → General), independent of the
+spoken language. Texts are marked with `translate("TalkToMe", ...)`; translations live in
+`translations/TalkToMe_<language>.ts` and are compiled to `.qm` files, which FreeCAD loads.
+With PySide6's tools (`pip install pyside6`):
+
+```bash
+pyside6-lupdate talktome/*.py -source-language en -target-language de -ts translations/TalkToMe_de.ts -no-obsolete
+# translate the new texts, e.g. with Qt Linguist (pyside6-linguist translations/TalkToMe_de.ts)
+pyside6-lrelease translations/TalkToMe_de.ts -qm translations/TalkToMe_de.qm
+```
+
+A new language: the same with its code instead of `de`.
+
 ## Tests
 
 ```bash

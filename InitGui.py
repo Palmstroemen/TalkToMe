@@ -2,7 +2,14 @@
 """Talk to me – voice control for FreeCAD."""
 
 def _talktome_init():
+    import os
+
     from PySide import QtCore
+
+    import talktome
+    # Translations of the user interface, in FreeCAD's language; before the commands are created.
+    FreeCADGui.addLanguagePath(os.path.join(os.path.dirname(os.path.dirname(talktome.__file__)), "translations"))
+    FreeCADGui.updateLocale()
 
     import talktome.command
     import talktome.preferences
