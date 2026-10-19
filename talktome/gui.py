@@ -108,7 +108,7 @@ class Controller(QtCore.QObject):
         if self.sock is None:
             return
         try:
-            candidates = ttm_context.collect(self.vocab)
+            candidates = ttm_context.collect(self.vocab, self.language)
         except Exception as e:
             log("collecting the context failed: {}".format(e))
             return
@@ -286,6 +286,8 @@ class Controller(QtCore.QObject):
                 ok, reason = executor.execute(command)
             except Exception as e:
                 ok, reason = False, str(e)
+        if ok and msg.get("more"):
+            self.send_context()                # the next step is decided in the new context
         if msg.get("via") == "description":
             command += " (from help text)"
         if ok:
@@ -294,7 +296,7 @@ class Controller(QtCore.QObject):
         else:
             self.status("»{}« → {} failed: {}".format(text, command, reason))
             App.Console.PrintWarning("Talk to me: »{}« → {} failed: {}\n".format(text, command, reason))
-        self.send("result", ok=ok)
+        self.send("result", ok=ok, id=msg.get("id"))
 
 
 _controller = None

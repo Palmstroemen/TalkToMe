@@ -13,13 +13,17 @@ from ttm_core.vocabulary import merge_phrases
 
 LEVELS = ("dialog", "edit", "workbench", "global")
 SEPARATOR = "Separator"
+# The workbench selector carries the names of all workbenches; switching is offered as
+# workbench:<name> instead.
+EXCLUDED = {"Std_Workbench"}
 
 
 def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_open=False,
-                     workbenches=None, current_workbench=None, vocab=None, descriptions=None):
+                     workbenches=None, current_workbench=None, vocab=None, descriptions=None,
+                     foreign_labels=None):
     """
     toolbar_items      {toolbar name: [command ids]} of the active workbench
-    labels             {command id: [button texts]}, translated first, English after
+    labels             {command id: [button texts]} in the user's language
     active             {command id: bool}; missing ids count as active
     edit_prefix        command prefix of the object in edit mode, e.g. "Sketcher_"
     dialog_open        whether a task dialog is open
@@ -27,16 +31,21 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     current_workbench  name of the active workbench (no switch offered to it)
     vocab              {command id: [phrases]} from vocabulary files; they come first
     descriptions       {command id: help text} in the user's language (status tips)
+    foreign_labels     {command id: [texts]} in another language, usually FreeCAD's English
+                       names; compared by spelling only, the sound rules are the user's language's
     """
     vocab = vocab or {}
     descriptions = descriptions or {}
+    foreign_labels = foreign_labels or {}
     candidates, seen = [], set()
 
     def add(id_, level, phrases, is_active=True):
-        if phrases and id_ not in seen:
+        own = {p.lower() for p in phrases}
+        foreign = [p for p in merge_phrases(foreign_labels.get(id_)) if p.lower() not in own]
+        if (phrases or foreign) and id_ not in seen:
             seen.add(id_)
-            candidates.append({"id": id_, "level": level, "phrases": phrases, "active": is_active,
-                               "description": descriptions.get(id_, "")})
+            candidates.append({"id": id_, "level": level, "phrases": phrases, "foreign": foreign,
+                               "active": is_active, "description": descriptions.get(id_, "")})
 
     if dialog_open:
         add("ui:ok", "dialog", merge_phrases(vocab.get("ui:ok")))
@@ -44,7 +53,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
 
     for commands in toolbar_items.values():
         for cmd in commands:
-            if cmd == SEPARATOR or cmd in seen:
+            if cmd == SEPARATOR or cmd in EXCLUDED or cmd in seen:
                 continue
             if cmd.startswith("Std_"):
                 level = "global"

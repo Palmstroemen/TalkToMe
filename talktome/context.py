@@ -42,8 +42,8 @@ def _command_name(action):
     return value.decode() if isinstance(value, bytes) else str(value)
 
 
-def _describe(cmd_id, labels, active, descriptions):
-    """Add the translated and English texts and the translated help text of a command.
+def _describe(cmd_id, labels, english, active, descriptions):
+    """Add the translated texts, the English name and the translated help text of a command.
 
     Returns its group children, if any.
     """
@@ -65,7 +65,7 @@ def _describe(cmd_id, labels, active, descriptions):
             texts.append(action.text())
             descriptions.setdefault(cmd_id, action.statusTip())
     try:
-        texts.append(cmd.getInfo().get("menuText", ""))
+        english.setdefault(cmd_id, []).append(cmd.getInfo().get("menuText", ""))
     except Exception:
         pass
     labels.setdefault(cmd_id, []).extend(texts)
@@ -76,18 +76,18 @@ def _describe(cmd_id, labels, active, descriptions):
     return children
 
 
-def collect(vocab):
+def collect(vocab, language="de"):
     """Candidates of the current context, as plain data for the speech service."""
     wb = Gui.activeWorkbench()
     toolbars = {name: list(items) for name, items in wb.getToolbarItems().items()}
-    labels, active, descriptions = {}, {}, {}
+    labels, english, active, descriptions = {}, {}, {}, {}
     for name in list(toolbars):
         expanded = []
         for cmd_id in toolbars[name]:
-            children = _describe(cmd_id, labels, active, descriptions)
+            children = _describe(cmd_id, labels, english, active, descriptions)
             if children:                       # a group button: offer its entries, not the group
                 for child in children:
-                    _describe(child, labels, active, descriptions)
+                    _describe(child, labels, english, active, descriptions)
                 expanded.extend(children)
             else:
                 expanded.append(cmd_id)
@@ -99,15 +99,24 @@ def collect(vocab):
     if in_edit is not None:
         edit_prefix = in_edit.Object.TypeId.split("::")[0] + "_"
 
-    workbenches = {name: [getattr(w, "MenuText", "")] for name, w in Gui.listWorkbenches().items()}
+    workbenches = {name: [] for name in Gui.listWorkbenches()}
+    for name, w in Gui.listWorkbenches().items():
+        english["workbench:" + name] = [getattr(w, "MenuText", "")]
     try:                                       # translated workbench names
         for action in Gui.Command.get("Std_Workbench").getAction():
             if action.objectName() in workbenches:
-                workbenches[action.objectName()].insert(0, action.text())
+                workbenches[action.objectName()].append(action.text())
     except Exception:
         pass
+
+    if language.startswith("en"):              # English names are the user's own words then
+        for cmd_id, texts in english.items():
+            target = labels if not cmd_id.startswith("workbench:") else workbenches
+            key = cmd_id if target is labels else cmd_id.split(":", 1)[1]
+            target.setdefault(key, []).extend(texts)
+        english = {}
 
     return build_candidates(toolbars, labels, active, edit_prefix=edit_prefix,
                             dialog_open=bool(Gui.Control.activeDialog()),
                             workbenches=workbenches, current_workbench=wb.name(), vocab=vocab,
-                            descriptions=descriptions)
+                            descriptions=descriptions, foreign_labels=english)

@@ -16,10 +16,12 @@ import time
 import numpy as np
 
 from talktome_service.segmenter import Segmenter
+from ttm_core.clauses import split_clauses
 from ttm_core.context import LEVELS
 from ttm_core.decision import decide
 from ttm_core.matching import hotwords
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
+from ttm_core.sequence import next_step
 
 SAMPLE_RATE = 16000
 FRAME = 512
@@ -49,6 +51,12 @@ class Service:
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
         self.language = self.info.get("language")
         self._mute_until = 0.0
+        self._seq_lock = threading.Lock()     # the sequence advances from the STT and the client thread
+        self._pending = []                    # clauses of the current utterance not decided yet
+        self._utterance = ""
+        self._step_id = 0
+        self._awaiting = None                 # id of the plan the addon is executing
+        self._steps = 0
         self._stop = threading.Event()
         self._threads = []
 
@@ -150,7 +158,7 @@ class Service:
         elif kind == "context":
             self._set_context(msg)
         elif kind == "result":
-            self._play("ok" if msg.get("ok") else "error")
+            self._on_result(msg)
         elif kind == "bye":
             self._stop.set()
         else:
@@ -242,17 +250,65 @@ class Service:
                     self._decide(result["text"])
             self.send("state", state="listening" if self._listening else "idle")
 
+    # --- decisions and sequences (DESIGN.md 7) --------------------------------------------
+
     def _decide(self, text):
-        d = decide(text, self._candidates, language=self.language)
-        info = dict(text=text, command=d.command, score=d.score, level=d.level,
-                    alternatives=d.alternatives, via=d.via)
-        if d.kind == "execute":
-            self.send("plan", **info)              # the addon executes and answers with "result"
-        elif d.kind == "not_understood":
-            self.send("not_understood", reason=d.reason, **info)
-            self._play("error")
-        else:
-            self.send("ignored", reason=d.reason, text=text)
+        """Start a new utterance; it replaces what is left of the previous one."""
+        with self._seq_lock:
+            self._utterance = text
+            self._pending = split_clauses(text, self.language)
+            self._awaiting = None
+            self._steps = 0
+            if self._candidates is not None:
+                whole = decide(text, self._candidates, self.language)
+                if whole.kind == "ignore":     # talk; its clauses alone would look like short attempts
+                    self._pending = []
+                    self.send("ignored", reason=whole.reason, text=text)
+                    return
+            self._advance()
+
+    def _on_result(self, msg):
+        with self._seq_lock:
+            if self._awaiting is None and "id" not in msg:
+                self._play("ok" if msg.get("ok") else "error")      # a result without a plan
+                return
+            if self._awaiting is None or msg.get("id", self._awaiting) != self._awaiting:
+                return                         # result of a step that is no longer current
+            self._awaiting = None
+            if not msg.get("ok"):
+                self._pending = []
+                self._play("error")
+                return
+            last = self._advance()
+            if self._awaiting is None and (last is None or last.kind == "ignore"):
+                self._play("ok")               # all steps done
+
+    def _advance(self):
+        """Decide clauses until one step is sent, the sequence fails, or nothing is left.
+
+        Returns the last decision. Talk between the steps is skipped silently; an unclear clause
+        ends the sequence with the error tone: the later steps would run in an unexpected state.
+        """
+        last = None
+        while self._pending and self._candidates is not None:
+            d, n = next_step(self._pending, self._candidates, self.language)
+            span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
+            last = d
+            info = dict(text=span, utterance=self._utterance, command=d.command, score=d.score,
+                        level=d.level, alternatives=d.alternatives, via=d.via)
+            if d.kind == "execute":
+                self._step_id += 1
+                self._awaiting = self._step_id
+                self._steps += 1
+                self.send("plan", id=self._step_id, more=bool(self._pending), **info)
+                return d                       # the addon executes and answers with "result"
+            if d.kind == "not_understood":
+                self._pending = []
+                self.send("not_understood", reason=d.reason, **info)
+                self._play("error")
+                return d
+            self.send("ignored", reason=d.reason, text=span, utterance=self._utterance)
+        return last
 
     def _play(self, kind):
         try:

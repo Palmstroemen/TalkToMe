@@ -44,6 +44,7 @@ STOP_WORDS = {
         "zum", "zur", "über", "unter", "vor", "hinter", "neben", "zwischen", "durch", "gegen", "ohne",
         "oder", "aber", "wie", "wenn", "als", "auch", "nur", "nicht", "kein", "keine",
         "bin", "sind", "war", "wird", "werden", "wurde", "hat", "haben", "kann", "soll", "will",
-        "möchte", "bitte", "mal", "doch", "einfach",
+        "möchte", "bitte", "mal", "doch", "einfach", "danach", "anschließend",
+        "mach", "mache", "machen", "macht", "tu", "tue", "tun",       # say nothing about the command
     },
 }

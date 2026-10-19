@@ -65,11 +65,16 @@ def show_transcript(msg):
 def show_decision(msg):
     kind = msg["type"]
     alternatives = ", ".join("{} {:.2f}".format(c, s) for c, s in msg.get("alternatives") or [])
+    part = ""
+    if msg.get("utterance") and msg.get("text") != msg.get("utterance"):
+        part = "»{}« ".format(msg["text"])           # one step of a sequence
     if kind == "plan":
-        print("          → {}  {}".format(color(32, msg["command"]), color(90, "(Wert {:.2f})".format(msg["score"]))))
+        via = ", aus Hilfstext" if msg.get("via") == "description" else ""
+        print("          → {}{}  {}".format(part, color(32, msg["command"]),
+                                            color(90, "(Wert {:.2f}{})".format(msg["score"], via))))
     elif kind == "not_understood":
         reasons = {"no_match": "kein passender Befehl", "ambiguous": "mehrdeutig", "inactive": "gerade nicht verfügbar"}
-        print("          → {}  {}".format(color(31, "nicht verstanden: " + reasons.get(msg.get("reason"), str(msg.get("reason")))),
+        print("          → {}{}  {}".format(part, color(31, "nicht verstanden: " + reasons.get(msg.get("reason"), str(msg.get("reason")))),
                                           color(90, alternatives)))
     else:
         print("          → {}".format(color(90, "ignoriert (kein Befehl gemeint)")))
@@ -123,7 +128,7 @@ def main():
                 elif msg["type"] in ("plan", "not_understood", "ignored"):
                     show_decision(msg)
                     if msg["type"] == "plan":        # FreeCAD would execute it now
-                        sock.sendall(encode(make_message("result", ok=True)))
+                        sock.sendall(encode(make_message("result", ok=True, id=msg.get("id"))))
                     count += 1
                 elif msg["type"] == "error":
                     print(color(31, "Fehler: {}".format(msg.get("message"))))

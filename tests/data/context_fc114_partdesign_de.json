@@ -1,0 +1,1019 @@
+[
+ {
+  "id": "Std_New",
+  "level": "global",
+  "phrases": [
+   "Neues Dokument"
+  ],
+  "foreign": [
+   "New Document"
+  ],
+  "active": true,
+  "description": "Erstellt ein neues leeres Dokument"
+ },
+ {
+  "id": "Std_Open",
+  "level": "global",
+  "phrases": [
+   "Öffnen"
+  ],
+  "foreign": [
+   "Open"
+  ],
+  "active": true,
+  "description": "Öffnet ein Dokument oder importiert Dateien"
+ },
+ {
+  "id": "Std_Save",
+  "level": "global",
+  "phrases": [
+   "speichern",
+   "speichere das"
+  ],
+  "foreign": [
+   "Save"
+  ],
+  "active": true,
+  "description": "Speichert das aktive Dokument"
+ },
+ {
+  "id": "Std_Undo",
+  "level": "global",
+  "phrases": [
+   "rückgängig"
+  ],
+  "foreign": [
+   "Undo"
+  ],
+  "active": true,
+  "description": "Die vorherige Aktion rückgängig machen"
+ },
+ {
+  "id": "Std_Redo",
+  "level": "global",
+  "phrases": [
+   "wiederholen",
+   "Wiederherstellen"
+  ],
+  "foreign": [
+   "Redo"
+  ],
+  "active": false,
+  "description": "Zuletzt rückgängig gemachte Aktion wiederherstellen"
+ },
+ {
+  "id": "Std_Refresh",
+  "level": "global",
+  "phrases": [
+   "Neuberechnen"
+  ],
+  "foreign": [
+   "Recompute"
+  ],
+  "active": false,
+  "description": "Berechnet das aktive Dokument neu"
+ },
+ {
+  "id": "Std_Cut",
+  "level": "global",
+  "phrases": [
+   "Ausschneiden"
+  ],
+  "foreign": [
+   "Cut"
+  ],
+  "active": false,
+  "description": "Entfernt die Auswahl und kopiert sie in die Zwischenablage"
+ },
+ {
+  "id": "Std_Copy",
+  "level": "global",
+  "phrases": [
+   "Kopieren"
+  ],
+  "foreign": [
+   "Copy"
+  ],
+  "active": true,
+  "description": "Kopiert die Auswahl in die Zwischenablage"
+ },
+ {
+  "id": "Std_Paste",
+  "level": "global",
+  "phrases": [
+   "Einfügen"
+  ],
+  "foreign": [
+   "Paste"
+  ],
+  "active": false,
+  "description": "Fügt den Inhalt der Zwischenablage ein"
+ },
+ {
+  "id": "Std_DlgMacroRecord",
+  "level": "global",
+  "phrases": [
+   "Makro aufzeichnen"
+  ],
+  "foreign": [
+   "Record Macro"
+  ],
+  "active": true,
+  "description": "Öffnet einen Dialog zum Aufzeichnen eines Makros"
+ },
+ {
+  "id": "Std_DlgMacroExecute",
+  "level": "global",
+  "phrases": [
+   "Makros"
+  ],
+  "foreign": [
+   "Macros"
+  ],
+  "active": true,
+  "description": "Öffnet einen Dialog zum Ausführen eines aufgezeichneten Makros"
+ },
+ {
+  "id": "Std_DlgMacroExecuteDirect",
+  "level": "global",
+  "phrases": [
+   "Makro ausführen"
+  ],
+  "foreign": [
+   "Execute Macro"
+  ],
+  "active": false,
+  "description": "Führt das im Editor befindliche Makro aus"
+ },
+ {
+  "id": "Std_ViewFitAll",
+  "level": "global",
+  "phrases": [
+   "alles einpassen",
+   "alles zeigen"
+  ],
+  "foreign": [
+   "Fit All"
+  ],
+  "active": true,
+  "description": "Passt den gesamten Inhalt in die 3D-Ansicht ein"
+ },
+ {
+  "id": "Std_ViewFitSelection",
+  "level": "global",
+  "phrases": [
+   "Auswahl einpassen"
+  ],
+  "foreign": [
+   "Fit Selection"
+  ],
+  "active": true,
+  "description": "Passt den ausgewählten Inhalt in die 3D-Ansicht ein"
+ },
+ {
+  "id": "Std_ViewGroup",
+  "level": "global",
+  "phrases": [
+   "Isometrisch",
+   "1 Vorderansicht",
+   "2 Draufsicht",
+   "3 Seitenansicht von rechts",
+   "4 Rückansicht",
+   "5 Untersicht",
+   "6 Seitenansicht von links"
+  ],
+  "foreign": [
+   "Standard Views"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die isometrische Ansicht"
+ },
+ {
+  "id": "Std_AlignToSelection",
+  "level": "global",
+  "phrases": [
+   "Auf Auswahl ausrichten"
+  ],
+  "foreign": [
+   "Align to Selection"
+  ],
+  "active": true,
+  "description": "Richtet die Kameraansicht auf die in der 3D-Ansicht ausgewählten Elemente aus"
+ },
+ {
+  "id": "Std_DrawStyle",
+  "level": "global",
+  "phrases": [
+   "1 Wie es ist",
+   "2 Punkte",
+   "3 Drahtgitter",
+   "4 Versteckte Linie",
+   "5 Keine Schattierung",
+   "6 Schattiert",
+   "7 Flache Linien"
+  ],
+  "foreign": [
+   "Draw Style"
+  ],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "Part_SelectFilter",
+  "level": "workbench",
+  "phrases": [
+   "Knotenauswahl",
+   "Kantenauswahl",
+   "Flächenauswahl",
+   "Keine Auswahlfilter"
+  ],
+  "foreign": [
+   "Selection Filter"
+  ],
+  "active": true,
+  "description": "Lässt nur die Auswahl von Knoten zu"
+ },
+ {
+  "id": "Std_TreeViewActions",
+  "level": "global",
+  "phrases": [
+   "1 Ansicht synchronisieren",
+   "2 Auswahl synchronisieren",
+   "3 Positionierung synchronisieren",
+   "4 Vorauswahl",
+   "5 Auswahl aufzeichnen",
+   "Einzelnes Dokument",
+   "Mehrfach-Dokument",
+   "Reduzieren/Erweitern",
+   "Ziehen initiieren",
+   "Zur Auswahl gehen",
+   "Auswahl Rückwärts",
+   "Auswahl Vorwärts"
+  ],
+  "foreign": [
+   "Tree View Actions"
+  ],
+  "active": true,
+  "description": "Wechselt zu der 3D-Ansicht, die das in der Baumansicht ausgewählte Objekt enthält"
+ },
+ {
+  "id": "Std_Measure",
+  "level": "global",
+  "phrases": [
+   "Messen"
+  ],
+  "foreign": [
+   "Measure"
+  ],
+  "active": true,
+  "description": "Formelement messen"
+ },
+ {
+  "id": "Std_ViewIsometric",
+  "level": "global",
+  "phrases": [
+   "isometrische Ansicht",
+   "isometrisch"
+  ],
+  "foreign": [
+   "Isometric"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die isometrische Ansicht"
+ },
+ {
+  "id": "Std_ViewFront",
+  "level": "global",
+  "phrases": [
+   "Ansicht von vorne",
+   "Vorderansicht",
+   "von vorne",
+   "1 Vorderansicht"
+  ],
+  "foreign": [
+   "1 Front"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von vorne"
+ },
+ {
+  "id": "Std_ViewTop",
+  "level": "global",
+  "phrases": [
+   "Draufsicht",
+   "von oben",
+   "2 Draufsicht"
+  ],
+  "foreign": [
+   "2 Top"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von oben"
+ },
+ {
+  "id": "Std_ViewRight",
+  "level": "global",
+  "phrases": [
+   "von rechts",
+   "3 Seitenansicht von rechts"
+  ],
+  "foreign": [
+   "3 Right"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von rechts"
+ },
+ {
+  "id": "Std_ViewRear",
+  "level": "global",
+  "phrases": [
+   "andere Seite",
+   "Rückansicht",
+   "Ansicht von hinten",
+   "von hinten",
+   "4 Rückansicht"
+  ],
+  "foreign": [
+   "4 Rear"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von hinten"
+ },
+ {
+  "id": "Std_ViewBottom",
+  "level": "global",
+  "phrases": [
+   "Untersicht",
+   "von unten",
+   "5 Untersicht"
+  ],
+  "foreign": [
+   "5 Bottom"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von unten"
+ },
+ {
+  "id": "Std_ViewLeft",
+  "level": "global",
+  "phrases": [
+   "von links",
+   "6 Seitenansicht von links"
+  ],
+  "foreign": [
+   "6 Left"
+  ],
+  "active": true,
+  "description": "Wechselt die Kamera auf die Ansicht von links"
+ },
+ {
+  "id": "Std_Part",
+  "level": "global",
+  "phrases": [
+   "Neues Part-Objekt"
+  ],
+  "foreign": [
+   "New Part"
+  ],
+  "active": true,
+  "description": "Erstellt ein Part-Objekt, das ein universell verwendbarer Behälter ist, der Objekte gruppiert, sodass sie in der 3D-Ansicht als Einheit agieren. Es ist dazu gedacht, Objekte anzuordnen, die eine Part-Topoform enthalten, wie Part-Grundkörper, Part-Design-Körper und andere Bauteile."
+ },
+ {
+  "id": "Part_Datums",
+  "level": "workbench",
+  "phrases": [
+   "Koordinatensystem",
+   "Bezugsebene",
+   "Bezugslinie",
+   "Bezugspunkt"
+  ],
+  "foreign": [
+   "Datums"
+  ],
+  "active": true,
+  "description": "Erstellt ein Koordinatensystem, das an anderen Objekten befestigt werden kann"
+ },
+ {
+  "id": "Std_Group",
+  "level": "global",
+  "phrases": [
+   "Neue Gruppe"
+  ],
+  "foreign": [
+   "New Group"
+  ],
+  "active": true,
+  "description": "Erstellt eine Gruppe, die als universeller Container dient, um Objekte in der Baumansicht unabhängig von ihrem Datentyp zu gruppieren. Es handelt sich um einen einfachen Ordner, um die Objekte in einem Modell zu organisieren."
+ },
+ {
+  "id": "Std_LinkActions",
+  "level": "global",
+  "phrases": [
+   "Verknüpfung erstellen",
+   "Unterverknüpfung erstellen",
+   "Durch Verknüpfung ersetzen",
+   "Verknüpfung auflösen",
+   "Verknüpfungen importieren",
+   "Alle Verknüpfungen importieren"
+  ],
+  "foreign": [
+   "Link Actions"
+  ],
+  "active": true,
+  "description": "Ein Link ist ein Objekt, das auf ein anderes Objekt innerhalb desselben oder eines anderen Dokuments verweist. Im Gegensatz zu Klonen verweisen Links direkt auf die ursprüngliche Form, wodurch sie speichereffizienter sind, was bei der Erstellung komplexer Baugruppen hilfreich ist."
+ },
+ {
+  "id": "Std_VarSet",
+  "level": "global",
+  "phrases": [
+   "Variablensatz"
+  ],
+  "foreign": [
+   "Variable Set"
+  ],
+  "active": true,
+  "description": "Ein Variablensatz ist ein Objekt, das einen Satz von Eigenschaften verwaltet, die als Variablen verwendet werden können"
+ },
+ {
+  "id": "Std_WhatsThis",
+  "level": "global",
+  "phrases": [
+   "Direkthilfe"
+  ],
+  "foreign": [
+   "What's This?"
+  ],
+  "active": true,
+  "description": "Öffnet die Dokumentation für den ausgewählten Befehl"
+ },
+ {
+  "id": "PartDesign_Body",
+  "level": "workbench",
+  "phrases": [
+   "Neuer Körper"
+  ],
+  "foreign": [
+   "New Body"
+  ],
+  "active": true,
+  "description": "Erstellt einen neuen Körper und aktiviert ihn"
+ },
+ {
+  "id": "PartDesign_CompSketches",
+  "level": "workbench",
+  "phrases": [
+   "Neue Skizze",
+   "Skizze befestigen",
+   "Skizze bearbeiten"
+  ],
+  "foreign": [
+   "Create Datum"
+  ],
+  "active": true,
+  "description": "Erstellt eine neue Skizze"
+ },
+ {
+  "id": "Sketcher_ValidateSketch",
+  "level": "workbench",
+  "phrases": [
+   "Skizze überprüfen"
+  ],
+  "foreign": [
+   "Validate Sketch"
+  ],
+  "active": false,
+  "description": "Überprüft eine Skizze durch die Suche nach fehlenden Koinzident-Festlegungen,\nungültigen Randbedingungen und degenerierter Geometrie"
+ },
+ {
+  "id": "Part_CheckGeometry",
+  "level": "workbench",
+  "phrases": [
+   "Geometrie überprüfen"
+  ],
+  "foreign": [
+   "Check Geometry"
+  ],
+  "active": false,
+  "description": "Analysiert die ausgewählten Formen auf Fehler"
+ },
+ {
+  "id": "PartDesign_SubShapeBinder",
+  "level": "workbench",
+  "phrases": [
+   "Teilformbinder"
+  ],
+  "foreign": [
+   "Sub-Shape Binder"
+  ],
+  "active": true,
+  "description": "Erstellt einen Verweis auf Geometrie eines oder mehrerer Objekte und ermöglicht so, dass sie innerhalb oder außerhalb eines Part Design-Körpers verwendet werden kann. Er verfolgt relative Positionierungen, unterstützt mehrere Geometriearten (Festkörper, Flächen, Kanten, Knoten) und kann mit Objekten aus demselben oder externen Dokumenten arbeiten."
+ },
+ {
+  "id": "PartDesign_Clone",
+  "level": "workbench",
+  "phrases": [
+   "Klon"
+  ],
+  "foreign": [
+   "Clone"
+  ],
+  "active": true,
+  "description": "Kopiert ein Festkörperobjekt parametrisch als Basis-Element in einen neuen Körper"
+ },
+ {
+  "id": "PartDesign_Pad",
+  "level": "workbench",
+  "phrases": [
+   "Polster",
+   "Polstere",
+   "aufpolstern",
+   "extrudieren",
+   "hochziehen",
+   "Aufpolsterung"
+  ],
+  "foreign": [
+   "Pad"
+  ],
+  "active": true,
+  "description": "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und fügt das Ergebnis dem Körper hinzu"
+ },
+ {
+  "id": "PartDesign_Revolution",
+  "level": "workbench",
+  "phrases": [
+   "Drehteil"
+  ],
+  "foreign": [
+   "Revolve"
+  ],
+  "active": true,
+  "description": "Dreht die Skizze oder das Profil um eine Linie oder Achse herum und fügt das Ergebnis dem Körper hinzu"
+ },
+ {
+  "id": "PartDesign_AdditiveLoft",
+  "level": "workbench",
+  "phrases": [
+   "Ausformung"
+  ],
+  "foreign": [
+   "Additive Loft"
+  ],
+  "active": true,
+  "description": "Trägt ein Formelement zwischen zwei ausgewählten Skizze oder Profilen aus und fügt es dem Körper hinzu"
+ },
+ {
+  "id": "PartDesign_AdditivePipe",
+  "level": "workbench",
+  "phrases": [
+   "Rohr"
+  ],
+  "foreign": [
+   "Additive Pipe"
+  ],
+  "active": true,
+  "description": "Trägt die ausgewählte Skizze oder das ausgewählte Profil entlang einer Spine-Kurve aus und fügt das Ergebnis dem Körper hinzu"
+ },
+ {
+  "id": "PartDesign_AdditiveHelix",
+  "level": "workbench",
+  "phrases": [
+   "Wendel"
+  ],
+  "foreign": [
+   "Additive Helix"
+  ],
+  "active": true,
+  "description": "Trägt die ausgewählte Skizze oder das ausgewählte Profil entlang einer Wendel aus und fügt das Ergebnis dem Körper hinzu"
+ },
+ {
+  "id": "PartDesign_CompPrimitiveAdditive",
+  "level": "workbench",
+  "phrases": [
+   "Quader",
+   "Zylinder",
+   "Kugel",
+   "Kegel",
+   "Ellipsoid",
+   "Torus",
+   "Prisma",
+   "Keil"
+  ],
+  "foreign": [
+   "Additive Primitive"
+  ],
+  "active": true,
+  "description": "Erstellt einen hinzufügenden Quader durch Angabe von Breite, Höhe und Länge"
+ },
+ {
+  "id": "PartDesign_Pocket",
+  "level": "workbench",
+  "phrases": [
+   "Tasche",
+   "Vertiefung",
+   "ausschneiden"
+  ],
+  "foreign": [
+   "Pocket"
+  ],
+  "active": true,
+  "description": "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und zieht das Ergebnis von dem Körper ab"
+ },
+ {
+  "id": "PartDesign_Hole",
+  "level": "workbench",
+  "phrases": [
+   "Bohrung"
+  ],
+  "foreign": [
+   "Hole"
+  ],
+  "active": true,
+  "description": "Erstellt im aktiven Körper Bohrungen an den Mittelpunkten von Kreisen oder Kreisbögen der ausgewählten Skizze oder des ausgewählten Profils"
+ },
+ {
+  "id": "PartDesign_Groove",
+  "level": "workbench",
+  "phrases": [
+   "Nut"
+  ],
+  "foreign": [
+   "Groove"
+  ],
+  "active": true,
+  "description": "Dreht die Skizze oder das Profil um eine Linie oder Achse herum und zieht das Ergebnis von dem Körper ab"
+ },
+ {
+  "id": "PartDesign_SubtractiveLoft",
+  "level": "workbench",
+  "phrases": [
+   "Ausformung"
+  ],
+  "foreign": [
+   "Subtractive Loft"
+  ],
+  "active": true,
+  "description": "Formt die gewählte Skizze oder das Profil entlang eines Pfades aus und entfernt es vom Körper"
+ },
+ {
+  "id": "PartDesign_SubtractivePipe",
+  "level": "workbench",
+  "phrases": [
+   "Abziehendes Rohr"
+  ],
+  "foreign": [
+   "Subtractive Pipe"
+  ],
+  "active": true,
+  "description": "Trägt die ausgewählte Skizze oder das ausgewählte Profil entlang einer Spine-Kurve aus und zieht das Ergebnis von dem Körper ab"
+ },
+ {
+  "id": "PartDesign_SubtractiveHelix",
+  "level": "workbench",
+  "phrases": [
+   "Wendel"
+  ],
+  "foreign": [
+   "Subtractive Helix"
+  ],
+  "active": true,
+  "description": "Trägt die ausgewählte Skizze oder das ausgewählte Profil entlang einer Wendel aus und zieht das Ergebnis von dem Körper ab"
+ },
+ {
+  "id": "PartDesign_CompPrimitiveSubtractive",
+  "level": "workbench",
+  "phrases": [
+   "Quader",
+   "Zylinder",
+   "Kugel",
+   "Kegel",
+   "Ellipsoid",
+   "Torus",
+   "Prisma",
+   "Keil"
+  ],
+  "foreign": [
+   "Subtractive Primitive"
+  ],
+  "active": true,
+  "description": "Erstellt einen abziehenden Quader durch Angabe von Breite, Höhe und Länge"
+ },
+ {
+  "id": "PartDesign_Boolean",
+  "level": "workbench",
+  "phrases": [
+   "Boolesche Verknüpfung"
+  ],
+  "foreign": [
+   "Boolean Operation"
+  ],
+  "active": true,
+  "description": "Führt boolesche Verknüpfungen mit den ausgewählten Objekten und dem Körper durch"
+ },
+ {
+  "id": "PartDesign_Fillet",
+  "level": "workbench",
+  "phrases": [
+   "Verrundung",
+   "abrunden",
+   "verrunden"
+  ],
+  "foreign": [
+   "Fillet"
+  ],
+  "active": true,
+  "description": "Versieht die ausgewählten Kanten mit einer Verrundung"
+ },
+ {
+  "id": "PartDesign_Chamfer",
+  "level": "workbench",
+  "phrases": [
+   "Fase",
+   "anfasen"
+  ],
+  "foreign": [
+   "Chamfer"
+  ],
+  "active": true,
+  "description": "Versieht die ausgewählten Kanten mit einer Fase"
+ },
+ {
+  "id": "PartDesign_Draft",
+  "level": "workbench",
+  "phrases": [
+   "Formschräge"
+  ],
+  "foreign": [
+   "Draft"
+  ],
+  "active": true,
+  "description": "Versieht die ausgewählten Flächen mit einer Formschräge"
+ },
+ {
+  "id": "PartDesign_Thickness",
+  "level": "workbench",
+  "phrases": [
+   "Dicke"
+  ],
+  "foreign": [
+   "Thickness"
+  ],
+  "active": true,
+  "description": "Versieht das Objekt mit einer konstanten Wandstärke und entfernt die ausgewählten Flächen"
+ },
+ {
+  "id": "PartDesign_Mirrored",
+  "level": "workbench",
+  "phrases": [
+   "Spiegeln",
+   "spiegle"
+  ],
+  "foreign": [
+   "Mirror"
+  ],
+  "active": true,
+  "description": "Spiegelt die ausgewählten Formelemente oder den aktiven Körper"
+ },
+ {
+  "id": "PartDesign_LinearPattern",
+  "level": "workbench",
+  "phrases": [
+   "Lineares Muster"
+  ],
+  "foreign": [
+   "Linear Pattern"
+  ],
+  "active": true,
+  "description": "Dupliziert und ordnet die ausgewählten Formelemente oder den aktiven Körper in einem linearen Muster an"
+ },
+ {
+  "id": "PartDesign_PolarPattern",
+  "level": "workbench",
+  "phrases": [
+   "Polares Muster"
+  ],
+  "foreign": [
+   "Polar Pattern"
+  ],
+  "active": true,
+  "description": "Dupliziert und ordnet die ausgewählten Formelemente oder den aktiven Körper in einem kreisförmigen Muster an"
+ },
+ {
+  "id": "PartDesign_MultiTransform",
+  "level": "workbench",
+  "phrases": [
+   "Mehrfach-Transformation"
+  ],
+  "foreign": [
+   "Multi-Transform"
+  ],
+  "active": true,
+  "description": "Führt mehrere Transformationen mit den ausgewählten Formelementen oder dem aktiven Körper durch"
+ },
+ {
+  "id": "ui:cancel",
+  "level": "global",
+  "phrases": [
+   "Abbrechen",
+   "Abbruch",
+   "Stopp"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:NoneWorkbench",
+  "level": "global",
+  "phrases": [
+   "<none>"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:AssemblyWorkbench",
+  "level": "global",
+  "phrases": [
+   "Assembly"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:BIMWorkbench",
+  "level": "global",
+  "phrases": [
+   "BIM"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:CAMWorkbench",
+  "level": "global",
+  "phrases": [
+   "CAM"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:DraftWorkbench",
+  "level": "global",
+  "phrases": [
+   "Wechsle zu Draft",
+   "Draft"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:FemWorkbench",
+  "level": "global",
+  "phrases": [
+   "FEM"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:InspectionWorkbench",
+  "level": "global",
+  "phrases": [
+   "Inspection"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:MaterialWorkbench",
+  "level": "global",
+  "phrases": [
+   "Material"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:MeshWorkbench",
+  "level": "global",
+  "phrases": [
+   "Mesh"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:OpenSCADWorkbench",
+  "level": "global",
+  "phrases": [
+   "OpenSCAD"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:PartWorkbench",
+  "level": "global",
+  "phrases": [
+   "Wechsle zu Part",
+   "Part"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:PointsWorkbench",
+  "level": "global",
+  "phrases": [
+   "Points"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:ReverseEngineeringWorkbench",
+  "level": "global",
+  "phrases": [
+   "Reverse Engineering"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:RobotWorkbench",
+  "level": "global",
+  "phrases": [
+   "Robot"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SketcherWorkbench",
+  "level": "global",
+  "phrases": [
+   "Wechsle zum Sketcher",
+   "Sketcher"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SpreadsheetWorkbench",
+  "level": "global",
+  "phrases": [
+   "Spreadsheet"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:SurfaceWorkbench",
+  "level": "global",
+  "phrases": [
+   "Surface"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:TechDrawWorkbench",
+  "level": "global",
+  "phrases": [
+   "Wechsle zu TechDraw",
+   "Tech Draw",
+   "TechDraw"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ },
+ {
+  "id": "workbench:TestWorkbench",
+  "level": "global",
+  "phrases": [
+   "Test Framework"
+  ],
+  "foreign": [],
+  "active": true,
+  "description": ""
+ }
+]

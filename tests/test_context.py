@@ -93,3 +93,21 @@ def test_descriptions_are_attached():
 def test_description_is_empty_when_unknown():
     cands = build_candidates({"tb": ["PartDesign_Pad"]}, {"PartDesign_Pad": ["Aufpolsterung"]}, {})
     assert cands[0]["description"] == ""
+
+
+def test_workbench_selector_is_no_candidate():
+    """Std_Workbench carries all workbench names; switching is offered as workbench:<name>."""
+    cands = build_candidates({"Workbench": ["Std_Workbench"]}, {"Std_Workbench": ["Part Design", "Draft"]}, {})
+    assert cands == [] or "Std_Workbench" not in by_id(cands)
+
+
+def test_foreign_labels_are_kept_apart():
+    cands = build_candidates({"tb": ["Std_Open"]}, {"Std_Open": ["Öffnen"]}, {},
+                             foreign_labels={"Std_Open": ["&Open...", "öffnen"]})
+    assert cands[0]["phrases"] == ["Öffnen"]
+    assert cands[0]["foreign"] == ["Open"]          # cleaned, without what the phrases have already
+
+
+def test_foreign_labels_alone_make_a_candidate():
+    cands = build_candidates({"tb": ["Std_Open"]}, {}, {}, foreign_labels={"Std_Open": ["Open"]})
+    assert cands[0]["phrases"] == [] and cands[0]["foreign"] == ["Open"]

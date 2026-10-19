@@ -83,7 +83,11 @@ class Client:
                 self.pending.remove(msg)
                 if msg["type"] == type_ and all(msg.get(k) == v for k, v in match.items()):
                     return msg
-            data = self.sock.recv(4096)
+            self.sock.settimeout(max(0.01, deadline - time.monotonic()))
+            try:
+                data = self.sock.recv(4096)
+            except socket.timeout:
+                break
             if not data:
                 raise ConnectionError("closed by service")
             self.pending.extend(self.decoder.feed(data))
@@ -293,5 +297,105 @@ def test_candidates_become_hotwords(parts):
     s, c = service_saying(parts, "Zeichne ein Rechteck")
     c.wait_for("plan")
     assert parts["transcriber"].hotwords[-1] == "Rechteck, Speichern"
+    c.close()
+    s.stop()
+
+
+# --- sequences of commands --------------------------------------------------------------
+
+SEQUENCE_CANDIDATES = CANDIDATES + [
+    {"id": "workbench:PartDesignWorkbench", "level": "global", "phrases": ["Part Design"], "active": True},
+]
+AFTER_SWITCH = SEQUENCE_CANDIDATES + [
+    {"id": "PartDesign_Body", "level": "workbench", "phrases": ["Körper"], "active": True},
+]
+
+
+def sequence_service(parts, text):
+    parts["transcriber"] = FakeTranscriber(text)
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=SEQUENCE_CANDIDATES)
+    c.send("listen", on=True)
+    return s, c
+
+
+def test_sequence_runs_step_by_step_with_new_context(parts):
+    s, c = sequence_service(parts, "Wechsle zu Part Design und erstelle einen Körper")
+    first = c.wait_for("plan")
+    assert first["command"] == "workbench:PartDesignWorkbench"
+    assert first["more"] is True
+    c.send("context", candidates=AFTER_SWITCH)          # the addon sends the new context first
+    c.send("result", ok=True, id=first["id"])
+    second = c.wait_for("plan")
+    assert second["command"] == "PartDesign_Body"
+    assert second["more"] is False
+    assert parts["tones"].played == []                  # no tone between the steps
+    c.send("result", ok=True, id=second["id"])
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["ok"]
+    c.close()
+    s.stop()
+
+
+def test_failed_step_stops_the_sequence(parts):
+    s, c = sequence_service(parts, "Wechsle zu Part Design und speichern")
+    first = c.wait_for("plan")
+    c.send("result", ok=False, id=first["id"])
+    wait_tones(parts["tones"], 1)
+    time.sleep(0.2)
+    assert parts["tones"].played == ["error"]
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.3)
+    c.close()
+    s.stop()
+
+
+def test_unclear_step_stops_with_error(parts):
+    s, c = sequence_service(parts, "Speichern, Klaus, Rechteck")
+    first = c.wait_for("plan")
+    assert first["command"] == "Std_Save"
+    c.send("result", ok=True, id=first["id"])
+    msg = c.wait_for("not_understood")
+    assert msg["text"] == "Klaus"
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["error"]
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.3)
+    c.close()
+    s.stop()
+
+
+def test_stale_result_is_ignored(parts):
+    s, c = sequence_service(parts, "Speichern und Rechteck")
+    first = c.wait_for("plan")
+    c.send("result", ok=True, id="something old")
+    with pytest.raises(TimeoutError):
+        c.wait_for("plan", timeout=0.3)
+    c.send("result", ok=True, id=first["id"])
+    assert c.wait_for("plan")["command"] == "Sketcher_CreateRectangle"
+    c.close()
+    s.stop()
+
+
+def test_talk_over_several_clauses_is_ignored_as_a_whole(parts):
+    """ "bis gleich" alone would be a short unclear utterance with error tone."""
+    s, c = sequence_service(parts, "Ich gehe jetzt einen Kaffee trinken, bis gleich")
+    c.wait_for("ignored")
+    time.sleep(0.2)
+    assert parts["tones"].played == []
+    c.close()
+    s.stop()
+
+
+def test_skipped_clause_is_reported(parts):
+    s, c = sequence_service(parts, "Speichern, und zwar von hier")
+    first = c.wait_for("plan")
+    assert first["more"] is True
+    c.send("result", ok=True, id=first["id"])
+    assert c.wait_for("ignored")["text"] == "und zwar von hier"
+    wait_tones(parts["tones"], 1)
+    assert parts["tones"].played == ["ok"]
     c.close()
     s.stop()

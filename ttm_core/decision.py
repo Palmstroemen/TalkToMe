@@ -33,11 +33,12 @@ class Decision:
     level: str = None
     reason: str = None             # for not_understood / ignore
     via: str = None                # "name" or "description": how the command was found
+    words: int = 0                 # meaningful words of the sentence explained by the command
     alternatives: list = field(default_factory=list)   # [(command, score)], best first
 
 
 def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
-           ignore_below=0.55, ignore_min_words=4,
+           ignore_below=0.7, ignore_min_words=4,
            desc_threshold=0.7, desc_margin=0.15, desc_min_known=2):
     """
     threshold         minimal score for executing
@@ -60,20 +61,22 @@ def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
 
     best_per_command = {}
     for c in candidates:
-        score, size = max(((phrase_score(words, pw, phonetic, stop), len(pw))
-                           for pw in (command_words(p, language) for p in c["phrases"])),
+        score, size = max(((phrase_score(words, pw, sound, stop), len(pw))
+                           for pw, sound in _phrases(c, language, phonetic)),
                           default=(0.0, 0))
         ranked = (score + LEVEL_BONUS.get(c["level"], 0.0), score, c, size)
-        if c["id"] not in best_per_command or ranked[:2] > best_per_command[c["id"]][:2]:
+        if c["id"] not in best_per_command or _key(ranked) > _key(best_per_command[c["id"]]):
             best_per_command[c["id"]] = ranked
     if not best_per_command:
         return Decision("ignore", reason="no_candidates")
 
-    ranking = sorted(best_per_command.values(), key=lambda r: r[:2], reverse=True)
+    ranking = sorted(best_per_command.values(), key=_key, reverse=True)
     alternatives = [(c["id"], round(score, 3)) for _, score, c, _ in ranking[:3]]
     adjusted, score, best, size = ranking[0]
+    meaningful = [w for w in words if w not in stop] or words
+    explained = min(size, len(meaningful))
     result = dict(command=best["id"], score=round(score, 3), level=best["level"],
-                  alternatives=alternatives, via="name")
+                  alternatives=alternatives, via="name", words=explained)
 
     if score < threshold:
         by_description = _decide_by_description(text, candidates, language,
@@ -83,19 +86,48 @@ def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
         if score < ignore_below and len(words) >= ignore_min_words:
             return Decision("ignore", reason="unrelated", **result)
         return Decision("not_understood", reason="no_match", **result)
-    meaningful = [w for w in words if w not in stop] or words
-    if min(size, len(meaningful)) / len(meaningful) < NAME_EXPLAINS:
+    if explained / len(meaningful) < NAME_EXPLAINS:
         by_description = _decide_by_description(text, candidates, language,
                                                 desc_threshold, desc_margin, desc_min_known)
         if by_description is not None and by_description.reason != "ambiguous":
             return by_description
     if len(ranking) > 1:
-        adjusted2, score2, second, _ = ranking[1]
-        if score2 >= threshold and second["level"] == best["level"] and adjusted - adjusted2 < margin:
+        adjusted2, score2, second, size2 = ranking[1]
+        if (score2 >= threshold and second["level"] == best["level"] and adjusted - adjusted2 < margin
+                and size2 >= size):            # a longer phrase containing the other one is no rival
             return Decision("not_understood", reason="ambiguous", **result)
     if not best["active"]:
         return Decision("not_understood", reason="inactive", **result)
     return Decision("execute", **result)
+
+
+def explains(text, candidate, language=None, threshold=0.75):
+    """Meaningful words of text that candidate accounts for, by name or by help text."""
+    words = command_words(text, language)
+    stop = STOP_WORDS.get(language, frozenset())
+    meaningful = [w for w in words if w not in stop] or words
+    phonetic = PHONETICS.get(language)
+    by_name = max((len(pw) for pw, sound in _phrases(candidate, language, phonetic)
+                   if phrase_score(words, pw, sound, stop) >= threshold), default=0)
+    by_description = 0
+    if candidate.get("description"):
+        index = DescriptionIndex({candidate["id"]: candidate["description"]}, language)
+        by_description = index.explained(text, candidate["id"])
+    return max(min(by_name, len(meaningful)), by_description)
+
+
+def _phrases(candidate, language, phonetic):
+    """(phrase words, sound rule) of a candidate; foreign labels are compared by spelling only."""
+    for p in candidate["phrases"]:
+        yield command_words(p, language), phonetic
+    for p in candidate.get("foreign", ()):
+        yield command_words(p, language), None
+
+
+def _key(ranked):
+    """Ranking order: score with level bonus, score, then the longer, more specific phrase."""
+    adjusted, score, _, size = ranked
+    return adjusted, score, size
 
 
 def _decide_by_description(text, candidates, language, threshold, margin, min_known):
@@ -108,11 +140,11 @@ def _decide_by_description(text, candidates, language, threshold, margin, min_kn
         return None
     ranking = index.ranking(text)
     cmd, score = ranking[0]
-    if score < threshold:
-        return None
+    if score < threshold or index.explained(text, cmd) < min_known:
+        return None                            # one rare word must not decide alone
     best = by_id[cmd]
     result = dict(command=cmd, score=score, level=best["level"], alternatives=ranking[:3],
-                  via="description")
+                  via="description", words=index.explained(text, cmd))
     if len(ranking) > 1 and score - ranking[1][1] < margin:
         return Decision("not_understood", reason="ambiguous", **result)
     if not best["active"]:

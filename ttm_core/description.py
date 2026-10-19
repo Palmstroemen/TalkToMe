@@ -11,24 +11,12 @@ the help texts weigh more, words found in no help text at all are left out.
 
 import math
 
-from ttm_core.languages import CLAUSE_WORDS, PARTICLES, STOP_WORDS
+from ttm_core.clauses import split_clauses
+from ttm_core.languages import PARTICLES, STOP_WORDS
 from ttm_core.matching import command_words
 from ttm_core.stemming import STEMMERS
 
 JOIN = "+"           # separable verb: "zieht ... ab" → "ab+zieh"
-
-
-def _clauses(words, separators):
-    clause = []
-    for w in words:
-        if w in separators:
-            if clause:
-                yield clause
-            clause = []
-        else:
-            clause.append(w)
-    if clause:
-        yield clause
 
 
 def terms(text, language):
@@ -42,7 +30,7 @@ def terms(text, language):
     stop = STOP_WORDS.get(language, set())
     particles = PARTICLES.get(language, set())
     result = set()
-    for clause in _clauses(command_words(text, language), CLAUSE_WORDS.get(language, set())):
+    for clause in (command_words(c, language) for c in split_clauses(text, language)):
         content = [stem(w) for w in clause if w not in stop]
         result.update(content)
         if content and len(clause) > 1 and clause[-1] in particles:
@@ -69,6 +57,10 @@ class DescriptionIndex:
     def known_terms(self, text):
         """Number of words of the sentence that occur in any help text (joined verbs not counted)."""
         return sum(1 for t in self._known(text) if JOIN not in t)
+
+    def explained(self, text, cmd):
+        """Number of words of the sentence found in the help text of cmd (joined verbs not counted)."""
+        return sum(1 for t in self._known(text) & self.docs.get(cmd, set()) if JOIN not in t)
 
     def ranking(self, text):
         """[(command id, coverage 0..1)], best first."""

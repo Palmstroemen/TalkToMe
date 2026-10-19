@@ -169,3 +169,32 @@ def test_name_stays_when_it_explains_the_sentence():
                   for c in DESCRIBED]
     d = decide("Extrudieren", candidates, language="de")
     assert (d.command, d.via) == ("PartDesign_Pad", "name")
+
+
+def test_talk_with_weak_similarities_is_ignored():
+    """ "schon" looks a bit like the English label "Cone" (0.63): talk, not a command attempt."""
+    candidates = CANDIDATES + [cand("Part_Cone", ["Kegel", "Cone"])]
+    assert decide("Das sieht schon ganz gut aus", candidates, language="de").kind == "ignore"
+
+
+def test_longer_phrase_wins_a_tie():
+    """ "Part" is contained in "Part Design": the longer phrase is meant, not ambiguity."""
+    candidates = [cand("Std_Part", ["Part"], "global"),
+                  cand("workbench:PartDesignWorkbench", ["Part Design"], "global")]
+    d = decide("Wechsle zu Part Design", candidates, language="de")
+    assert (d.kind, d.command) == ("execute", "workbench:PartDesignWorkbench")
+
+
+
+# --- foreign labels (English command names for a German speaker) ---------------------------
+
+def test_foreign_labels_match_by_spelling():
+    candidates = [dict(cand("PartDesign_Pad", ["Aufpolsterung"]), foreign=["Pad"])]
+    assert decide("Pad", candidates, language="de").command == "PartDesign_Pad"
+
+
+def test_foreign_labels_do_not_match_by_sound():
+    """German sound rules on English words: "Ebene" and "Open" are both 016."""
+    candidates = [dict(cand("Std_Open", ["Öffnen"], "global"), foreign=["Open"])]
+    d = decide("Skizze in der XY-Ebene", candidates, language="de")
+    assert d.kind != "execute"

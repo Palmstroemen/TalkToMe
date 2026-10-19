@@ -245,6 +245,34 @@ fällt (`ttm_core/description.py`):
 Grenze: Andere Wörter als im Hilfstext („mach die Kanten rund“ statt „Verrundung“) findet erst
 Stufe 2.
 
+Englische Befehlsnamen („Pad“, „Pocket“) bleiben erkennbar, denn viele sagen sie auch auf
+Deutsch. Sie stehen aber getrennt (`foreign`): Sie werden nur nach Schreibweise verglichen, nicht
+nach Klang, denn deutsche Lautregeln auf englische Wörter angewandt machen „Ebene“ zu „Open“. Sie
+gehen auch nicht als Hinweiswörter an die Spracherkennung.
+
+### Befehlssequenzen
+
+„Wechsle bitte zu Part Design, erstelle einen neuen Körper und dann eine Skizze“ sind drei
+Schritte. Ablauf (`ttm_core/clauses.py`, `ttm_core/sequence.py`):
+
+1. Die Äußerung wird in Teilsätze zerlegt: an Satzzeichen (außer dem Dezimalkomma) und an
+   „und“, „dann“, „danach“, „anschließend“.
+2. Ist die ganze Äußerung Gerede (siehe 9.3), wird sie als Ganzes ignoriert. Einzelne kurze
+   Reste wie „finde ich“ würden sonst wie Befehlsversuche aussehen.
+3. Der nächste Schritt: Die ersten ein bis drei Teilsätze werden als ein Befehl probiert, denn
+   ein Befehl kann sich über mehrere erstrecken („Extrudiere das und ziehe es vom Körper ab“).
+   Ein weiterer Teilsatz gehört nur dazu, wenn er für denselben Befehl zusätzliche Wörter erklärt.
+   Ein Workbench-Wechsel ist immer ein eigener Schritt.
+4. Der Dienst schickt den Schritt als `plan` mit `more`, das Addon führt ihn aus, schickt den
+   neuen Kontext und dann `result`. Erst danach wird der nächste Schritt entschieden, im Kontext
+   nach dem vorigen: Nach dem Wechsel zu Part Design gibt es den Befehl „Körper“.
+5. Gerede-Teilsätze werden übersprungen. Ein unklarer Teilsatz oder ein fehlgeschlagener
+   Schritt beendet die Sequenz mit Fehlerton, denn die folgenden Schritte liefen in einem
+   unerwarteten Zustand. Der Bestätigungston kommt einmal am Ende.
+
+Noch nicht möglich: Schritte mit freien Parametern („den nennen wir Bodenplatte“, wird derzeit
+als Gerede übersprungen) und Auswahl in Folgedialogen („in der XY-Ebene“, siehe 6.5).
+
 ### Plan-Format
 
 ```json
@@ -366,7 +394,7 @@ Dauerzuhören ist das größte Risiko des Designs. Das System hört auch Telefon
 |---|---|---|
 | **Ausführen** | Hohe Konfidenz und Befehl im Kontext aktiv | Ausführen + Bestätigungston |
 | **Fehlerton** | Äußerung wirkt wie ein Befehlsversuch (kurz, enthält Befehls- oder Wortschatznähe), aber kein sicherer Treffer | Nichts ausführen + Fehlerton, Lernmodus kurz bereit |
-| **Ignorieren** | Lange Sätze ohne Wortschatznähe, typische Gesprächssprache | Nichts tun, kein Ton |
+| **Ignorieren** | Lange Sätze (ab 4 Wörtern) ohne Treffer über 0,7, typische Gesprächssprache | Nichts tun, kein Ton |
 
 Die Schwellenwerte sind einstellbar und werden in der Spike-Phase an echten Aufnahmen kalibriert.
 
@@ -409,9 +437,9 @@ Die Verbindung läuft über TCP auf `127.0.0.1` (Port einstellbar), mit einer JS
 | Addon → Dienst | `context` | Kontext-Schnappschuss (Ebenen, Kandidaten mit Texten, Auswahl) |
 | Dienst → Addon | `state` | `listening` / `processing` / `idle` / `error` |
 | Dienst → Addon | `speech_start` | Eine Äußerung beginnt. Das Addon hält Mausposition und Auswahl fest (6.4) |
-| Dienst → Addon | `plan` | Plan (Abschnitt 7) |
+| Dienst → Addon | `plan` | Ein Schritt: `id`, `command`, `text` (sein Teil der Äußerung), `utterance`, `more` (weitere Schritte folgen), `via` (`name` / `description`) |
 | Dienst → Addon | `not_understood` | Erkannter Text, ggf. Top-3-Kandidaten |
-| Addon → Dienst | `result` | `ok` / `failed` (+ Grund), daraufhin spielt der Dienst den Ton |
+| Addon → Dienst | `result` | `ok` und die `id` des Schritts. Bei `more` schickt das Addon vorher den neuen `context`. Der Dienst entscheidet dann den nächsten Schritt oder spielt den Ton |
 | Addon → Dienst | `learn` | Äußerung + Befehls-ID aus dem Lernmodus |
 
 Die Verbindung wird nur lokal angenommen, also nicht an andere Netzwerkschnittstellen gebunden. Zusätzlich gibt es ein beim Start erzeugtes Token, damit keine anderen lokalen Programme Befehle einschleusen können.
