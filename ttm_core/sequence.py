@@ -65,6 +65,11 @@ def next_step(clauses, candidates, language=None, max_span=3, patterns=None, **d
 # The service decides step by step, each step in the context the step before left; the corpus
 # (DESIGN.md 16.5) plays a whole utterance in one context. Both use these functions.
 
+def _recognized(d):
+    """A command was recognized, also one that is not available now."""
+    return d.kind == "execute" or d.reason == "inactive"
+
+
 def start_utterance(text, candidates, language=None, patterns=None, tool_running=False):
     """(clauses to decide, None) or ([], the ignore decision) when the whole is talk."""
     pending = split_clauses(text, language)
@@ -72,7 +77,10 @@ def start_utterance(text, candidates, language=None, patterns=None, tool_running
     has_pattern = any(parse(c, language, patterns) for c in pending)
     values = tool_running and parse_values(text, language)
     if whole.kind == "ignore" and not has_pattern and not values:   # its clauses alone would look like short attempts
-        return [], whole
+        # A statement may stand next to a command: "Die Skizze ist fertig, Skizze verlassen".
+        if not (whole.reason == "statement" and len(pending) > 1
+                and any(_recognized(decide(c, candidates, language)) for c in pending)):
+            return [], whole
     if whole.kind == "execute" and whole.command in EXCLUSIVE:
         return [text], None                    # one step, decided as a whole
     return pending, None

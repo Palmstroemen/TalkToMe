@@ -35,6 +35,7 @@ LISTS = {
     "parameter_words": QT_TRANSLATE_NOOP("TalkToMe", "Number and unit words – parameters, left out when comparing"),
     "clause_words": QT_TRANSLATE_NOOP("TalkToMe", "Clause words – split a sentence into steps (\"und\", \"dann\")"),
     "particles": QT_TRANSLATE_NOOP("TalkToMe", "Verb particles – end of separable verbs (\"zieht … ab\")"),
+    "statement_words": QT_TRANSLATE_NOOP("TalkToMe", "Statement words – a sentence with one of these is talk (\"Der Kreis ist zu groß\")"),
 }
 
 # How a language pack compares words (DESIGN.md 7, 13.1): name and an example of what it catches.

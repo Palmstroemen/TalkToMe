@@ -101,6 +101,7 @@ class Pack:
         self.filler_words = set(data.get("filler_words", []))
         self.parameter_words = set(data.get("parameter_words", []))
         self.clause_words = set(data.get("clause_words", []))
+        self.statement_words = set(data.get("statement_words", []))
         self.particles = set(data.get("particles", []))
         self.stop_words = self.filler_words | self.particles | set(data.get("stop_words", []))
         self.number_values = dict(data.get("number_values", {}))
@@ -162,7 +163,7 @@ def pack(language):
 
 
 # Word lists a user may change on the settings page (DESIGN.md 13).
-EDITABLE_LISTS = ("filler_words", "stop_words", "parameter_words", "clause_words", "particles")
+EDITABLE_LISTS = ("filler_words", "stop_words", "parameter_words", "clause_words", "particles", "statement_words")
 
 
 def pack_list(language, key):

@@ -30,7 +30,7 @@
 {"text": "Das sieht schon ganz gut aus, finde ich", "context": "fc114_partdesign", "expect": "ignore"}
 {"text": "Ich trinke jetzt einen Kaffee", "context": "fc114_partdesign", "expect": "ignore"}
 {"text": "und zwar von hier nach hier", "context": "fc114_partdesign", "expect": "ignore"}
-{"text": "Was meinst du, passt das so?", "context": "fc114_partdesign", "expect": "ignore", "known": true, "note": "'passt das so' sounds like 'Einfügen'/Paste (inactive): asks instead of staying silent"}
+{"text": "Was meinst du, passt das so?", "context": "fc114_partdesign", "expect": "ignore"}
 {"text": "Moment, ich muss kurz nachdenken", "context": "fc114_partdesign", "expect": "ignore"}
 {"text": "Hallo, ja, ich bin gleich wieder da", "context": "fc114_partdesign", "expect": "ignore"}
 {"text": "Das hat letzte Woche schon nicht geklappt", "context": "fc114_partdesign", "expect": "ignore"}
@@ -104,8 +104,8 @@
 {"text": "Koinzident", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainCoincidentUnified"]}
 {"text": "Mach das parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
 {"text": "Parallel festlegen", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
-{"text": "Die Linien sind jetzt parallel, oder?", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: 'Linien' ≈ 'Linie' explains 1 of 3 words, still executed (name below NAME_EXPLAINS falls through when no help text fits)"}
-{"text": "Das ist noch nicht ganz symmetrisch, finde ich", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: 'symmetrisch' ≈ 'Isometrisch' inside a sentence, executed although it explains little"}
+{"text": "Die Linien sind jetzt parallel, oder?", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Das ist noch nicht ganz symmetrisch, finde ich", "context": "fc114_sketcher", "expect": "ignore"}
 
 # --- Werte für ein laufendes Werkzeug
 {"text": "50 mal 30", "context": "fc114_sketcher_tool", "expect": [{"command": "ui:values", "args": {"values": [[null, 50.0, "length"], [null, 30.0, "length"]]}}]}
@@ -122,3 +122,49 @@
 {"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}
 {"text": "Länge 20", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[0, 20.0, "length"]]}}]}
 {"text": "OK", "context": "fc114_pad_dialog", "expect": ["ui:ok"]}
+
+# --- Gespräch beim Konstruieren, mit Fachwörtern: keine Reaktion
+{"text": "Die Linie ist viel zu lang geworden", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Der Kreis ist irgendwie zu groß", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Hm, das Rechteck sitzt noch nicht richtig", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Wo ist denn jetzt der Mittelpunkt hin", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Die beiden Linien müssten eigentlich gleich lang sein", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Warum ist das jetzt horizontal geworden", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Ich glaube die Skizze ist noch nicht vollständig bestimmt", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Oh nein, das war die falsche Ecke", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Das sieht doch schon mal ganz ordentlich aus", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Mal sehen ob das so passt", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Moment, ich muss das erst ausmessen", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk without a statement word; a sound-alike asks back (mild: no command)"}
+{"text": "Der Bogen gefällt mir noch nicht", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Die Kante da ist noch viel zu scharf", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Der Körper ist ein bisschen zu dick geraten", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Die Bohrung sitzt an der falschen Stelle", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Ich habe gestern schon mal so ein Teil gemacht", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Das Muster wiederholt sich viel zu oft", "context": "fc114_partdesign", "expect": "ignore", "known": true, "note": "talk without a statement word; 'wiederholt' ≈ Redo asks back (mild)"}
+{"text": "Wie war das noch mit der Aufpolsterung letztes Mal", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Kannst du mir mal den Kaffee rüberreichen", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Ja, ich komme gleich, einen Moment noch", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Das muss ich nachher noch dem Kunden zeigen", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Die Datei schicke ich dir dann per Mail", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Hast du das Telefon gehört", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Nee, das mache ich morgen fertig", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Wie spät ist es eigentlich", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Das Teil wird später gefräst, glaube ich", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Die Wandstärke ist noch zu gering", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Ich schaue mir das gleich noch einmal an", "context": "fc114_part", "expect": "ignore"}
+{"text": "Das ist ein ziemlich kompliziertes Bauteil", "context": "fc114_part", "expect": "ignore"}
+
+# --- Lange, natürliche Befehle
+{"text": "Ich brauche hier jetzt einen Kreis", "context": "fc114_sketcher", "expect": ["Sketcher_CreateCircle"]}
+{"text": "Zeichne jetzt mal bitte eine Linie", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
+{"text": "Und jetzt machen wir hier ein Rechteck", "context": "fc114_sketcher", "expect": ["Sketcher_CreateRectangle"]}
+{"text": "Mach die beiden mal parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Jetzt die Skizze verlassen", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
+{"text": "Jetzt noch eine Fase an die Kante", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer"]}
+{"text": "Lass uns das mal speichern", "context": "fc114_partdesign", "expect": ["Std_Save"]}
+{"text": "Mach bitte eine Bohrung", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
+{"text": "Und jetzt eine Verrundung bitte", "context": "fc114_partdesign", "expect": ["PartDesign_Fillet"]}
+{"text": "Erstell mir mal einen neuen Körper", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
+{"text": "Dann machen wir jetzt eine neue Skizze", "context": "fc114_partdesign", "expect": ["PartDesign_NewSketch"]}
+{"text": "Die Skizze ist fertig, Skizze verlassen", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
+{"text": "Der Kreis ist zu groß, rückgängig", "context": "fc114_sketcher", "expect": ["Std_Undo"]}

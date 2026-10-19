@@ -957,11 +957,19 @@ Werkbankwechsel werden bei laufendem Werkzeug nicht angeboten.
   träfe „Fit“ (aus „Fit Selection“) das „first“ in einem Gesprächssatz; beim Leave-one-out
   bleiben sie wie FreeCADs Name erhalten.
 
-**Neu gefunden, offen (allgemein):** Ein Namenstreffer, der weniger als die Hälfte eines
-Satzes erklärt, wird ausgeführt, wenn auch kein Hilfetext passt („Die Linien sind jetzt
-parallel, oder?“ → Linie). Ebenso reicht ein Hilfetext mit zwei Wörtern („These lines look
-parallel to me now“). Die Grenze zwischen Befehl und Gespräch ist neu abzuwägen; der Korpus
-mit mehr Gesprächssätzen ist dafür der Prüfstein. Offen: Zahlwörter enden bei
+**Gespräch mit Fachwörtern (behoben):** Ein Namenstreffer, der wenig vom Satz erklärt, wurde
+ausgeführt („Die Linien sind jetzt parallel, oder?“ → Linie; „The circle is a bit too big“ →
+Kreis). Der Korpus bekam dafür Gesprächssätze beim Konstruieren und lange, natürliche Befehle.
+Vorher: de 10, en 9 Fehlauslösungen. Der Unterschied ist sprachlich, nicht eine Frage der
+Ähnlichkeit: Gespräch *beschreibt* Bestehendes („**Der** Kreis **ist** zu groß“, „Wie spät
+ist es“, „glaube ich“, „I **made** …“), Befehle *wollen* etwas („Ich brauche hier **einen**
+Kreis“). Darum `statement_words` im Sprachpaket (Aussage-, Frage- und Meinungswörter, auf der
+Einstellungsseite bearbeitbar): Ein Satz ab 3 Wörtern mit einem davon ist Gespräch
+(`reason: statement`). Steht daneben ein Teilsatz mit einem erkannten Befehl, gilt nur der
+Teilsatz („Die Skizze ist fertig, Skizze verlassen“). Kurzformen zählen innerhalb eines Satzes,
+wenn sie exakt geschrieben sind („Mach die beiden mal parallel“). Nachher: 0 Fehlauslösungen;
+drei Gesprächssätze ohne Aussagewort fragen noch zurück (mild). Preis: Befehle in Frageform
+(„Wie wäre es mit einer Fase?“) werden ignoriert – lieber still als falsch. Offen: Zahlwörter enden bei
 „zwölf“; „zwanzig“, „dreiundzwanzig“ fehlen (Whisper schreibt sie meist als Ziffern).
 
 ### 16.7 Abdeckung und Trainingsspiele

@@ -12,8 +12,8 @@ Principle: rather do nothing than the wrong thing.
 from dataclasses import dataclass, field
 
 from ttm_core.description import DescriptionIndex
-from ttm_core.languages import FILLER_WORDS, STOP_WORDS
-from ttm_core.matching import command_words, phrase_score
+from ttm_core.languages import FILLER_WORDS, STATEMENT_WORDS, STOP_WORDS
+from ttm_core.matching import PARTIAL, command_words, phrase_score
 from ttm_core.phonetics import PHONETICS
 
 # Higher levels win over equally good matches in lower levels (DESIGN.md 6.2).
@@ -23,6 +23,8 @@ LEVEL_BONUS = {"dialog": 0.03, "edit": 0.02, "workbench": 0.01, "global": 0.0}
 # result from the help texts: in "Extrudiere das und ziehe es vom Körper ab" the name
 # "extrudieren" (Pad) explains one word of four, the help text of Pocket all of them.
 NAME_EXPLAINS = 0.5
+# Below this many words a statement word is no evidence of talk: "Ist Kreis" is a clumsy command.
+STATEMENT_MIN_WORDS = 3
 
 
 @dataclass
@@ -57,6 +59,10 @@ def decide(text, candidates, language=None, threshold=0.75, margin=0.05,
     fillers = FILLER_WORDS.get(language, set())
     if fillers and all(w in fillers for w in words):
         return Decision("ignore", reason="filler")
+    # Statements, questions, opinions describe what is there: "Der Kreis ist zu groß".
+    statement = STATEMENT_WORDS.get(language, set())
+    if len(words) >= STATEMENT_MIN_WORDS and any(w in statement for w in words):
+        return Decision("ignore", reason="statement")
     phonetic = PHONETICS.get(language)
     stop = STOP_WORDS.get(language, frozenset())
 
@@ -130,10 +136,11 @@ def _phrases(candidate, language, phonetic):
 
 
 def _score(words, meaningful, phrase_words, sound, stop, whole):
-    if whole:
-        if len(meaningful) != len(phrase_words):
-            return 0.0
-        return phrase_score(meaningful, phrase_words, sound, stop)
+    if whole:                  # a short form: the whole utterance, or spelled exactly inside it
+        if len(meaningful) == len(phrase_words):
+            return phrase_score(meaningful, phrase_words, sound, stop)
+        score = phrase_score(meaningful, phrase_words, None, stop)
+        return score if score >= PARTIAL - 1e-9 else 0.0
     return phrase_score(words, phrase_words, sound, stop)
 
 

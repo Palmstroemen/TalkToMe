@@ -245,5 +245,32 @@
   "angle_units": [
     "degree",
     "degrees"
+  ],
+  "statement_words": [
+    "are",
+    "been",
+    "could",
+    "did",
+    "gets",
+    "got",
+    "guess",
+    "had",
+    "how",
+    "is",
+    "look",
+    "looks",
+    "made",
+    "seems",
+    "should",
+    "think",
+    "was",
+    "were",
+    "what",
+    "when",
+    "where",
+    "who",
+    "why",
+    "will",
+    "would"
   ]
 }

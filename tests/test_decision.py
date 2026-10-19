@@ -1,5 +1,7 @@
 """Tests for deciding whether to execute, reject or ignore an utterance (DESIGN.md 7 and 9.3)."""
 
+import pytest
+
 from ttm_core.decision import decide
 
 
@@ -198,3 +200,47 @@ def test_foreign_labels_do_not_match_by_sound():
     candidates = [dict(cand("Std_Open", ["Öffnen"], "global"), foreign=["Open"])]
     d = decide("Skizze in der XY-Ebene", candidates, language="de")
     assert d.kind != "execute"
+
+
+# --- statements, questions, opinions are talk (statement_words in the language pack) --------------
+
+@pytest.mark.parametrize("text", [
+    "Der Kreis ist irgendwie zu groß", "Das Rechteck sitzt noch nicht richtig", "Wie spät ist es eigentlich",
+    "Ich glaube das Rechteck passt so", "Ich habe gestern einen Kreis gezeichnet",
+])
+def test_statements_are_talk(text):
+    d = decide(text, CANDIDATES, language="de")
+    assert (d.kind, d.reason) == ("ignore", "statement"), d
+
+
+@pytest.mark.parametrize("text, command", [
+    ("Ich brauche hier jetzt einen Kreis", "Sketcher_CreateCircle"),
+    ("Zeichne jetzt mal bitte ein Rechteck", "Sketcher_CreateRectangle"),
+    ("Kreis", "Sketcher_CreateCircle"),
+])
+def test_commands_without_statement_words_still_work(text, command):
+    d = decide(text, CANDIDATES, language="de")
+    assert (d.kind, d.command) == ("execute", command)
+
+
+def test_statement_words_english():
+    en = [cand("Sketcher_CreateCircle", ["Circle"], "edit")]
+    assert decide("The circle is a bit too big", en, language="en").reason == "statement"
+    assert decide("I need a circle here now", en, language="en").kind == "execute"
+
+
+def test_short_statements_are_not_judged():
+    """Under three words a statement word is no evidence: "Ist Kreis" is a clumsy command."""
+    assert decide("Ist Kreis", CANDIDATES, language="de").kind == "execute"
+
+
+# --- short forms of labels -----------------------------------------------------------------------
+
+PARALLEL = [{"id": "Sketcher_ConstrainParallel", "phrases": ["Parallel festlegen"], "short": ["Parallel"],
+             "level": "edit", "active": True},
+            {"id": "Std_ViewFitSelection", "phrases": ["Fit Selection"], "short": ["Fit"], "level": "global", "active": True}]
+
+
+def test_short_form_inside_a_sentence_only_when_spelled_exactly():
+    assert decide("Mach die beiden mal parallel", PARALLEL, language="de").command == "Sketcher_ConstrainParallel"
+    assert decide("Let me get a coffee first", PARALLEL, language="en").kind != "execute"

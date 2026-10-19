@@ -74,7 +74,7 @@
 {"text": "Circle", "context": "fc114_sketcher", "expect": ["Sketcher_CreateCircle"]}
 {"text": "Ellipse", "context": "fc114_sketcher", "expect": ["Sketcher_CreateEllipseByCenter"]}
 {"text": "Make it parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
-{"text": "These lines look parallel to me now", "context": "fc114_sketcher", "expect": "ignore", "known": true, "note": "talk: the help text of Parallel Constraint explains 'lines' and 'parallel'"}
+{"text": "These lines look parallel to me now", "context": "fc114_sketcher", "expect": "ignore"}
 {"text": "Let me get a coffee first", "context": "fc114_sketcher", "expect": "ignore"}
 
 # --- Values for a running tool
@@ -87,3 +87,31 @@
 # --- Values in the pad dialog
 {"text": "12 mm", "context": "fc114_pad_dialog", "expect": [{"command": "ui:values", "args": {"values": [[null, 12.0, "length"]]}}]}
 {"text": "OK", "context": "fc114_pad_dialog", "expect": ["ui:ok"]}
+
+# --- Talk while designing, with technical words: no reaction
+{"text": "The line got way too long", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "The circle is a bit too big", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Hmm, the rectangle is not in the right place", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Where did the center point go", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Why did that become horizontal", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "Oops, that was the wrong corner", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "I think the sketch is not fully constrained yet", "context": "fc114_sketcher", "expect": "ignore"}
+{"text": "That edge is still way too sharp", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "The hole is in the wrong place", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "I made a part like this yesterday", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "Can you pass me the coffee", "context": "fc114_partdesign", "expect": "ignore", "known": true, "note": "talk without a statement word; asks back (mild: no command)"}
+{"text": "Yes, I am coming, just a moment", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "I will send you the file by mail", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "What time is it actually", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "The wall thickness is still too low", "context": "fc114_partdesign", "expect": "ignore"}
+{"text": "I will have another look at this later", "context": "fc114_part", "expect": "ignore"}
+
+# --- Long, natural commands
+{"text": "I need a circle here now", "context": "fc114_sketcher", "expect": ["Sketcher_CreateCircle"]}
+{"text": "Now please draw a line", "context": "fc114_sketcher", "expect": ["Sketcher_CreateLine"]}
+{"text": "Make these two parallel", "context": "fc114_sketcher", "expect": ["Sketcher_ConstrainParallel"]}
+{"text": "Now a chamfer on that edge", "context": "fc114_partdesign", "expect": ["PartDesign_Chamfer"]}
+{"text": "Let's save this", "context": "fc114_partdesign", "expect": ["Std_Save"]}
+{"text": "Make a hole please", "context": "fc114_partdesign", "expect": ["PartDesign_Hole"]}
+{"text": "Create a new body for me", "context": "fc114_partdesign", "expect": ["PartDesign_Body"]}
+{"text": "The sketch is done, leave sketch", "context": "fc114_sketcher", "expect": ["Sketcher_LeaveSketch"]}
