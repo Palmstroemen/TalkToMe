@@ -55,7 +55,10 @@ installations; FreeCAD's Python console shows it with `App.getUserAppDataDir()` 
 ln -s ~/Development/TalkToMe "<UserAppDataDir>/Mod/TalkToMe"
 ```
 
-A toolbar "Talk to me" with a microphone button appears in every workbench.
+A toolbar "Talk to me" with a microphone button appears in every workbench. To give it a
+keyboard shortcut (or a foot pedal key), assign one to the command "Talk to me" in
+Tools → Customize → Keyboard. The microphone key of a laptop keyboard mutes the microphone in
+the system; the button then turns orange.
 Optional settings (Tools → Edit parameters → `BaseApp/Preferences/Mod/TalkToMe`):
 
 | Parameter | Default | Meaning |

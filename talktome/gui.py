@@ -13,16 +13,16 @@ import sys
 import FreeCAD as App
 import FreeCADGui as Gui
 
+from talktome import command
 from talktome import context as ttm_context
 from talktome import executor
-from talktome.qt import QAction, QtCore, QtGui, QtWidgets
+from talktome.qt import QtCore, QtGui, QtWidgets
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
 
 ADDON_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.join(ADDON_DIR, "service")
 ICON_DIR    = os.path.join(ADDON_DIR, "Resources", "icons")
 PARAMS      = App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe")
-TOOLBAR     = "Talk to me"
 POLL_MS     = 50
 STATUS_MS   = 8000
 STDERR_KEEP = 20
@@ -35,6 +35,7 @@ ICONS = {
     "starting":   "mic_wait.svg",
     "idle":       "mic_wait.svg",
     "listening":  "mic_on.svg",
+    "muted":      "mic_muted.svg",
     "processing": "mic_busy.svg",
     "error":      "mic_error.svg",
 }
@@ -43,6 +44,7 @@ TOOLTIPS = {
     "starting":   "Talk to me: starting speech service ...",
     "idle":       "Talk to me: connected, microphone off",
     "listening":  "Talk to me: listening",
+    "muted":      "Talk to me: microphone muted by the system (e.g. its keyboard key)",
     "processing": "Talk to me: recognizing ...",
     "error":      "Talk to me: speech service not available",
 }
@@ -59,14 +61,12 @@ def log(text):
 
 
 class Controller(QtCore.QObject):
-    """Owns the microphone action, the service process and the socket connection."""
+    """Drives the microphone command's action, owns the service process and the connection."""
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, action):
         super().__init__(main_window)
         self.mw = main_window
-        self.action = QAction(main_window)
-        self.action.setObjectName("TalkToMe_Microphone")
-        self.action.setCheckable(True)
+        self.action = action
         self.action.toggled.connect(self.on_toggled)
 
         self.language = PARAMS.GetString("Language", "de")
@@ -93,14 +93,7 @@ class Controller(QtCore.QObject):
     def status(self, text):
         self.mw.statusBar().showMessage("Talk to me: " + text, STATUS_MS)
 
-    def ensure_in_toolbar(self):
-        tb = self.mw.findChild(QtWidgets.QToolBar, TOOLBAR)
-        if tb is not None and self.action not in tb.actions():
-            tb.addAction(self.action)
-        return tb is not None
-
     def on_workbench_activated(self, *args):
-        self.ensure_in_toolbar()
         self.send_context()
 
     def send_context(self):
@@ -306,14 +299,14 @@ _controller = None
 
 
 def setup():
-    """Create the controller once the main window and our toolbar exist. Returns True when done."""
+    """Create the controller once FreeCAD has created the command's action. Returns True when done."""
     global _controller
     mw = Gui.getMainWindow()
-    if mw is None or mw.findChild(QtWidgets.QToolBar, TOOLBAR) is None:
+    action = command.action()
+    if mw is None or action is None:
         return False
     if _controller is None:
-        _controller = Controller(mw)
+        _controller = Controller(mw, action)
         mw.workbenchActivated.connect(_controller.on_workbench_activated)
         QtWidgets.QApplication.instance().aboutToQuit.connect(_controller.shutdown)
-    _controller.ensure_in_toolbar()
     return True

@@ -4,11 +4,14 @@
 def _talktome_init():
     from PySide import QtCore
 
-    # A global toolbar shown in every workbench. FreeCAD creates it from this parameter
-    # group; the microphone action is added to it at runtime.
+    import talktome.command
+
+    # A global toolbar shown in every workbench, created by FreeCAD from this parameter group.
+    # The value names the module that registers the command.
     toolbar = FreeCAD.ParamGet("User parameter:BaseApp/Workbench/Global/Toolbar/TalkToMe")
     toolbar.SetString("Name", "Talk to me")
     toolbar.SetBool("Active", True)
+    toolbar.SetString(talktome.command.NAME, "talktome.command")
 
     # FreeCAD runs this file with exec() inside a function: module-level names vanish
     # afterwards. The main window as parent keeps the timer alive.

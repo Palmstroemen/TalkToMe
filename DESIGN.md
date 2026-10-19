@@ -374,12 +374,13 @@ Gespeichert wird im Lernmodus immer der **tatsächlich erkannte** Text, nicht de
 
 ### 9.1 Bedienung
 
-- **Ein Toolbar-Button** mit Mikrofon-Symbol schaltet das Zuhören ein und aus (umschaltbar). Optional kann der Button zusätzlich ein Tastenkürzel bekommen.
+- **Ein Toolbar-Button** mit Mikrofon-Symbol schaltet das Zuhören ein und aus (umschaltbar). Er ist ein FreeCAD-Befehl (`TalkToMe_Microphone`): Unter *Werkzeuge → Anpassen → Tastatur* bekommt er eine beliebige Taste, auch die eines Fußpedals, und er lässt sich in andere Toolbars ziehen.
+- **Die Mikrofon-Taste der Tastatur** (viele Laptops, z. B. Fn+F4) schaltet das Mikrofon im System stumm. Der Dienst bekommt dann exakte Nullen, echtes Mikrofonrauschen ist nie genau null. Nach 0,5 s Nullen zeigt der Button „stumm (System)“ in Orange; die Spracherkennung überspringt die Nullen sofort. Externe Tastaturen haben diese Taste meist nicht, dafür gibt es das Tastenkürzel des Buttons.
 - **Der Zustand ist deutlich sichtbar:** Das Symbol unterscheidet die Zustände aus, hört zu, verarbeitet gerade und Dienst nicht erreichbar.
 - **Optional:** Das Zuhören pausiert automatisch, solange FreeCAD nicht das aktive Fenster ist. Das ist nützlich bei Videokonferenzen.
 - **Ausschalten per Sprache:** „Mikro aus“, „kurze Pause“, „Stoppe mal die Aufnahme“, „Höre nicht mehr zu“ (`ui:mic_off`, immer verfügbar). Steckt der Befehl in einer Äußerung, wird nur er ausgeführt: „Ok, kurze Pause“ drückt in einem Dialog nicht erst OK. Ein Fehlalarm ist harmlos, das Mikrofon ist dann aus. Zum Einschalten gibt es bewusst keinen Sprachbefehl, dafür ist der Button da.
 
-#### Betriebsart Sprechtaste (geplant)
+#### Betriebsart Sprechtaste (später, für laute Umgebungen)
 
 Für laute Umgebungen oder Großraumbüros ist das Mikrofon wahlweise eine Sprechtaste (Push-to-Talk) statt eines Schalters (Einstellung `Mode`: `toggle` / `push`):
 

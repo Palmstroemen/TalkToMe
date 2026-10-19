@@ -27,6 +27,7 @@ SAMPLE_RATE = 16000
 FRAME = 512
 FRAME_MS = FRAME * 1000 // SAMPLE_RATE
 MUTE_AFTER_TONE_S = 0.15     # keep the microphone deaf a bit longer than the tone itself
+SYSTEM_MUTE_FRAMES = 500 // FRAME_MS   # exact digital silence this long: muted by the system
 
 
 class Service:
@@ -51,6 +52,8 @@ class Service:
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
         self.language = self.info.get("language")
         self._mute_until = 0.0
+        self._zero_frames = 0
+        self._system_muted = False            # microphone muted by the system, e.g. a keyboard key
         self._seq_lock = threading.Lock()     # the sequence advances from the STT and the client thread
         self._pending = []                    # clauses of the current utterance not decided yet
         self._utterance = ""
@@ -122,7 +125,7 @@ class Service:
                         self._client = conn
                         self.language = msg.get("language") or self.language
                         self.send("welcome", **self.info)
-                        self.send("state", state="listening" if self._listening else "idle")
+                        self.send("state", state=self._listen_state())
                         continue
                     self._dispatch(msg)
         except OSError:
@@ -183,13 +186,19 @@ class Service:
         if on and not self._listening:
             self.segmenter.reset()
             self.vad.reset()
+            self._zero_frames, self._system_muted = 0, False
             self._listening = True
             self.source.start(self._on_frame)
         elif not on and self._listening:
             self._listening = False
             self.source.stop()
         if notify:
-            self.send("state", state="listening" if self._listening else "idle")
+            self.send("state", state=self._listen_state())
+
+    def _listen_state(self):
+        if not self._listening:
+            return "idle"
+        return "muted" if self._system_muted else "listening"
 
     def _on_frame(self, frame):
         try:
@@ -215,6 +224,19 @@ class Service:
         While a tone plays, frames count as silence: the tone can't start an utterance,
         but the frames stay in the pre-roll, so speech beginning during the tone keeps its start.
         """
+        if not frame.any():
+            # A muted microphone (system setting or keyboard key) delivers exact zeros, real
+            # input always has some noise. No speech in there: skip the VAD.
+            self._zero_frames += 1
+            if self._zero_frames >= SYSTEM_MUTE_FRAMES and not self._system_muted:
+                self._system_muted = True
+                self.send("state", state="muted")
+            prob = 0.0
+        else:
+            self._zero_frames = 0
+            if self._system_muted:
+                self._system_muted = False
+                self.send("state", state="listening")
         if prob is None:
             prob = self.vad.prob(frame)
         if time.monotonic() < self._mute_until:
@@ -248,7 +270,7 @@ class Service:
                 self.send("transcript", **result)
                 if self._candidates is not None:
                     self._decide(result["text"])
-            self.send("state", state="listening" if self._listening else "idle")
+            self.send("state", state=self._listen_state())
 
     # --- decisions and sequences (DESIGN.md 7) --------------------------------------------
 

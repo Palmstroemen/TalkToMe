@@ -16,8 +16,11 @@ SPEECH_PATTERN = [0.0] * 10 + [0.9] * 20 + [0.0] * 30
 
 
 class FakeSource:
-    def __init__(self, n_frames):
+    """Frames with a faint noise floor like a real microphone; level 0.0 is a system-muted one."""
+
+    def __init__(self, n_frames, levels=None):
         self.n_frames = n_frames
+        self.levels = levels or [1e-4] * n_frames
         self.running = False
         self.starts = 0
 
@@ -25,10 +28,10 @@ class FakeSource:
         self.running = True
         self.starts += 1
         def feed():
-            for _ in range(self.n_frames):
+            for level in self.levels[:self.n_frames]:
                 if not self.running:
                     return
-                callback(np.zeros(FRAME, dtype=np.float32))
+                callback(np.full(FRAME, level, dtype=np.float32))
         threading.Thread(target=feed, daemon=True).start()
 
     def stop(self):
@@ -415,5 +418,38 @@ def test_microphone_off_wins_over_the_rest_of_the_utterance(parts):
     c.send("listen", on=True)
     msg = c.wait_for("plan")
     assert (msg["command"], msg["more"]) == ("ui:mic_off", False)
+    c.close()
+    s.stop()
+
+
+
+# --- microphone muted by the system (keyboard key) ----------------------------------------
+
+def test_system_mute_is_reported_and_lifted(parts):
+    """Muted by the system, the microphone delivers exact zeros; real noise never does."""
+    levels = [1e-4] * 5 + [0.0] * 60 + [1e-4] * 5
+    parts["source"] = FakeSource(len(levels), levels)
+    parts["vad"] = FakeVAD([0.0] * len(levels))
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("listen", on=True)
+    c.wait_for("state", state="muted")
+    c.wait_for("state", state="listening")
+    c.close()
+    s.stop()
+
+
+def test_muted_frames_skip_the_vad(parts):
+    levels = [0.0] * 60
+    parts["source"] = FakeSource(len(levels), levels)
+    parts["vad"] = FakeVAD([0.9] * len(levels))          # would be speech if asked
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("listen", on=True)
+    c.wait_for("state", state="muted")
+    with pytest.raises(TimeoutError):
+        c.wait_for("speech_start", timeout=0.3)
     c.close()
     s.stop()
