@@ -29,6 +29,11 @@
         <translation>Auswahl wird nicht mehr angeboten</translation>
     </message>
     <message>
+        <location filename="../talktome/executor.py" line="186"/>
+        <source>Rename constraint</source>
+        <translation>Randbedingung umbenennen</translation>
+    </message>
+    <message>
         <location filename="../talktome/executor.py" line="202"/>
         <source>named {}</source>
         <translation>heißt jetzt {}</translation>
@@ -516,6 +521,7 @@
         <translation>Die Sprachausgabe braucht piper-tts im Python des Sprachdienstes.</translation>
     </message>
     <message>
+        <location filename="../talktome/executor.py" line="197"/>
         <location filename="../talktome/training.py" line="26"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>

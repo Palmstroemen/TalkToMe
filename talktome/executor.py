@@ -183,7 +183,7 @@ def constraint_name(label):
 
 def rename_constraint(sketch, index, label):
     doc = sketch.Document
-    doc.openTransaction("Rename constraint")
+    doc.openTransaction(translate("TalkToMe", "Rename constraint"))
     try:
         sketch.renameConstraint(index, constraint_name(label))
     finally:
@@ -194,7 +194,7 @@ def rename_constraint(sketch, index, label):
 def rename(obj, label):
     """Set an object's label, undoable. Returns (ok, reason); FreeCAD may adapt duplicate labels."""
     doc = obj.Document
-    doc.openTransaction("Rename")
+    doc.openTransaction(translate("TalkToMe", "Rename"))
     try:
         obj.Label = label
     finally:
