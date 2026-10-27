@@ -87,7 +87,7 @@ def main(argv=None):
 
     from talktome_service.audio import Microphone, WavSource
     from talktome_service.server import Service
-    from talktome_service.stt import Transcriber, cuda_device_count
+    from talktome_service.stt import cuda_device_count, load_transcriber
     from talktome_service.tones import TonePlayer
     from talktome_service.vad import SileroVAD
     from talktome_service.voice import LazySpeaker
@@ -98,8 +98,10 @@ def main(argv=None):
         log("no usable GPU found, falling back to the CPU profile")
     log("loading model '{}' on {} ({}) ...".format(profile.model, profile.device, profile.compute_type))
     # A variant ("de-AT") is recognized in its base's language: Whisper only knows "de".
-    transcriber = Transcriber(profile, langpack.pack(args.language).recognition_language, beam_size=args.beam, cpu_threads=args.threads)
-    log("model loaded")
+    transcriber = load_transcriber(profile, langpack.pack(args.language).recognition_language, model=args.model,
+                                   log=log, beam_size=args.beam, cpu_threads=args.threads)
+    profile = transcriber.profile
+    log("model loaded" if not profile.fallback else "model '{}' loaded on the CPU".format(profile.model))
 
     mic = args.mic
     if mic is not None and mic.isdigit():

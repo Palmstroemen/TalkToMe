@@ -3,6 +3,10 @@
 
 import time
 
+import numpy as np
+
+from talktome_service.profiles import select_profile
+
 
 def cuda_device_count():
     try:
@@ -42,3 +46,22 @@ class Transcriber:
             "no_speech_prob": round(max((s.no_speech_prob for s in segments), default=1.0), 3),
             "avg_logprob": round(sum(s.avg_logprob for s in segments) / n, 3),
         }
+
+
+def load_transcriber(profile, language, model=None, log=print, make=Transcriber, **kwargs):
+    """A Transcriber that has decoded once, so it works and the first command is fast.
+
+    A GPU counts as found as soon as its driver is there, but decoding also needs the CUDA
+    libraries (cuBLAS, cuDNN), which Windows in particular often lacks. They are only loaded on
+    the first decoding: if it fails, the CPU profile takes over (DESIGN.md 12.1)."""
+    try:
+        transcriber = make(profile, language, **kwargs)
+        transcriber.transcribe(np.zeros(16000, dtype=np.float32))
+        return transcriber
+    except Exception as e:
+        if profile.device == "cpu":
+            raise
+        log("GPU not usable ({}), falling back to the CPU profile".format(e))
+    cpu = select_profile("cpu", 0, model)
+    cpu.fallback = True
+    return make(cpu, language, **kwargs)

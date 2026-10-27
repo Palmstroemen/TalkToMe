@@ -51,8 +51,10 @@ The addon itself is a few MB. Speech recognition needs much more, about as much 
 | Speech model, downloaded on first use | `tiny` ~75 MB, `base` ~150 MB (default without GPU), `small` ~500 MB (default with GPU), `medium` ~1.5 GB | `~/.cache/huggingface` | huggingface.co |
 | Voice of the speech output, per language | ~60 MB | `~/.cache/talktome/voices` | huggingface.co |
 
-A usual installation without GPU takes about 750 MB. With an NVIDIA GPU, the CUDA libraries come
-on top (often more than 1 GB), see [faster-whisper](https://github.com/SYSTRAN/faster-whisper#gpu).
+A usual installation without GPU takes about 750 MB. With an NVIDIA GPU, the CUDA 12 libraries
+(cuBLAS, cuDNN 9) come on top (often more than 1 GB), see [faster-whisper](https://github.com/SYSTRAN/faster-whisper#gpu).
+They are not installed with the speech service: without them it uses the CPU and the status bar
+says "no usable GPU found, using the CPU".
 
 These downloads are the only connections to the internet. What you say, the documents and
 what Talk to me learns stay on your computer.
