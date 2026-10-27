@@ -24,9 +24,11 @@ def test_default_python_falls_back_to_a_venv_in_the_addon():
 
 
 def test_search_path_leaves_out_the_appimage():
-    path = os.pathsep.join(["/tmp/.mount_FreeCA1/usr/bin", "/usr/local/bin", "/usr/bin"])
-    assert install.search_path(path, appdir="/tmp/.mount_FreeCA1") == ["/usr/local/bin", "/usr/bin"]
-    assert install.search_path(path) == ["/tmp/.mount_FreeCA1/usr/bin", "/usr/local/bin", "/usr/bin"]
+    appdir = os.path.join(os.sep, "tmp", ".mount_FreeCA1")
+    dirs = [os.path.join(appdir, "usr", "bin"), os.path.join(os.sep, "usr", "local", "bin"), os.path.join(os.sep, "usr", "bin")]
+    path = os.pathsep.join(dirs)
+    assert install.search_path(path, appdir=appdir) == dirs[1:]
+    assert install.search_path(path) == dirs
 
 
 def test_parse_version():
@@ -40,10 +42,10 @@ def files(*paths):
 
 
 def test_find_python_takes_the_first_new_enough():
-    versions = {"/usr/local/bin/python3": (3, 8), "/usr/bin/python3": (3, 12)}
+    versions = {os.path.join("/usr/local/bin", "python3"): (3, 8), os.path.join("/usr/bin", "python3"): (3, 12)}
     found = install.find_python(["/usr/local/bin", "/usr/bin"], lambda program, args: versions.get(program),
                                 isfile=files(*versions))
-    assert found == ("/usr/bin/python3", [], (3, 12))
+    assert found == (os.path.join("/usr/bin", "python3"), [], (3, 12))
 
 
 def test_find_python_none_when_too_old_or_missing():
@@ -54,8 +56,8 @@ def test_find_python_none_when_too_old_or_missing():
 def test_find_python_skips_python_of_an_app_bundle():
     bundle = "/Applications/FreeCAD.app/Contents/Resources/bin"
     found = install.find_python([bundle, "/usr/bin"], lambda program, args: (3, 11),
-                                isfile=files(bundle + "/python3", "/usr/bin/python3"))
-    assert found[0] == "/usr/bin/python3"
+                                isfile=files(os.path.join(bundle, "python3"), os.path.join("/usr/bin", "python3")))
+    assert found[0] == os.path.join("/usr/bin", "python3")
 
 
 def test_find_python_on_windows_uses_the_launcher_and_skips_the_store_alias():

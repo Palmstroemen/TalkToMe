@@ -50,7 +50,8 @@ def version_of(program, args):
 
 def run(program, args, **kwargs):
     print("$ {} {}".format(program, " ".join(args)), flush=True)
-    env = dict(os.environ, PYTHONPATH=os.pathsep.join([ROOT, SERVICE_DIR]))
+    # As the addon starts the service (talktome/gui.py, service_environment).
+    env = dict(os.environ, PYTHONPATH=os.pathsep.join([ROOT, SERVICE_DIR]), PYTHONIOENCODING="utf-8")
     return subprocess.run([program] + list(args), env=env, check=True, **kwargs)
 
 
