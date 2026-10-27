@@ -52,7 +52,7 @@ The addon itself is a few MB. Speech recognition needs much more, about as much 
 | Speech service (faster-whisper, Piper, numpy, …) | ~550 MB | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
 | Speech model, downloaded on first use | `tiny` ~75 MB, `base` ~150 MB (default without GPU), `small` ~500 MB (default with GPU), `medium` ~1.5 GB | `~/.cache/huggingface` | huggingface.co |
 | Voice of the speech output, per language | ~60 MB | `~/.cache/talktome/voices` | huggingface.co |
-| GPU support, optional: NVIDIA's CUDA libraries (cuBLAS, cuDNN 9) | ~1.3 GB download, ~2 GB on disk | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
+| GPU support, optional: NVIDIA's CUDA libraries (cuBLAS, cuDNN 9) | ~1.3 GB download, ~2.2 GB on disk | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
 
 A usual installation without GPU takes about 750 MB.
 
