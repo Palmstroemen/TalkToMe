@@ -59,67 +59,67 @@
         <translation>gerade nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="34"/>
+        <location filename="../talktome/gui.py" line="35"/>
         <source>no matching command</source>
         <translation>kein passender Befehl</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="35"/>
+        <location filename="../talktome/gui.py" line="36"/>
         <source>ambiguous</source>
         <translation>mehrdeutig</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="36"/>
+        <location filename="../talktome/gui.py" line="37"/>
         <source>not available now</source>
         <translation>gerade nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="53"/>
+        <location filename="../talktome/gui.py" line="54"/>
         <source>Talk to me: microphone off</source>
         <translation>Talk to me: Mikrofon aus</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="54"/>
+        <location filename="../talktome/gui.py" line="55"/>
         <source>Talk to me: starting speech service ...</source>
         <translation>Talk to me: Sprachdienst startet …</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="55"/>
+        <location filename="../talktome/gui.py" line="56"/>
         <source>Talk to me: connected, microphone off</source>
         <translation>Talk to me: verbunden, Mikrofon aus</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="56"/>
+        <location filename="../talktome/gui.py" line="57"/>
         <source>Talk to me: listening</source>
         <translation>Talk to me: hört zu</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="57"/>
+        <location filename="../talktome/gui.py" line="58"/>
         <source>Talk to me: microphone muted by the system (e.g. its keyboard key)</source>
         <translation>Talk to me: Mikrofon im System stummgeschaltet (z. B. mit der Tastaturtaste)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="58"/>
+        <location filename="../talktome/gui.py" line="59"/>
         <source>Talk to me: recognizing ...</source>
         <translation>Talk to me: erkenne …</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="59"/>
+        <location filename="../talktome/gui.py" line="60"/>
         <source>Talk to me: speech service not available</source>
         <translation>Talk to me: Sprachdienst nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="263"/>
-        <source>speech service not installed ({} not found), see README</source>
-        <translation>Sprachdienst nicht installiert ({} nicht gefunden), siehe README</translation>
+        <location filename="../talktome/gui.py" line="262"/>
+        <source>speech service not installed ({} not found)</source>
+        <translation>Sprachdienst nicht installiert ({} nicht gefunden)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="291"/>
+        <location filename="../talktome/gui.py" line="292"/>
         <source>starting speech service (the first start downloads the model) ...</source>
         <translation>Sprachdienst startet (beim ersten Start wird das Modell geladen) …</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="312"/>
+        <location filename="../talktome/gui.py" line="319"/>
         <source>Talk to me: speech service output:
   {}
 </source>
@@ -128,94 +128,94 @@
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="314"/>
+        <location filename="../talktome/gui.py" line="321"/>
         <source>speech service stopped, see Report view for details</source>
         <translation>Sprachdienst beendet, Einzelheiten im Ausgabefenster</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="346"/>
+        <location filename="../talktome/gui.py" line="353"/>
         <source>cannot connect to speech service: {}</source>
         <translation>keine Verbindung zum Sprachdienst: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="402"/>
+        <location filename="../talktome/gui.py" line="409"/>
         <source>connection to speech service lost</source>
         <translation>Verbindung zum Sprachdienst verloren</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="412"/>
+        <location filename="../talktome/gui.py" line="419"/>
         <source>no usable GPU found, using the CPU</source>
         <translation>keine nutzbare Grafikkarte gefunden, die CPU wird verwendet</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="427"/>
+        <location filename="../talktome/gui.py" line="434"/>
         <source>not understood: »{}« ({})</source>
         <translation>nicht verstanden: »{}« ({})</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="527"/>
+        <location filename="../talktome/gui.py" line="534"/>
         <source>nothing to pick</source>
         <translation>nichts zum Auswählen</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="557"/>
+        <location filename="../talktome/gui.py" line="564"/>
         <source>»{}« → {} failed: {}</source>
         <translation>»{}« → {} fehlgeschlagen: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="558"/>
+        <location filename="../talktome/gui.py" line="565"/>
         <source>Talk to me: »{}« → {} failed: {}
 </source>
         <translation>Talk to me: »{}« → {} fehlgeschlagen: {}
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="574"/>
+        <location filename="../talktome/gui.py" line="581"/>
         <source> (from help text)</source>
         <translation> (aus dem Hilfetext)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="589"/>
+        <location filename="../talktome/gui.py" line="596"/>
         <source>dry run, not executed</source>
         <translation>Testmodus, nicht ausgeführt</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="596"/>
+        <location filename="../talktome/gui.py" line="603"/>
         <source>values wait for the first click</source>
         <translation>Werte warten auf den ersten Klick</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="598"/>
+        <location filename="../talktome/gui.py" line="605"/>
         <source>no tool waiting for values</source>
         <translation>kein Werkzeug wartet auf Werte</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="599"/>
+        <location filename="../talktome/gui.py" line="606"/>
         <source>values {}</source>
         <translation>Werte {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="608"/>
+        <location filename="../talktome/gui.py" line="615"/>
         <source>no object »{}« in the document</source>
         <translation>kein Objekt »{}« im Dokument</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="609"/>
+        <location filename="../talktome/gui.py" line="616"/>
         <source>nothing to rename: select an object</source>
         <translation>nichts zum Umbenennen: wähle ein Objekt aus</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="613"/>
+        <location filename="../talktome/gui.py" line="620"/>
         <source>dimension name »{}«</source>
         <translation>Name der Bemaßung »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="617"/>
+        <location filename="../talktome/gui.py" line="624"/>
         <source>rename dimension {} to »{}«</source>
         <translation>Bemaßung {} umbenannt in »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="620"/>
+        <location filename="../talktome/gui.py" line="627"/>
         <source>rename {} to »{}«</source>
         <translation>{} umbenannt in »{}«</translation>
     </message>
@@ -350,173 +350,213 @@
         <translation>Experte</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="113"/>
+        <location filename="../talktome/preferences.py" line="117"/>
+        <source>Remove…</source>
+        <translation>Entfernen…</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="118"/>
+        <source>Remove the speech service&apos;s Python environment (about 550 MB)</source>
+        <translation>Die Python-Umgebung des Sprachdienstes entfernen (ca. 550 MB)</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="121"/>
+        <source>Speech service:</source>
+        <translation>Sprachdienst:</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="124"/>
         <source>Spoken language:</source>
         <translation>Gesprochene Sprache:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="115"/>
+        <location filename="../talktome/preferences.py" line="126"/>
         <source>Microphone:</source>
         <translation>Mikrofon:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="123"/>
+        <location filename="../talktome/preferences.py" line="134"/>
         <source>Volume of tones and voice:</source>
         <translation>Lautstärke von Tönen und Stimme:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="124"/>
+        <location filename="../talktome/preferences.py" line="135"/>
         <source>The microphone is switched on and off with the button in the toolbar &quot;Talk to me&quot;. A keyboard shortcut for it: Tools → Customize → Keyboard.</source>
         <translation>Das Mikrofon schaltest du mit dem Button in der Symbolleiste „Talk to me“ ein und aus. Ein Tastenkürzel dafür: Werkzeuge → Anpassen → Tastatur.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="132"/>
+        <location filename="../talktome/preferences.py" line="143"/>
         <source>Speech recognition model:</source>
         <translation>Modell der Spracherkennung:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="134"/>
+        <location filename="../talktome/preferences.py" line="145"/>
         <source>Run on:</source>
         <translation>Ausführen auf:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="137"/>
+        <location filename="../talktome/preferences.py" line="148"/>
         <source>Larger models recognize better but take longer. Without a GPU, &quot;base&quot; answers in about a second. A new model is downloaded on its first use.</source>
         <translation>Größere Modelle erkennen besser, brauchen aber länger. Ohne Grafikkarte antwortet „base“ in etwa einer Sekunde. Ein neues Modell wird bei der ersten Verwendung heruntergeladen.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="144"/>
+        <location filename="../talktome/preferences.py" line="155"/>
         <source>Offer the likely commands next to the mouse pointer when not sure</source>
         <translation>Bei Unsicherheit die wahrscheinlichen Befehle neben dem Mauszeiger anbieten</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="147"/>
+        <location filename="../talktome/preferences.py" line="158"/>
         <source>Speech output:</source>
         <translation>Sprachausgabe:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="149"/>
+        <location filename="../talktome/preferences.py" line="160"/>
         <source>default voice of the language</source>
         <translation>Standardstimme der Sprache</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="150"/>
+        <location filename="../talktome/preferences.py" line="161"/>
         <source>Voice:</source>
         <translation>Stimme:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="150"/>
+        <location filename="../talktome/preferences.py" line="161"/>
         <source>Piper voice</source>
         <translation>Piper-Stimme</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="153"/>
+        <location filename="../talktome/preferences.py" line="164"/>
         <source>Only show what was recognized, don&apos;t execute (for testing)</source>
         <translation>Nur anzeigen, was erkannt wurde, nicht ausführen (zum Testen)</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="163"/>
+        <location filename="../talktome/preferences.py" line="174"/>
         <source>Word lists of the spoken language. Your changes are kept apart from the language pack, in your own folder; &quot;Reset&quot; brings back the pack&apos;s list.</source>
         <translation>Wortlisten der gesprochenen Sprache. Deine Änderungen liegen getrennt vom Sprachpaket in deinem eigenen Ordner; „Zurücksetzen“ holt die Liste des Pakets zurück.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="169"/>
+        <location filename="../talktome/preferences.py" line="180"/>
         <source>one word per line</source>
         <translation>ein Wort pro Zeile</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="173"/>
+        <location filename="../talktome/preferences.py" line="184"/>
         <source>Reset this list</source>
         <translation>Liste zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="175"/>
+        <location filename="../talktome/preferences.py" line="186"/>
         <source>Training…</source>
         <translation>Training…</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="177"/>
+        <location filename="../talktome/preferences.py" line="188"/>
         <location filename="../talktome/training.py" line="124"/>
         <source>Vocabulary…</source>
         <translation>Wortschatz…</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="178"/>
+        <location filename="../talktome/preferences.py" line="189"/>
         <source>Your phrases and what training learned, by command</source>
         <translation>Deine Phrasen und was das Training gelernt hat, nach Befehlen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="180"/>
+        <location filename="../talktome/preferences.py" line="191"/>
         <source>Open my folder</source>
         <translation>Meinen Ordner öffnen</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="195"/>
-        <source>service/.venv/bin/python of the addon</source>
-        <translation>service/.venv/bin/python des Addons</translation>
+        <location filename="../talktome/preferences.py" line="206"/>
+        <source>the one installed on the General tab</source>
+        <translation>der auf der Seite „Allgemein“ installierte</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="196"/>
+        <location filename="../talktome/preferences.py" line="314"/>
+        <source>The speech service is not installed yet: General → Install…</source>
+        <translation>Der Sprachdienst ist noch nicht installiert: Allgemein → Installieren…</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="207"/>
         <source>Python of the speech service:</source>
         <translation>Python des Sprachdienstes:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="198"/>
+        <location filename="../talktome/preferences.py" line="209"/>
         <source>Extra arguments:</source>
         <translation>Zusätzliche Argumente:</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="199"/>
+        <location filename="../talktome/preferences.py" line="210"/>
         <source>Extra arguments are passed to the speech service, e.g. &quot;--beam 3&quot;. See: python -m talktome_service --help</source>
         <translation>Zusätzliche Argumente gehen an den Sprachdienst, z. B. „--beam 3“. Siehe: python -m talktome_service --help</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="220"/>
+        <location filename="../talktome/preferences.py" line="231"/>
         <source>&lt;b&gt;Sound comparison:&lt;/b&gt; {}. Words that sound alike count as the same, so a command is found even when the speech recognition spelled it wrong: {}.</source>
         <translation>&lt;b&gt;Lautvergleich:&lt;/b&gt; {}. Gleich klingende Wörter zählen als gleich, so wird ein Befehl auch dann gefunden, wenn die Spracherkennung ihn falsch geschrieben hat: {}.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="224"/>
+        <location filename="../talktome/preferences.py" line="235"/>
         <source>&lt;b&gt;Sound comparison:&lt;/b&gt; none for this language, only the spelling is compared. A language pack names its algorithm in language.json (&quot;phonetics&quot;).</source>
         <translation>&lt;b&gt;Lautvergleich:&lt;/b&gt; keiner für diese Sprache, verglichen wird nur die Schreibweise. Ein Sprachpaket nennt sein Verfahren in language.json („phonetics“).</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="228"/>
+        <location filename="../talktome/preferences.py" line="239"/>
         <source>&lt;b&gt;Word stems:&lt;/b&gt; forms of a word count as one when comparing with the help texts of the commands: {}.</source>
         <translation>&lt;b&gt;Wortstämme:&lt;/b&gt; Formen eines Wortes zählen beim Vergleich mit den Hilfetexten der Befehle als eines: {}.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="230"/>
+        <location filename="../talktome/preferences.py" line="241"/>
         <source>&lt;b&gt;Word stems:&lt;/b&gt; none for this language, help texts are compared word by word.</source>
         <translation>&lt;b&gt;Wortstämme:&lt;/b&gt; keine für diese Sprache, Hilfetexte werden Wort für Wort verglichen.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="275"/>
+        <location filename="../talktome/preferences.py" line="296"/>
+        <source>installed</source>
+        <translation>installiert</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="298"/>
+        <source>installed, but does not start</source>
+        <translation>installiert, startet aber nicht</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="300"/>
+        <source>not installed yet</source>
+        <translation>noch nicht installiert</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="303"/>
+        <source>Update…</source>
+        <translation>Aktualisieren…</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="303"/>
+        <source>Install…</source>
+        <translation>Installieren…</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="309"/>
         <source>System default</source>
         <translation>Systemvorgabe</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="284"/>
-        <source>The speech service is not installed yet, see README.</source>
-        <translation>Der Sprachdienst ist noch nicht installiert, siehe README.</translation>
-    </message>
-    <message>
-        <location filename="../talktome/preferences.py" line="287"/>
+        <location filename="../talktome/preferences.py" line="317"/>
         <source>Found: {} CUDA GPU(s).</source>
         <translation>Gefunden: {} CUDA-Grafikkarte(n).</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="288"/>
+        <location filename="../talktome/preferences.py" line="318"/>
         <source>No CUDA GPU found: the CPU is used.</source>
         <translation>Keine CUDA-Grafikkarte gefunden: Die CPU wird verwendet.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="295"/>
+        <location filename="../talktome/preferences.py" line="321"/>
         <source>Default: {}. Any Piper voice (name or .onnx file) works; check its license.</source>
         <translation>Vorgabe: {}. Jede Piper-Stimme (Name oder .onnx-Datei) geht; prüfe ihre Lizenz.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="296"/>
+        <location filename="../talktome/preferences.py" line="322"/>
         <source>Speech output needs piper-tts in the service&apos;s Python.</source>
         <translation>Die Sprachausgabe braucht piper-tts im Python des Sprachdienstes.</translation>
     </message>
@@ -623,10 +663,141 @@
         <translation>Die Zuweisung des ausgewählten Satzes zurücknehmen</translation>
     </message>
     <message>
+        <location filename="../talktome/install.py" line="23"/>
+        <source>Python&apos;s module for environments is missing. On Debian, Ubuntu and Mint: &lt;code&gt;sudo apt install python3-venv&lt;/code&gt;, then install again.</source>
+        <translation>Pythons Modul für Umgebungen fehlt. Unter Debian, Ubuntu und Mint: &lt;code&gt;sudo apt install python3-venv&lt;/code&gt;, dann noch einmal installieren.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="25"/>
+        <source>The audio library PortAudio is missing. On Debian, Ubuntu and Mint: &lt;code&gt;sudo apt install libportaudio2&lt;/code&gt;.</source>
+        <translation>Die Audiobibliothek PortAudio fehlt. Unter Debian, Ubuntu und Mint: &lt;code&gt;sudo apt install libportaudio2&lt;/code&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="27"/>
+        <source>No connection to the Python Package Index (pypi.org). Check the internet connection and install again.</source>
+        <translation>Keine Verbindung zum Python Package Index (pypi.org). Prüfe die Internetverbindung und installiere noch einmal.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="29"/>
+        <source>Not enough disk space: the speech service needs about 550 MB.</source>
+        <translation>Nicht genug Speicherplatz: Der Sprachdienst braucht ca. 550 MB.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="30"/>
+        <source>The packages are not available for this Python or system. Tested with Python 3.10.</source>
+        <translation>Die Pakete gibt es für dieses Python oder System nicht. Getestet mit Python 3.10.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="70"/>
+        <source>Install Python from python.org, then open this dialog again.</source>
+        <translation>Installiere Python von python.org und öffne diesen Dialog dann noch einmal.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="72"/>
+        <source>Install Python from python.org or with Homebrew, then open this dialog again.</source>
+        <translation>Installiere Python von python.org oder mit Homebrew und öffne diesen Dialog dann noch einmal.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="73"/>
+        <source>Install it with the package manager of your system, on Debian, Ubuntu and Mint: &lt;code&gt;sudo apt install python3 python3-venv&lt;/code&gt;.</source>
+        <translation>Installiere es mit der Paketverwaltung deines Systems, unter Debian, Ubuntu und Mint: &lt;code&gt;sudo apt install python3 python3-venv&lt;/code&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="85"/>
+        <source>Talk to me: install the speech service</source>
+        <translation>Talk to me: Sprachdienst installieren</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="96"/>
+        <source>Talk to me recognizes speech in a Python environment of its own, apart from FreeCAD&apos;s Python. Installing it downloads:&lt;ul&gt;&lt;li&gt;the Python packages faster-whisper, Piper, sounddevice and numpy from the Python Package Index (pypi.org): about 550 MB on disk, in &lt;code&gt;{}&lt;/code&gt;&lt;/li&gt;&lt;li&gt;on the first start of the microphone, the speech recognition model from Hugging Face (&quot;base&quot;: about 150 MB) and the voice of the speech output (about 60 MB)&lt;/li&gt;&lt;/ul&gt;After that, everything runs on this computer: what you say is not sent anywhere.</source>
+        <translation>Talk to me erkennt Sprache in einer eigenen Python-Umgebung, getrennt von FreeCADs Python. Die Installation lädt herunter:&lt;ul&gt;&lt;li&gt;die Python-Pakete faster-whisper, Piper, sounddevice und numpy aus dem Python Package Index (pypi.org): ca. 550 MB auf der Festplatte, in &lt;code&gt;{}&lt;/code&gt;&lt;/li&gt;&lt;li&gt;beim ersten Einschalten des Mikrofons das Spracherkennungsmodell von Hugging Face („base“: ca. 150 MB) und die Stimme der Sprachausgabe (ca. 60 MB)&lt;/li&gt;&lt;/ul&gt;Danach läuft alles auf diesem Rechner: Was du sagst, wird nirgendwohin geschickt.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="131"/>
+        <location filename="../talktome/install.py" line="233"/>
+        <source>Update</source>
+        <translation>Aktualisieren</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="131"/>
+        <source>Install</source>
+        <translation>Installieren</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="133"/>
         <location filename="../talktome/training.py" line="122"/>
         <location filename="../talktome/vocabulary.py" line="64"/>
         <source>Close</source>
         <translation>Schließen</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="143"/>
+        <source>Installed. &quot;Update&quot; installs newer packages the addon needs.</source>
+        <translation>Installiert. „Aktualisieren“ installiert neuere Pakete, die das Addon braucht.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="146"/>
+        <source>No Python {}.{} or newer found.</source>
+        <translation>Kein Python {}.{} oder neuer gefunden.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="150"/>
+        <source>Python used: &lt;code&gt;{}&lt;/code&gt; ({}.{})</source>
+        <translation>Verwendetes Python: &lt;code&gt;{}&lt;/code&gt; ({}.{})</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="220"/>
+        <source>Installation failed.</source>
+        <translation>Die Installation ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="221"/>
+        <source>The output above says why.</source>
+        <translation>Die Ausgabe oben nennt den Grund.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="222"/>
+        <source>Install again</source>
+        <translation>Noch einmal installieren</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="228"/>
+        <source>Checking the speech service ...</source>
+        <translation>Prüfe den Sprachdienst ...</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="237"/>
+        <source>The packages are installed, but the speech service does not start. The Report view may say why.</source>
+        <translation>Die Pakete sind installiert, aber der Sprachdienst startet nicht. Die Ausgabe in der Berichtsansicht nennt vielleicht den Grund.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="242"/>
+        <source>Installed, but the microphone is not usable yet.</source>
+        <translation>Installiert, aber das Mikrofon ist noch nicht nutzbar.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="246"/>
+        <source>Installed.</source>
+        <translation>Installiert.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="247"/>
+        <source>Switch on the microphone with the button in the toolbar &quot;Talk to me&quot;; its first start downloads the model.</source>
+        <translation>Schalte das Mikrofon mit dem Button in der Symbolleiste „Talk to me“ ein; beim ersten Start wird das Modell heruntergeladen.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="271"/>
+        <source>Talk to me</source>
+        <translation>Talk to me</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="271"/>
+        <source>Remove the speech service ({})?
+
+Downloaded models (~/.cache/huggingface) and voices (~/.cache/talktome) stay; delete them by hand if you don&apos;t need them any more.</source>
+        <translation>Den Sprachdienst entfernen ({})?
+
+Heruntergeladene Modelle (~/.cache/huggingface) und Stimmen (~/.cache/talktome) bleiben; lösche sie von Hand, wenn du sie nicht mehr brauchst.</translation>
     </message>
     <message>
         <location filename="../talktome/training.py" line="125"/>

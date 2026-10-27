@@ -90,6 +90,9 @@ Das System besteht aus **zwei Prozessen**:
 ### Lebenszyklus
 
 - Das Addon startet den Dienst beim ersten Einschalten des Mikrofons als Unterprozess. Der Pfad zum Python-Interpreter der venv steht in den Einstellungen.
+- **Installation aus FreeCAD** (`ttm_core/install.py`, `talktome/install.py`): Fehlt der Dienst, öffnet der Mikrofon-Button einen Dialog (ebenso Einstellungen → Allgemein → Installieren…). Er nennt, was woher geladen wird (Pakete ~550 MB von pypi.org, Modell und Stimme beim ersten Start von Hugging Face), sucht ein Python ≥ 3.10 des Systems, legt die venv an und installiert `service/requirements.txt`; danach prüft er den Dienst mit `--probe`. Bekannte Fehler (python3-venv, PortAudio, Netz, Platz) bekommen einen Hinweis.
+- **Die venv liegt im Benutzerordner** (`<UserAppDataDir>/TalkToMe/venv`), nicht im Addon: Ein Update über den Addon-Manager darf den Addon-Ordner ersetzen, ohne 550 MB zu verlieren. Eine ältere `service/.venv` gilt weiter, solange es die neue nicht gibt (Entwicklung).
+- **Nicht FreeCADs Python:** Das AppImage setzt sein eigenes `usr/bin` an den Anfang von `PATH`; dieses Python verschwindet mit dem Einhängepunkt. Der Installer überspringt Pfade unter `$APPDIR` und in `.app`-Bündeln.
 - Das Addon beendet den Dienst, wenn FreeCAD geschlossen wird.
 - Ausschalten des Mikrofons stoppt nur die Audioaufnahme. Der Dienst und seine Modelle bleiben geladen, damit das Wiedereinschalten sofort wirkt.
 
@@ -1068,7 +1071,7 @@ Inspiration für die Karten in Spiel 1.
 | GPU-Konkurrenz mit FreeCAD | Modelle belegen VRAM, 3D-Ansicht ruckelt | VRAM-Budget, Auslagern einzelner Bausteine auf die CPU (12.1) |
 | Fehlende QActions | Workbenches ohne bisherige Aktivierung haben keine übersetzten Texte | Englische Rückfallebene, Wortschatz beim Aktivieren nachladen |
 | Befehle mit interaktiven Dialogen | Manche Befehle öffnen Dialoge, die Eingaben erwarten | Parameter über Objekteigenschaften setzen, Dialog-Ebene (6.2) |
-| Installation des Dienstes | venv, Modelle herunterladen, PortAudio | Installationsskript, später Prüfung in der Einstellungsseite |
+| Installation des Dienstes | venv, Modelle herunterladen, PortAudio | Installer in FreeCAD (Abschnitt 4, Lebenszyklus) mit Hinweisen zu bekannten Fehlern; ein Python ≥ 3.10 und unter Linux PortAudio muss das System mitbringen |
 | FreeCAD in einer Sandbox (Flatpak, Snap) | Der Sprachdienst läuft als Unterprozess mit einer venv, die auf das System-Python verweist. In der Sandbox gibt es dieses Python nicht, und der Mikrofonzugriff ist eingeschränkt | Vorerst AppImage oder Distributionspaket empfehlen (README). Später den Dienst unabhängig von FreeCAD starten (eigener Autostart, FreeCAD verbindet sich nur per Socket) oder als eigenständiges Paket ausliefern |
 | Veraltete FreeCAD-Versionen aus Distributionen | `apt install freecad` liefert unter Ubuntu 22.04 / Mint 21 FreeCAD 0.19 (2021). Dort fehlt z. B. `QtWidgets` in FreeCADs PySide-Schicht | Rückfall auf `QtGui` (`talktome/qt.py`), Tests gegen die 0.19-Schicht. Zielversion bleibt 1.x |
 | GPU-Hersteller | CUDA (NVIDIA) ist am besten unterstützt, AMD/Intel/Apple weniger | Zunächst CUDA + CPU, andere Backends später prüfen |

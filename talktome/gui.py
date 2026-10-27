@@ -2,7 +2,7 @@
 """Microphone button and connection to the speech service.
 
 The addon sends the command candidates of the current context, the service decides,
-and the addon executes the resulting plan (Phase 1: single commands).
+and the addon executes the resulting plan step by step.
 """
 
 import json
@@ -19,6 +19,7 @@ from talktome import command
 from talktome import context as ttm_context
 from talktome import executor
 from talktome.qt import QT_TRANSLATE_NOOP, QtCore, QtGui, QtWidgets, translate
+from ttm_core import install
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message
 from ttm_core.objects import find_object
 from ttm_core.training import classify, learn, options
@@ -94,9 +95,7 @@ def service_python():
 
 
 def default_python():
-    if sys.platform.startswith("win"):
-        return os.path.join(SERVICE_DIR, ".venv", "Scripts", "python.exe")
-    return os.path.join(SERVICE_DIR, ".venv", "bin", "python")
+    return install.default_python(ttm_context.user_dir(), SERVICE_DIR, windows=sys.platform.startswith("win"))
 
 
 def log(text):
@@ -260,7 +259,9 @@ class Controller(QtCore.QObject):
             return True
         python = service_python()
         if not os.path.exists(python):
-            self.fail(translate("TalkToMe", "speech service not installed ({} not found), see README").format(python))
+            self.fail(translate("TalkToMe", "speech service not installed ({} not found)").format(python))
+            if not PARAMS.GetString("ServicePython", ""):
+                QtCore.QTimer.singleShot(0, self.offer_install)
             return False
         args = ["-m", "talktome_service",
                 "--volume", str(PARAMS.GetInt("Volume", 40) / 100.0),
@@ -291,6 +292,12 @@ class Controller(QtCore.QObject):
         self.status(translate("TalkToMe", "starting speech service (the first start downloads the model) ..."))
         self.process.start(python, args)
         return True
+
+    def offer_install(self):
+        """The microphone was switched on without a speech service: install it, then listen."""
+        import talktome.install
+        if talktome.install.run(self.mw):
+            self.action.setChecked(True)
 
     def on_stdout(self):
         out = self.process.readAllStandardOutput().data().decode("utf-8", "replace")
@@ -635,6 +642,17 @@ _controller = None
 def restart_service():
     if _controller is not None:
         _controller.restart_service()
+
+
+def stop_service():
+    """Stop the speech service and switch the microphone off (before removing the service)."""
+    if _controller is not None:
+        _controller.shutdown()
+        _controller.action.blockSignals(True)
+        _controller.action.setChecked(False)
+        _controller.action.blockSignals(False)
+        _controller.want_listen = False
+        _controller.set_state("off")
 
 
 def open_vocabulary(parent=None):

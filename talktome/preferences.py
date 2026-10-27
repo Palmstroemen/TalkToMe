@@ -108,6 +108,17 @@ class PreferencesPage:
     def general_tab(self):
         tab = QtWidgets.QWidget()
         form = QtWidgets.QFormLayout(tab)
+        row = QtWidgets.QHBoxLayout()
+        self.service = QtWidgets.QLabel()
+        row.addWidget(self.service, 1)
+        self.install = QtWidgets.QPushButton()
+        self.install.clicked.connect(self.on_install)
+        row.addWidget(self.install)
+        self.remove = QtWidgets.QPushButton(translate("TalkToMe", "Remove…"))
+        self.remove.setToolTip(translate("TalkToMe", "Remove the speech service's Python environment (about 550 MB)"))
+        self.remove.clicked.connect(self.on_remove)
+        row.addWidget(self.remove)
+        form.addRow(translate("TalkToMe", "Speech service:"), row)
         self.language = combo([(code, "{} ({})".format(langpack.pack(code).name, code)) for code in langpack.languages()])
         self.language.currentIndexChanged.connect(self.on_language)
         form.addRow(translate("TalkToMe", "Spoken language:"), self.language)
@@ -192,7 +203,7 @@ class PreferencesPage:
         tab = QtWidgets.QWidget()
         form = QtWidgets.QFormLayout(tab)
         self.python = QtWidgets.QLineEdit()
-        self.python.setPlaceholderText(translate("TalkToMe", "service/.venv/bin/python of the addon"))
+        self.python.setPlaceholderText(translate("TalkToMe", "the one installed on the General tab"))
         form.addRow(translate("TalkToMe", "Python of the speech service:"), browse_row(self.python, "Python", "Python (python*)"))
         self.extra = QtWidgets.QLineEdit()
         form.addRow(translate("TalkToMe", "Extra arguments:"), self.extra)
@@ -262,39 +273,67 @@ class PreferencesPage:
         os.makedirs(ttm_context.user_dir(), exist_ok=True)
         QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(ttm_context.user_dir()))
 
-    # --- FreeCAD's interface -----------------------------------------------------------------
+    # --- speech service ---------------------------------------------------------------------
 
-    def loadSettings(self):
+    def on_install(self):
+        import talktome.install
+        talktome.install.run(self.form.window())
+        self.show_service(reprobe=True)
+
+    def on_remove(self):
+        import talktome.install
+        if talktome.install.remove(self.form.window()):
+            self.show_service(reprobe=True)
+
+    def show_service(self, reprobe=False, microphone=None):
+        """What the service's Python offers: its state, microphones, GPUs, speech output."""
         import talktome.gui
-        if self.probe is None:
+        import talktome.install
+        if self.probe is None or reprobe:
             self.probe = talktome.gui.probe_service()
-        select(self.language, PARAMS.GetString("Language", "de"))
-        self.on_language()
+        python = talktome.gui.service_python()
+        if self.probe:
+            self.service.setText(translate("TalkToMe", "installed"))
+        elif os.path.exists(python):
+            self.service.setText(translate("TalkToMe", "installed, but does not start"))
+        else:
+            self.service.setText(translate("TalkToMe", "not installed yet"))
+        self.service.setToolTip(python)
+        own = talktome.install.installed()
+        self.install.setText(translate("TalkToMe", "Update…") if own else translate("TalkToMe", "Install…"))
+        self.remove.setEnabled(own)
 
+        if microphone is None:
+            microphone = self.microphone.currentData() or ""
         self.microphone.clear()
         self.microphone.addItem(translate("TalkToMe", "System default"), "")
         for mic in self.probe.get("microphones", []):
             self.microphone.addItem(mic["name"], mic["name"])
-        select(self.microphone, PARAMS.GetString("Microphone", ""))
-        self.volume.setValue(PARAMS.GetInt("Volume", 40))
-
-        select(self.model, PARAMS.GetString("Model", ""))
-        select(self.device, PARAMS.GetString("Device", "auto"))
+        select(self.microphone, microphone)
         if not self.probe:
-            self.found.setText(translate("TalkToMe", "The speech service is not installed yet, see README."))
+            self.found.setText(translate("TalkToMe", "The speech service is not installed yet: General → Install…"))
         else:
             n = self.probe.get("cuda_devices", 0)
             self.found.setText(translate("TalkToMe", "Found: {} CUDA GPU(s).").format(n) if n
                                else translate("TalkToMe", "No CUDA GPU found: the CPU is used."))
-
-        self.ask.setChecked(PARAMS.GetBool("AskMenu", True))
-        select(self.speech, PARAMS.GetString("Speech", "important"))
-        self.voice.setText(PARAMS.GetString("Voice", ""))
         voice = langpack.pack(self.language.currentData()).voice
         self.voice_hint.setText(
             (translate("TalkToMe", "Default: {}. Any Piper voice (name or .onnx file) works; check its license.").format(voice)
              if self.probe.get("speech", True) else translate("TalkToMe", "Speech output needs piper-tts in the service's Python.")))
+
+    # --- FreeCAD's interface -----------------------------------------------------------------
+
+    def loadSettings(self):
+        select(self.language, PARAMS.GetString("Language", "de"))
+        self.on_language()
+        self.volume.setValue(PARAMS.GetInt("Volume", 40))
+        select(self.model, PARAMS.GetString("Model", ""))
+        select(self.device, PARAMS.GetString("Device", "auto"))
+        self.ask.setChecked(PARAMS.GetBool("AskMenu", True))
+        select(self.speech, PARAMS.GetString("Speech", "important"))
+        self.voice.setText(PARAMS.GetString("Voice", ""))
         self.dry_run.setChecked(PARAMS.GetBool("DryRun", False))
+        self.show_service(microphone=PARAMS.GetString("Microphone", ""))
 
         self.python.setText(PARAMS.GetString("ServicePython", ""))
         self.extra.setText(PARAMS.GetString("ExtraArgs", ""))
