@@ -111,7 +111,7 @@ class Controller(QtCore.QObject):
         self.action = action
         self.action.toggled.connect(self.on_toggled)
 
-        self.language = PARAMS.GetString("Language", "de")
+        self.language = ttm_context.spoken_language()
         self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
         self.last_candidates = None  # the context sent last; a training situation is taken from it
         self.misses = []             # recent not understood utterances with their situation
@@ -265,7 +265,7 @@ class Controller(QtCore.QObject):
             return False
         args = ["-m", "talktome_service",
                 "--volume", str(PARAMS.GetInt("Volume", 40) / 100.0),
-                "--language", PARAMS.GetString("Language", "de"),
+                "--language", ttm_context.spoken_language(),
                 "--device", PARAMS.GetString("Device", "auto")]
         model = PARAMS.GetString("Model", "")
         if model:
@@ -323,7 +323,7 @@ class Controller(QtCore.QObject):
     def restart_service(self):
         """Apply changed settings: language and vocabulary now, the service on its next start;
         a running service is restarted, listening again if it was."""
-        self.language = PARAMS.GetString("Language", "de")
+        self.language = ttm_context.spoken_language()
         self.vocab, self.heard, self.patterns = ttm_context.load_vocabulary(self.language)
         if self.process is None:
             return
@@ -354,7 +354,7 @@ class Controller(QtCore.QObject):
             return
         self.sock.setblocking(False)
         self.decoder = LineDecoder()
-        self.send("hello", token=self.token, version=VERSION, language=PARAMS.GetString("Language", "de"))
+        self.send("hello", token=self.token, version=VERSION, language=ttm_context.spoken_language())
         self.send("train", on=self.training())
         self.send_context()
         if self.want_listen:

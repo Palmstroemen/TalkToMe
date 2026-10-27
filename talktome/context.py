@@ -20,6 +20,20 @@ def user_dir():
 langpack.configure(user_dir())
 
 
+def ui_language():
+    """Code of FreeCAD's user interface language ("de"), or None."""
+    try:
+        return Gui.supportedLocales().get(Gui.getLocale())
+    except Exception:
+        return None
+
+
+def spoken_language():
+    """The spoken language chosen in the settings; before a choice, the user interface's."""
+    chosen = App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe").GetString("Language", "")
+    return chosen or langpack.default_language(ui_language())
+
+
 def custom_path(language):
     """The user's own vocabulary file, also where training stores what it learned."""
     return os.path.join(user_dir(), "custom.{}.json".format(language))

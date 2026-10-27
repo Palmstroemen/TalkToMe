@@ -137,7 +137,7 @@ the speech service needs restart it. The page writes these parameters (`BaseApp/
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| `Language` | `de` | Spoken language: `de` or `en` (a folder in `lang/`) |
+| `Language` | FreeCAD's language, else `en` | Spoken language: `de` or `en` (a folder in `lang/`) |
 | `Microphone` | system default | Input device name |
 | `Volume` | `40` | Volume of tones and voice in percent |
 | `Model` | by hardware | `tiny`, `base`, `small`, ... |

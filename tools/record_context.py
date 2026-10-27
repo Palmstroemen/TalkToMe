@@ -23,7 +23,7 @@ if ROOT not in sys.path:
 def record(name, language=None, note="", directory=None):
     """Write the context; returns the file's path."""
     from talktome import context
-    language = language or App.ParamGet("User parameter:BaseApp/Preferences/Mod/TalkToMe").GetString("Language", "de")
+    language = language or context.spoken_language()
     data = {
         "_about": "A raw FreeCAD context for the corpus, recorded with tools/record_context.py.",
         "freecad": ".".join(App.Version()[:3]),

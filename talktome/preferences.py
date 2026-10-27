@@ -324,7 +324,7 @@ class PreferencesPage:
     # --- FreeCAD's interface -----------------------------------------------------------------
 
     def loadSettings(self):
-        select(self.language, PARAMS.GetString("Language", "de"))
+        select(self.language, ttm_context.spoken_language())
         self.on_language()
         self.volume.setValue(PARAMS.GetInt("Volume", 40))
         select(self.model, PARAMS.GetString("Model", ""))
@@ -341,8 +341,9 @@ class PreferencesPage:
     def saveSettings(self):
         before = {key: PARAMS.GetString(key, "") for key in RESTART if key != "Volume"}
         before["Volume"] = PARAMS.GetInt("Volume", 40)
+        before["Language"] = ttm_context.spoken_language()     # not chosen yet: the one in use
 
-        PARAMS.SetString("Language", self.language.currentData() or "de")
+        PARAMS.SetString("Language", self.language.currentData() or ttm_context.spoken_language())
         PARAMS.SetString("Microphone", self.microphone.currentData() or "")
         PARAMS.SetInt("Volume", self.volume.value())
         PARAMS.SetString("Model", self.model.currentData() or "")

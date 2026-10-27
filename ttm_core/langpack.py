@@ -42,6 +42,20 @@ def languages():
     return sorted(d for d in os.listdir(LANG_DIR) if os.path.isfile(os.path.join(LANG_DIR, d, "language.json")))
 
 
+FALLBACK = "en"
+
+
+def default_language(ui_language, available=None):
+    """The spoken language before the user chose one: the user interface's (its pack, or the pack
+    of its base: "de_CH" → "de"), else English."""
+    available = languages() if available is None else available
+    code = (ui_language or "").replace("_", "-")
+    for candidate in (code, code.split("-")[0], FALLBACK):
+        if candidate in available:
+            return candidate
+    return available[0] if available else FALLBACK
+
+
 def _read(directory, language, name):
     if directory is None:
         return {}

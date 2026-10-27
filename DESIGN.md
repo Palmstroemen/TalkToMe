@@ -721,6 +721,9 @@ lang/en/  …
   Snowball). Sprachen ohne Leerzeichen zwischen Wörtern (Chinesisch, Japanisch) brauchen einen
   Umbau des Abgleichs, der mit Wörtern arbeitet; Arabisch eigene Normalisierung.
 - **Englisch als zweites Paket** von Anfang an, um die Trennung zu prüfen.
+- **Vorgabe der gesprochenen Sprache:** Solange der Nutzer keine gewählt hat, die Sprache der
+  FreeCAD-Oberfläche, wenn es ein Paket dafür gibt (auch das ihrer Basis: `de_CH` → `de`), sonst
+  Englisch (`langpack.default_language`).
 
 **Umgesetzt (2026-10-19):** `ttm_core/langpack.py` lädt die Pakete; die alten Namen
 (`FILLER_WORDS`, `PATTERNS`, `PHONETICS`, …) sind Sichten darauf, der übrige Code blieb gleich.

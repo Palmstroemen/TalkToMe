@@ -205,3 +205,14 @@ def test_save_list_compares_with_the_inherited_list(packs, tmp_path):
     langpack.save_list("de-AT", "filler_words", langpack.pack_list("de-AT", "filler_words"))
     assert not (tmp_path / "user" / "lang" / "de-AT" / "language.json").exists() or \
         "filler_words" not in json.loads((tmp_path / "user" / "lang" / "de-AT" / "language.json").read_text())
+
+
+def test_default_language_follows_the_user_interface():
+    available = ["de", "de-AT", "en"]
+    assert langpack.default_language("de", available) == "de"
+    assert langpack.default_language("de-AT", available) == "de-AT"
+    assert langpack.default_language("de_CH", available) == "de"       # a variant without a pack: its base
+    assert langpack.default_language("en-US", available) == "en"
+    assert langpack.default_language("fr", available) == "en"          # no pack: English
+    assert langpack.default_language(None, available) == "en"
+    assert langpack.default_language("fr", ["de"]) == "de"             # without English: any pack
