@@ -82,6 +82,7 @@ def test_workbench_switches_exclude_the_current_one():
                                current_workbench="PartDesignWorkbench"))
     assert c["workbench:SketcherWorkbench"]["level"] == "global"
     assert c["workbench:SketcherWorkbench"]["phrases"] == ["Sketcher"]
+    assert c["workbench:SketcherWorkbench"]["changes_context"]          # what follows is decided after the switch
     assert "workbench:PartDesignWorkbench" not in c
 
 

@@ -577,6 +577,24 @@ def test_learned_patterns_come_with_the_context(parts):
     s.stop()
 
 
+def test_patterns_and_names_of_an_application(parts):
+    """Another application than FreeCAD: its own sentence patterns, a slot filled from its names."""
+    parts["transcriber"] = FakeTranscriber("Lege das in Eingangsrechnungen ab")
+    s = Service(token=TOKEN, log=lambda *a: None, **parts)
+    s.start()
+    c = connect(s)
+    c.send("context", candidates=[],
+           sentence_patterns=[["file", r"lege\s+{pronoun}\s+in\s+(?P<role>.+?)\s+ab"]],
+           entities={"role": [{"id": "04_Finanz/Ausgaben", "phrases": ["Ausgaben", "Eingangsrechnungen"]},
+                              {"id": "05_Rechtliches", "phrases": ["Rechtliches"]}]})
+    c.send("listen", on=True)
+    msg = c.wait_for("plan")
+    assert (msg["command"], msg["args"]) == ("file", {"role": "04_Finanz/Ausgaben"})
+    assert "Eingangsrechnungen" in s._hotwords
+    c.close()
+    s.stop()
+
+
 
 # --- speech output (DESIGN.md 10.1) ---------------------------------------------------------------
 

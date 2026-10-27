@@ -10,15 +10,23 @@ with a named group for the parameter:
     pick    an entry of the question menu ("die zweite"); number words are parameters
             elsewhere, so they can't be phrases
 
+An application may send patterns of its own, in the spoken language and with the pack's macros
+("lege {pronoun} in (?P<role>.+?) ab"), and lists of names (entities). A group named like a
+list is a slot: it takes the id of the name said ("Eingangsrechnungen" → "04_Finanz/Ausgaben"),
+and the pattern doesn't apply if none fits or the application sent no such list. Any other group
+is free text.
+
 Training adds learned patterns per user: how the recognizer heard such a sentence, with the
 parameter cut out ("nenndas {label}"). Their fixed part may differ a little next time.
 """
 
 import re
+from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 
-from ttm_core.langpack import View
+from ttm_core.langpack import View, expand
 from ttm_core.languages import CLAUSE_WORDS, STOP_WORDS
+from ttm_core.objects import find_entity
 from ttm_core.phonetics import PHONETICS
 
 LABEL = "{label}"
@@ -26,9 +34,18 @@ SIMILAR = 0.8        # fixed part of a learned pattern: spelling similarity need
 
 # Built-in patterns per language come from the language packs (lang/<code>/patterns.json).
 PATTERNS = View("patterns")
+MACROS = View("macros")
 PICK_WORDS = View("pick_words")
 LEADING = View("pattern_leading")      # words around a pattern that belong to neither command
 TRAILING = View("pattern_trailing")    # nor parameter ("bitte")
+
+
+@dataclass
+class Grammar:
+    """Patterns beyond the language pack's, and the names their slots take."""
+    learned: dict = None                          # {command: [templates]} from training
+    own: list = field(default_factory=list)       # [(command, regex)] of the application, tried first
+    entities: dict = field(default_factory=dict)  # {list name: [{"id", "phrases"}]}
 
 
 def _strip(words, language):
@@ -89,32 +106,60 @@ def _learned(words, templates, language):
     return None
 
 
-def parse(clause, language, learned=None):
+def _slots(m, entities, language, stop):
+    """{group: value} of the groups other than label, target and pick; None if a slot has no
+    fitting name or a free text is empty. A group is a slot if entities has a list of its name,
+    even an empty one (no projects yet)."""
+    args = {}
+    for name, value in m.groupdict().items():
+        if name in ("label", "target", "pick"):
+            continue
+        value = (value or "").strip()
+        if not value or all(w.lower() in stop for w in value.split()):
+            return None
+        if name in entities:
+            value = find_entity(value, entities[name], language)
+            if value is None:
+                return None
+        args[name] = value
+    return args
+
+
+def parse(clause, language, patterns=None):
     """(command, args) if the clause matches a pattern, else None.
 
-    learned: {command: [templates]} from training, tried after the built-in patterns.
+    patterns: a Grammar, or only the learned patterns {command: [templates]} from training,
+    tried after the built-in ones.
     """
+    grammar = patterns if isinstance(patterns, Grammar) else Grammar(learned=patterns)
     words = _strip(_words(clause), language)
     text = " ".join(words)
     stop = STOP_WORDS.get(language, set())
-    for command, pattern in PATTERNS.get(language, []):
+    macros = MACROS.get(language, {})
+    own = [(command, expand(regex, macros)) for command, regex in grammar.own or []]
+    for command, pattern in own + list(PATTERNS.get(language, [])):
         m = re.fullmatch(pattern, text, re.IGNORECASE)
         if not m:
             continue
-        if "pick" in m.groupdict():
+        groups = m.groupdict()
+        if "pick" in groups:
             n = PICK_WORDS.get(language, {}).get(m.group("pick").lower())
             if n is not None:
                 return command, {"pick": n}
             continue
-        label = m.group("label").strip()
-        if not label or all(w.lower() in stop for w in label.split()):
-            continue                           # "Wie nennen wir das": no name, a pronoun
-        args = {"label": label[0].upper() + label[1:]}
-        target = (m.groupdict().get("target") or "").strip()
+        args = _slots(m, grammar.entities or {}, language, stop)
+        if args is None:
+            continue
+        if "label" in groups:
+            label = (m.group("label") or "").strip()
+            if not label or all(w.lower() in stop for w in label.split()):
+                continue                       # "Wie nennen wir das": no name, a pronoun
+            args["label"] = label[0].upper() + label[1:]
+        target = (groups.get("target") or "").strip()
         if target and not all(w.lower() in stop for w in target.split()):
-            args["target"] = target            # "ihn", "das": no name, the addon decides
+            args["target"] = target            # "ihn", "das": no name, the application decides
         return command, args
-    for command, templates in (learned or {}).items():
+    for command, templates in (grammar.learned or {}).items():
         label = _learned(words, templates, language)
         if label and not all(w.lower() in stop for w in label.split()):
             return command, {"label": label[0].upper() + label[1:]}

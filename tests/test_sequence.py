@@ -6,7 +6,10 @@ from ttm_core.sequence import next_step
 
 
 def cand(id_, phrases, level="workbench", active=True, description=""):
-    return {"id": id_, "phrases": phrases, "level": level, "active": active, "description": description}
+    c = {"id": id_, "phrases": phrases, "level": level, "active": active, "description": description}
+    if id_.startswith("workbench:"):           # as FreeCAD's context marks them (ttm_core.context)
+        c["changes_context"] = True
+    return c
 
 
 POCKET = "Extrudiert die ausgewählte Skizze oder das ausgewählte Profil und zieht das Ergebnis von dem Körper ab"

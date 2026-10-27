@@ -360,6 +360,29 @@ Was ein Schritt erzeugt hat, ergibt der Vergleich der Dokumentobjekte vorher und
 Kinder der neuen Objekte (ein neuer Körper bringt seinen Ursprung mit). Das Label wird in einer
 Transaktion gesetzt, „Rückgängig“ stellt den alten Namen wieder her.
 
+### Befehle mit Lücken aus Namenslisten (andere Anwendungen)
+
+Der Kern ist nicht an FreeCAD gebunden: Eine andere Anwendung, z. B. ein Dateimanager, schickt
+mit dem `context` eigene Satzmuster (`sentence_patterns`, in der gesprochenen Sprache, mit den
+Makros des Sprachpakets) und Namenslisten (`entities`). Eine Gruppe des Musters, die wie eine Liste
+heißt, ist eine **Lücke**: Sie nimmt die `id` des gesagten Namens, unscharf und nach Klang gesucht
+wie die Labels oben (`find_entity`). Synonyme sind einfach weitere Phrasen derselben `id`:
+
+```json
+"sentence_patterns": [["file", "lege\\s+{pronoun}\\s+in\\s+(?P<role>.+?)\\s+ab"]],
+"entities": {"role": [{"id": "04_Finanz/Ausgaben", "phrases": ["Ausgaben", "Eingangsrechnungen"]}]}
+```
+
+„Lege das in Eingangsrechnungen ab“ → `file` mit `{"role": "04_Finanz/Ausgaben"}`. Passt kein
+Name, oder ist die Liste leer, gilt das Muster nicht: lieber nichts tun als die falsche Ablage.
+Gruppen ohne Liste sind freier Text. Worauf sich „das“ bezieht (z. B. die markierten Dateien),
+entscheidet die Anwendung, wie beim Umbenennen. Die Namen gehen auch als Hinweiswörter an die
+Spracherkennung.
+
+Was in FreeCAD ein Präfix war, ist eine Eigenschaft der Kandidaten: `changes_context` (ein
+Workbench-Wechsel; was folgt, wird im neuen Kontext entschieden, und während ein Werkzeug auf Werte
+wartet, wird er nicht angeboten).
+
 ### Plan-Format
 
 ```json
@@ -631,7 +654,7 @@ Die Verbindung läuft über TCP auf `127.0.0.1` (Port einstellbar), mit einer JS
 |---|---|---|
 | Addon → Dienst | `hello` | Protokollversion, Sprache, FreeCAD-Version |
 | Addon → Dienst | `listen` | `on` / `off` |
-| Addon → Dienst | `context` | Kontext-Schnappschuss (Ebenen, Kandidaten mit Texten, Auswahl) |
+| Addon → Dienst | `context` | Kontext-Schnappschuss (Ebenen, Kandidaten mit Texten, Auswahl); gelernte Muster `patterns`; von anderen Anwendungen auch `sentence_patterns` und `entities` (7, Befehle mit Lücken) |
 | Dienst → Addon | `state` | `listening` / `processing` / `idle` / `error` |
 | Dienst → Addon | `speech_start` | Eine Äußerung beginnt. Das Addon hält Mausposition und Auswahl fest (6.4) |
 | Dienst → Addon | `plan` | Ein Schritt: `id`, `command`, `text` (sein Teil der Äußerung), `utterance`, `more` (weitere Schritte folgen), `via` (`name` / `description`) |

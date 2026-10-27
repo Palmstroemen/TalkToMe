@@ -53,7 +53,7 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     foreign_labels = foreign_labels or {}
     candidates, seen = [], set()
 
-    def add(id_, level, phrases, is_active=True, shown=None):
+    def add(id_, level, phrases, is_active=True, shown=None, changes_context=False):
         """shown: FreeCAD's own text for the command, to display it (e.g. in the question menu)."""
         own = {p.lower() for p in phrases}
         foreign = [p for p in merge_phrases(foreign_labels.get(id_)) if p.lower() not in own]
@@ -64,6 +64,8 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
                                "short": [short[id_]] if id_ in short else [],
                                "heard": list(heard.get(id_, [])), "active": is_active,
                                "description": descriptions.get(id_, "")})
+            if changes_context:
+                candidates[-1]["changes_context"] = True
 
     if dialog_open:
         for text in choices or []:
@@ -90,7 +92,8 @@ def build_candidates(toolbar_items, labels, active, edit_prefix=None, dialog_ope
     for wb, names in (workbenches or {}).items():
         if wb != current_workbench:
             wb_id = "workbench:" + wb
-            add(wb_id, "global", merge_phrases(vocab.get(wb_id), names), shown=(list(names) or [None])[0])
+            add(wb_id, "global", merge_phrases(vocab.get(wb_id), names), shown=(list(names) or [None])[0],
+                changes_context=True)
     return candidates
 
 

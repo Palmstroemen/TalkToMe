@@ -105,7 +105,7 @@ def _shipped(language):
 
 
 class Pack:
-    def __init__(self, language, data, patterns, vocab, speech, chain=None):
+    def __init__(self, language, data, patterns, vocab, speech, chain=None, macros=None):
         self.language = language
         self.chain = chain or [language]
         self.name = data.get("name", language)
@@ -131,20 +131,22 @@ class Pack:
         self.pattern_leading = set(data.get("pattern_leading", []))
         self.pattern_trailing = set(data.get("pattern_trailing", []))
         self.patterns = patterns
+        self.macros = dict(macros or {})      # for the patterns an application sends (params.Grammar)
         self.vocab = vocab
         self.voice = speech.get("voice")
         self.messages = speech.get("messages", {})
 
 
+def expand(regex, macros):
+    """regex with its macros ("{pronoun}") replaced."""
+    for name, value in macros.items():
+        regex = regex.replace("{" + name + "}", value)
+    return regex
+
+
 def _patterns(sources, macros):
     """[(command, regex)] in order, macros replaced."""
-    result = []
-    for source in sources:
-        for command, regex in source.get("patterns", []):
-            for name, value in macros.items():
-                regex = regex.replace("{" + name + "}", value)
-            result.append((command, regex))
-    return result
+    return [(command, expand(regex, macros)) for source in sources for command, regex in source.get("patterns", [])]
 
 
 def pack(language):
@@ -173,7 +175,7 @@ def pack(language):
             speech["messages"].update(source.get("messages", {}))
             if source.get("voice"):
                 speech["voice"] = source["voice"]
-        _cache[language] = Pack(language, data, patterns, vocab, speech, codes)
+        _cache[language] = Pack(language, data, patterns, vocab, speech, codes, macros)
     return _cache[language]
 
 

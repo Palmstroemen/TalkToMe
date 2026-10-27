@@ -15,9 +15,6 @@ from ttm_core.matching import command_words
 from ttm_core.params import parse
 from ttm_core.values import only_values, parse_values
 
-# Steps that change the candidates; what follows them is decided in the new context.
-CONTEXT_CHANGING = ("workbench:",)
-
 # Commands that replace everything else said with them: "Ok, kurze Pause" must not press OK.
 EXCLUSIVE = ("ui:mic_off",)
 
@@ -45,7 +42,7 @@ def next_step(clauses, candidates, language=None, max_span=3, patterns=None, **d
     best = None
     for n in range(1, min(max_span, len(clauses)) + 1):
         d = decide(_join(clauses[:n]), candidates, language, **decide_args)
-        if n == 1 and d.kind == "execute" and d.command.startswith(CONTEXT_CHANGING):
+        if n == 1 and d.kind == "execute" and _changes_context(by_id[d.command]):
             return d, 1
         if d.kind != "execute" or (best is not None and d.words <= best[0].words):
             continue
@@ -98,11 +95,17 @@ def values_step(clause, language=None, tool_running=False):
                     args={"values": [list(v) for v in values]})
 
 
+def _changes_context(candidate):
+    """Steps that change the candidates (a workbench switch in FreeCAD); what follows them is
+    decided in the new context."""
+    return bool(candidate.get("changes_context"))
+
+
 def _while_tool(candidates, tool_running):
-    """No workbench switch while a tool waits for values: it would leave the tool."""
+    """No context change while a tool waits for values: it would leave the tool."""
     if not tool_running:
         return candidates
-    return [c for c in candidates if not c["id"].startswith(CONTEXT_CHANGING)]
+    return [c for c in candidates if not _changes_context(c)]
 
 
 def step(pending, candidates, language=None, patterns=None, tool_running=False):

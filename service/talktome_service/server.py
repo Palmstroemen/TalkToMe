@@ -19,9 +19,10 @@ import time
 import numpy as np
 
 from talktome_service.segmenter import Segmenter
-from ttm_core.context import CHOOSE, LEVELS
-from ttm_core.decision import decide
+from ttm_core.context import CHOOSE
+from ttm_core.decision import LEVEL_BONUS, decide
 from ttm_core.matching import hotwords
+from ttm_core.params import Grammar
 from ttm_core.protocol import LineDecoder, check_hello, encode, make_message
 from ttm_core.sequence import VALUES, start_utterance, step, values_step
 from ttm_core.speech import phrase
@@ -59,7 +60,7 @@ class Service:
         self._hotwords = None
         self._candidates = None      # None: no decisions, only transcripts (Phase 0 behavior)
         self._training = False       # training: only transcripts, nothing is decided or executed
-        self._patterns = None        # learned sentence patterns {command: [templates]}
+        self._grammar = Grammar()    # patterns learned and of the application, names for their slots
         self._tool = {}              # the running tool, e.g. {"running": True}: it takes spoken values
         self.language = self.info.get("language")
         self._mute_until = 0.0
@@ -186,19 +187,24 @@ class Service:
             self.log("ignored message: {}".format(kind))
 
     def _set_context(self, msg):
-        """Candidates for decisions; their phrases (higher levels first) also become hotwords."""
+        """Candidates for decisions, the application's sentence patterns and the names for their
+        slots (params.Grammar). Phrases (higher levels first) and names also become hotwords."""
         candidates = msg.get("candidates")
         if candidates is not None:
             self._candidates = candidates
         if "patterns" in msg:
-            self._patterns = msg["patterns"]
+            self._grammar.learned = msg["patterns"]
+        if "sentence_patterns" in msg:
+            self._grammar.own = msg["sentence_patterns"] or []
+        if "entities" in msg:
+            self._grammar.entities = msg["entities"] or {}
         if "tool" in msg:
             self._tool = msg["tool"] or {}
         words = msg.get("hotwords")
-        if words is None and candidates is not None:
-            order = {level: i for i, level in enumerate(LEVELS)}
-            ranked = sorted(candidates, key=lambda c: order.get(c.get("level"), len(LEVELS)))
+        if words is None and (candidates is not None or "entities" in msg):
+            ranked = sorted(self._candidates or [], key=lambda c: -LEVEL_BONUS.get(c.get("level"), 0.0))
             words = [p for c in ranked for p in c.get("phrases", [])]
+            words += [p for names in self._grammar.entities.values() for e in names for p in e.get("phrases", [])]
         if words is not None:
             self._hotwords = hotwords(words)
 
@@ -309,7 +315,7 @@ class Service:
             self._steps = 0
             if self._candidates is not None:
                 self._pending, ignored = start_utterance(text, self._candidates, self.language,
-                                                         self._patterns, self._tool.get("running"))
+                                                         self._grammar, self._tool.get("running"))
                 if ignored is not None:
                     self.send("ignored", reason=ignored.reason, text=text)
                     return
@@ -369,7 +375,7 @@ class Service:
         """
         last = None
         while self._pending and self._candidates is not None:
-            d, n = step(self._pending, self._candidates, self.language, self._patterns, self._tool.get("running"))
+            d, n = step(self._pending, self._candidates, self.language, self._grammar, self._tool.get("running"))
             span, self._pending = ", ".join(self._pending[:n]), self._pending[n:]
             last = d
             info = dict(text=span, utterance=self._utterance, utterance_id=self._utterance_id,
