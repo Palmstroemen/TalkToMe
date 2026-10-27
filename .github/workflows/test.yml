@@ -1,0 +1,51 @@
+# Tests on Linux, Windows and macOS; then the speech service installed as the addon does it,
+# with one spoken command (tools/smoke_install.py). No microphone, speaker or GPU there.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: PortAudio
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libportaudio2
+      - run: python -m pip install -r service/requirements.txt pytest
+      - run: python -m pytest tests
+
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: PortAudio
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libportaudio2
+      - name: Speech model and voice
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/talktome
+          key: models-${{ runner.os }}-base-thorsten
+      - run: python tools/smoke_install.py --venv "${{ runner.temp }}/TalkToMe/venv"

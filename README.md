@@ -1,5 +1,7 @@
 # Talk to me
 
+[![Tests](https://github.com/Palmstroemen/TalkToMe/actions/workflows/test.yml/badge.svg)](https://github.com/Palmstroemen/TalkToMe/actions/workflows/test.yml)
+
 Local, multilingual voice control for FreeCAD 1.x. Spoken commands run FreeCAD's own commands;
 nothing is generated, and speech is recognized on your computer. Design: see [DESIGN.md](DESIGN.md).
 
@@ -192,6 +194,10 @@ A new language: the same with its code instead of `de`.
 ```bash
 service/.venv/bin/python -m pytest tests
 ```
+
+On every push, GitHub Actions runs them on Linux, Windows and macOS, installs the speech service
+as the addon does and says one command to it: `python tools/smoke_install.py --venv <folder>`
+(downloads about 750 MB).
 
 ## Contributing
 
