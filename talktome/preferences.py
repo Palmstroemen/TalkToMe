@@ -314,8 +314,14 @@ class PreferencesPage:
             self.found.setText(translate("TalkToMe", "The speech service is not installed yet: General → Install…"))
         else:
             n = self.probe.get("cuda_devices", 0)
-            self.found.setText(translate("TalkToMe", "Found: {} CUDA GPU(s).").format(n) if n
-                               else translate("TalkToMe", "No CUDA GPU found: the CPU is used."))
+            if not n:
+                text = translate("TalkToMe", "No CUDA GPU found: the CPU is used.")
+            elif self.probe.get("cuda_libraries", True):
+                text = translate("TalkToMe", "Found: {} CUDA GPU(s).").format(n)
+            else:
+                text = translate("TalkToMe", "Found: {} CUDA GPU(s), but not its GPU support: the CPU is used unless "
+                                             "CUDA is installed in the system. Install it with General → Update….").format(n)
+            self.found.setText(text)
         voice = langpack.pack(self.language.currentData()).voice
         self.voice_hint.setText(
             (translate("TalkToMe", "Default: {}. Any Piper voice (name or .onnx file) works; check its license.").format(voice)

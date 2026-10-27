@@ -69,6 +69,12 @@ def service_environment():
     env.insert("TTM_USER_DIR", ttm_context.user_dir())
     env.insert("PYTHONPATH", os.pathsep.join([ADDON_DIR, SERVICE_DIR]))
     env.insert("PYTHONIOENCODING", "utf-8")
+    windows = sys.platform.startswith("win")
+    venv = os.path.dirname(os.path.dirname(service_python()))     # <venv>/bin/python, <venv>\Scripts\python.exe
+    variable = install.library_path(install.cuda_library_dirs(venv, windows),
+                                    env.value("PATH" if windows else "LD_LIBRARY_PATH", ""), windows)
+    if variable:
+        env.insert(*variable)
     return env
 
 

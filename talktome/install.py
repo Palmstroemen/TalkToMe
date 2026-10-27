@@ -26,7 +26,8 @@ HINTS = {
                                                "<code>sudo apt install libportaudio2</code>."),
     "network": QT_TRANSLATE_NOOP("TalkToMe", "No connection to the Python Package Index (pypi.org). Check the "
                                              "internet connection and install again."),
-    "disk": QT_TRANSLATE_NOOP("TalkToMe", "Not enough disk space: the speech service needs about 550 MB."),
+    "disk": QT_TRANSLATE_NOOP("TalkToMe", "Not enough disk space: the speech service needs about 550 MB, "
+                                          "its GPU support about 2 GB more."),
     "python_version": QT_TRANSLATE_NOOP("TalkToMe", "The packages are not available for this Python or system. "
                                                     "Tested with Python 3.10."),
 }
@@ -74,6 +75,17 @@ def no_python_hint():
                                  "<code>sudo apt install python3 python3-venv</code>.")
 
 
+def nvidia_driver():
+    """The NVIDIA graphics driver is installed (its CUDA library); macOS has none."""
+    if WINDOWS:
+        return ctypes.util.find_library("nvcuda") is not None
+    return sys.platform.startswith("linux") and ctypes.util.find_library("cuda") is not None
+
+
+def gpu_installed():
+    return bool(install.cuda_library_dirs(venv(), WINDOWS))
+
+
 def portaudio_missing():
     """On Linux the audio library comes from the system; elsewhere it comes with sounddevice."""
     return sys.platform.startswith("linux") and ctypes.util.find_library("portaudio") is None
@@ -90,7 +102,7 @@ class InstallDialog(QtWidgets.QDialog):
         self.process = None
         self.steps = []
         self.output = ""
-        self.done = False
+        self.succeeded = False                # not "done": that is QDialog.done(), which reject() calls
 
         layout = QtWidgets.QVBoxLayout(self)
         intro = QtWidgets.QLabel(translate("TalkToMe",
@@ -110,6 +122,18 @@ class InstallDialog(QtWidgets.QDialog):
         self.python_label.setTextFormat(QtCore.Qt.TextFormat.RichText)
         self.python_label.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
         layout.addWidget(self.python_label)
+
+        self.offer_gpu = nvidia_driver() or gpu_installed()
+        self.gpu = QtWidgets.QCheckBox(translate("TalkToMe", "Also install the GPU support for the NVIDIA graphics card"))
+        self.gpu.setChecked(gpu_installed())        # an update keeps it up to date
+        gpu_hint = QtWidgets.QLabel(translate("TalkToMe",
+            "Faster recognition and the more accurate models. Downloads NVIDIA's CUDA libraries from pypi.org: "
+            "about 1.3 GB more."))
+        gpu_hint.setWordWrap(True)
+        gpu_hint.setContentsMargins(24, 0, 0, 0)
+        for widget in (self.gpu, gpu_hint):
+            widget.setVisible(self.offer_gpu)
+            layout.addWidget(widget)
 
         self.log = QtWidgets.QPlainTextEdit()
         self.log.setReadOnly(True)
@@ -160,7 +184,9 @@ class InstallDialog(QtWidgets.QDialog):
         self.result.setText("")
         self.output = ""
         base = self.base[:2] if self.base else None
-        self.steps = install.install_steps(base, self.venv, REQUIREMENTS, self.have_venv, WINDOWS)
+        self.steps = install.install_steps(base, self.venv, REQUIREMENTS, self.have_venv, WINDOWS,
+                                           gpu=self.offer_gpu and self.gpu.isChecked())
+        self.gpu.setEnabled(False)
         self.progress.show()
         self.run_next()
 
@@ -221,6 +247,7 @@ class InstallDialog(QtWidgets.QDialog):
             " ".join(hints) or translate("TalkToMe", "The output above says why.")))
         self.install_button.setText(translate("TalkToMe", "Install again"))
         self.install_button.setEnabled(True)
+        self.gpu.setEnabled(True)
 
     def finish(self):
         """Check that the service's Python finds its packages and a microphone."""
@@ -229,9 +256,10 @@ class InstallDialog(QtWidgets.QDialog):
         QtWidgets.QApplication.processEvents()   # show it before the check blocks
         probe = talktome.gui.probe_service(timeout_ms=30000)
         self.progress.hide()
-        self.done = bool(probe)
+        self.succeeded = bool(probe)
         self.install_button.setText(translate("TalkToMe", "Update"))
         self.install_button.setEnabled(True)
+        self.gpu.setEnabled(True)
         self.close_button.setDefault(True)
         if not probe:
             self.result.setText("<b>{}</b>".format(translate("TalkToMe",
@@ -242,10 +270,12 @@ class InstallDialog(QtWidgets.QDialog):
                 translate("TalkToMe", "Installed, but the microphone is not usable yet."),
                 " ".join(hints) or probe["error"]))
         else:
-            self.result.setText("<b>{}</b> {}".format(
-                translate("TalkToMe", "Installed."),
-                translate("TalkToMe", "Switch on the microphone with the button in the toolbar \"Talk to me\"; "
-                                      "its first start downloads the model.")))
+            notes = [translate("TalkToMe", "Switch on the microphone with the button in the toolbar \"Talk to me\"; "
+                                           "its first start downloads the model.")]
+            if probe.get("cuda_libraries"):
+                notes.append(translate("TalkToMe", "If it is on already, switch it off and on again to use the GPU. "
+                                                   "If the GPU does not work, the CPU is used and the status bar says so."))
+            self.result.setText("<b>{}</b> {}".format(translate("TalkToMe", "Installed."), " ".join(notes)))
 
     def reject(self):
         if self.process is not None:
@@ -262,7 +292,7 @@ def run(parent=None):
     """Show the dialog; True if the speech service was installed."""
     dialog = InstallDialog(parent)
     (getattr(dialog, "exec", None) or dialog.exec_)()      # exec_ before PySide6
-    return dialog.done
+    return dialog.succeeded
 
 
 def remove(parent=None):

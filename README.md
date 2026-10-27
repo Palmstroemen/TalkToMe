@@ -52,11 +52,15 @@ The addon itself is a few MB. Speech recognition needs much more, about as much 
 | Speech service (faster-whisper, Piper, numpy, …) | ~550 MB | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
 | Speech model, downloaded on first use | `tiny` ~75 MB, `base` ~150 MB (default without GPU), `small` ~500 MB (default with GPU), `medium` ~1.5 GB | `~/.cache/huggingface` | huggingface.co |
 | Voice of the speech output, per language | ~60 MB | `~/.cache/talktome/voices` | huggingface.co |
+| GPU support, optional: NVIDIA's CUDA libraries (cuBLAS, cuDNN 9) | ~1.3 GB download, ~2 GB on disk | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
 
-A usual installation without GPU takes about 750 MB. With an NVIDIA GPU, the CUDA 12 libraries
-(cuBLAS, cuDNN 9) come on top (often more than 1 GB), see [faster-whisper](https://github.com/SYSTRAN/faster-whisper#gpu).
-They are not installed with the speech service: without them it uses the CPU and the status bar
-says "no usable GPU found, using the CPU".
+A usual installation without GPU takes about 750 MB.
+
+**NVIDIA graphics card (Windows, Linux):** when the install dialog finds NVIDIA's driver, it offers
+"Also install the GPU support". Only the graphics driver has to be installed, not CUDA. Without
+the GPU support, or when the GPU does not work (an old driver, for example), the speech service
+uses the CPU and the status bar says "no usable GPU found, using the CPU". **Macs** recognize on
+the CPU: faster-whisper has no support for Apple's GPU.
 
 These downloads are the only connections to the internet. What you say, the documents and
 what Talk to me learns stay on your computer.

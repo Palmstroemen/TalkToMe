@@ -92,3 +92,35 @@ def test_diagnose_known_problems():
                             "left on device") == ["disk"]
     assert install.diagnose("ERROR: No matching distribution found for ctranslate2") == ["python_version"]
     assert install.diagnose("Successfully installed numpy-2.2.6") == []
+
+
+def test_gpu_support_is_an_extra_step():
+    steps = install.install_steps(None, "/u/venv", "/r.txt", have_venv=True, gpu=True)
+    assert [s[0] for s in steps] == ["packages", "gpu"]
+    assert steps[1][1] == install.venv_python("/u/venv")
+    assert steps[1][2][:3] == ["-m", "pip", "install"]
+    assert set(install.GPU_PACKAGES) <= set(steps[1][2])
+    assert [s[0] for s in install.install_steps(None, "/u/venv", "/r.txt", have_venv=True)] == ["packages"]
+
+
+def test_cuda_library_dirs_of_the_nvidia_packages():
+    linux = os.path.join("/u/venv", "lib", "python3.12", "site-packages", "nvidia")
+    found = [os.path.join(linux, "cublas", "lib"), os.path.join(linux, "cudnn", "lib")]
+    patterns = []
+
+    def glob(pattern):
+        patterns.append(pattern)
+        return list(reversed(found))
+    assert install.cuda_library_dirs("/u/venv", glob=glob) == found
+    assert patterns == [os.path.join("/u/venv", "lib", "python*", "site-packages", "nvidia", "*", "lib")]
+    patterns.clear()
+    install.cuda_library_dirs("C:/venv", windows=True, glob=glob)
+    assert patterns == [os.path.join("C:/venv", "Lib", "site-packages", "nvidia", "*", "bin")]
+
+
+def test_library_path_puts_the_cuda_libraries_first():
+    dirs = ["/a", "/b"]
+    assert install.library_path(dirs, "/usr/lib") == ("LD_LIBRARY_PATH", os.pathsep.join(["/a", "/b", "/usr/lib"]))
+    assert install.library_path(dirs, "") == ("LD_LIBRARY_PATH", os.pathsep.join(dirs))
+    assert install.library_path(dirs, "C:/Windows", windows=True) == ("PATH", os.pathsep.join(["/a", "/b", "C:/Windows"]))
+    assert install.library_path([], "/usr/lib") is None

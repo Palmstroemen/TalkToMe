@@ -6,10 +6,15 @@ packages, and an AppImage's Python vanishes with the AppImage's mount. The envir
 the user's Talk to me folder, so updating or reinstalling the addon keeps it.
 """
 
+import glob as _glob
 import os
 import re
 
 MIN_PYTHON = (3, 10)          # oldest Python with wheels of all packages (numpy, av, onnxruntime)
+
+# CUDA libraries for faster-whisper on an NVIDIA GPU (Windows, Linux), as NVIDIA's own wheels:
+# only the graphics driver has to be installed. ctranslate2 needs CUDA 12 and cuDNN 9.
+GPU_PACKAGES = ("nvidia-cublas-cu12", "nvidia-cudnn-cu12==9.*")
 
 # What the output of a failed step says, and what to do about it (shown by the addon).
 PROBLEMS = (
@@ -79,17 +84,38 @@ def find_python(dirs, version_of, windows=False, isfile=os.path.isfile, join=os.
     return None
 
 
-def install_steps(base, venv, requirements, have_venv, windows=False):
-    """[(step, program, args)]: create the environment unless it exists, install the packages.
-    base is (program, args) of the system's Python; installing again adds what newer requirements ask for."""
+def install_steps(base, venv, requirements, have_venv, windows=False, gpu=False):
+    """[(step, program, args)]: create the environment unless it exists, install the packages,
+    with gpu also the CUDA libraries. base is (program, args) of the system's Python; installing
+    again adds what newer requirements ask for."""
     steps = []
     if not have_venv:
         program, args = base
         steps.append(("venv", program, list(args) + ["-m", "venv", venv]))
-    steps.append(("packages", venv_python(venv, windows),
-                  ["-m", "pip", "install", "--disable-pip-version-check", "--progress-bar", "off",
-                   "-r", requirements]))
+    pip = ["-m", "pip", "install", "--disable-pip-version-check", "--progress-bar", "off"]
+    steps.append(("packages", venv_python(venv, windows), pip + ["-r", requirements]))
+    if gpu:
+        steps.append(("gpu", venv_python(venv, windows), pip + list(GPU_PACKAGES)))
     return steps
+
+
+def cuda_library_dirs(venv, windows=False, glob=_glob.glob):
+    """Folders with the libraries of the GPU_PACKAGES in the environment; [] if not installed."""
+    if windows:
+        pattern = os.path.join(venv, "Lib", "site-packages", "nvidia", "*", "bin")
+    else:
+        pattern = os.path.join(venv, "lib", "python*", "site-packages", "nvidia", "*", "lib")
+    return sorted(glob(pattern))
+
+
+def library_path(dirs, current, windows=False):
+    """(variable, value) that lets the service find the CUDA libraries in dirs, or None.
+
+    They are loaded only when the GPU decodes, by name: Windows looks in PATH, Linux in
+    LD_LIBRARY_PATH, which is read when a process starts, so the one starting the service sets it."""
+    if not dirs:
+        return None
+    return ("PATH" if windows else "LD_LIBRARY_PATH"), os.pathsep.join(list(dirs) + ([current] if current else []))
 
 
 def diagnose(output):

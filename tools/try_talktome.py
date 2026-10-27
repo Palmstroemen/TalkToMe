@@ -26,6 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.join(ROOT, "service")
 sys.path.insert(0, ROOT)
 
+from ttm_core import install  # noqa: E402
 from ttm_core.protocol import VERSION, LineDecoder, encode, make_message  # noqa: E402
 
 END_SILENCE_MS = 640     # pause after which the service considers a sentence finished
@@ -48,6 +49,11 @@ def start_service(args, token):
     cmd += ["--volume", str(args.volume)]
     env = dict(os.environ, TTM_TOKEN=token,
                PYTHONPATH=os.pathsep.join([ROOT, SERVICE_DIR, os.environ.get("PYTHONPATH", "")]))
+    windows = os.name == "nt"
+    variable = install.library_path(install.cuda_library_dirs(sys.prefix, windows),
+                                    os.environ.get("PATH" if windows else "LD_LIBRARY_PATH", ""), windows)
+    if variable:
+        env[variable[0]] = variable[1]
     proc = subprocess.Popen(cmd, cwd=SERVICE_DIR, env=env, stdout=subprocess.PIPE, text=True)
     for line in proc.stdout:
         if line.startswith("TTM_PORT="):

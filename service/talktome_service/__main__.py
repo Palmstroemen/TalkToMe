@@ -21,8 +21,11 @@ def log(*args):
 
 
 def probe():
-    """What the settings page can offer: input devices, CUDA devices, speech output."""
-    result = {"microphones": [], "default_microphone": None, "cuda_devices": 0, "speech": False}
+    """What the settings page can offer: input devices, CUDA devices and whether the GPU support
+    is installed (ttm_core.install.GPU_PACKAGES), speech output."""
+    from ttm_core import install
+    result = {"microphones": [], "default_microphone": None, "cuda_devices": 0, "speech": False,
+              "cuda_libraries": bool(install.cuda_library_dirs(sys.prefix, os.name == "nt"))}
     try:
         import sounddevice as sd
         default_input = sd.default.device[0]

@@ -109,17 +109,17 @@
         <translation>Talk to me: Sprachdienst nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="262"/>
+        <location filename="../talktome/gui.py" line="268"/>
         <source>speech service not installed ({} not found)</source>
         <translation>Sprachdienst nicht installiert ({} nicht gefunden)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="292"/>
+        <location filename="../talktome/gui.py" line="298"/>
         <source>starting speech service (the first start downloads the model) ...</source>
         <translation>Sprachdienst startet (beim ersten Start wird das Modell geladen) …</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="319"/>
+        <location filename="../talktome/gui.py" line="325"/>
         <source>Talk to me: speech service output:
   {}
 </source>
@@ -128,94 +128,94 @@
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="321"/>
+        <location filename="../talktome/gui.py" line="327"/>
         <source>speech service stopped, see Report view for details</source>
         <translation>Sprachdienst beendet, Einzelheiten im Ausgabefenster</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="353"/>
+        <location filename="../talktome/gui.py" line="359"/>
         <source>cannot connect to speech service: {}</source>
         <translation>keine Verbindung zum Sprachdienst: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="409"/>
+        <location filename="../talktome/gui.py" line="415"/>
         <source>connection to speech service lost</source>
         <translation>Verbindung zum Sprachdienst verloren</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="419"/>
+        <location filename="../talktome/gui.py" line="425"/>
         <source>no usable GPU found, using the CPU</source>
         <translation>keine nutzbare Grafikkarte gefunden, die CPU wird verwendet</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="434"/>
+        <location filename="../talktome/gui.py" line="440"/>
         <source>not understood: »{}« ({})</source>
         <translation>nicht verstanden: »{}« ({})</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="534"/>
+        <location filename="../talktome/gui.py" line="540"/>
         <source>nothing to pick</source>
         <translation>nichts zum Auswählen</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="564"/>
+        <location filename="../talktome/gui.py" line="570"/>
         <source>»{}« → {} failed: {}</source>
         <translation>»{}« → {} fehlgeschlagen: {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="565"/>
+        <location filename="../talktome/gui.py" line="571"/>
         <source>Talk to me: »{}« → {} failed: {}
 </source>
         <translation>Talk to me: »{}« → {} fehlgeschlagen: {}
 </translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="581"/>
+        <location filename="../talktome/gui.py" line="587"/>
         <source> (from help text)</source>
         <translation> (aus dem Hilfetext)</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="596"/>
+        <location filename="../talktome/gui.py" line="602"/>
         <source>dry run, not executed</source>
         <translation>Testmodus, nicht ausgeführt</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="603"/>
+        <location filename="../talktome/gui.py" line="609"/>
         <source>values wait for the first click</source>
         <translation>Werte warten auf den ersten Klick</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="605"/>
+        <location filename="../talktome/gui.py" line="611"/>
         <source>no tool waiting for values</source>
         <translation>kein Werkzeug wartet auf Werte</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="606"/>
+        <location filename="../talktome/gui.py" line="612"/>
         <source>values {}</source>
         <translation>Werte {}</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="615"/>
+        <location filename="../talktome/gui.py" line="621"/>
         <source>no object »{}« in the document</source>
         <translation>kein Objekt »{}« im Dokument</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="616"/>
+        <location filename="../talktome/gui.py" line="622"/>
         <source>nothing to rename: select an object</source>
         <translation>nichts zum Umbenennen: wähle ein Objekt aus</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="620"/>
+        <location filename="../talktome/gui.py" line="626"/>
         <source>dimension name »{}«</source>
         <translation>Name der Bemaßung »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="624"/>
+        <location filename="../talktome/gui.py" line="630"/>
         <source>rename dimension {} to »{}«</source>
         <translation>Bemaßung {} umbenannt in »{}«</translation>
     </message>
     <message>
-        <location filename="../talktome/gui.py" line="627"/>
+        <location filename="../talktome/gui.py" line="633"/>
         <source>rename {} to »{}«</source>
         <translation>{} umbenannt in »{}«</translation>
     </message>
@@ -541,7 +541,7 @@
         <translation>Systemvorgabe</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="317"/>
+        <location filename="../talktome/preferences.py" line="320"/>
         <source>Found: {} CUDA GPU(s).</source>
         <translation>Gefunden: {} CUDA-Grafikkarte(n).</translation>
     </message>
@@ -551,12 +551,17 @@
         <translation>Keine CUDA-Grafikkarte gefunden: Die CPU wird verwendet.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="321"/>
+        <location filename="../talktome/preferences.py" line="322"/>
+        <source>Found: {} CUDA GPU(s), but not its GPU support: the CPU is used unless CUDA is installed in the system. Install it with General → Update….</source>
+        <translation>Gefunden: {} CUDA-GPU(s), aber nicht ihre GPU-Unterstützung: Die CPU wird verwendet, außer CUDA ist im System installiert. Installiere sie mit Allgemein → Aktualisieren….</translation>
+    </message>
+    <message>
+        <location filename="../talktome/preferences.py" line="327"/>
         <source>Default: {}. Any Piper voice (name or .onnx file) works; check its license.</source>
         <translation>Vorgabe: {}. Jede Piper-Stimme (Name oder .onnx-Datei) geht; prüfe ihre Lizenz.</translation>
     </message>
     <message>
-        <location filename="../talktome/preferences.py" line="322"/>
+        <location filename="../talktome/preferences.py" line="328"/>
         <source>Speech output needs piper-tts in the service&apos;s Python.</source>
         <translation>Die Sprachausgabe braucht piper-tts im Python des Sprachdienstes.</translation>
     </message>
@@ -678,120 +683,135 @@
         <translation>Keine Verbindung zum Python Package Index (pypi.org). Prüfe die Internetverbindung und installiere noch einmal.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="29"/>
-        <source>Not enough disk space: the speech service needs about 550 MB.</source>
-        <translation>Nicht genug Speicherplatz: Der Sprachdienst braucht ca. 550 MB.</translation>
-    </message>
-    <message>
-        <location filename="../talktome/install.py" line="30"/>
+        <location filename="../talktome/install.py" line="31"/>
         <source>The packages are not available for this Python or system. Tested with Python 3.10.</source>
         <translation>Die Pakete gibt es für dieses Python oder System nicht. Getestet mit Python 3.10.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="70"/>
+        <location filename="../talktome/install.py" line="71"/>
         <source>Install Python from python.org, then open this dialog again.</source>
         <translation>Installiere Python von python.org und öffne diesen Dialog dann noch einmal.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="72"/>
+        <location filename="../talktome/install.py" line="73"/>
         <source>Install Python from python.org or with Homebrew, then open this dialog again.</source>
         <translation>Installiere Python von python.org oder mit Homebrew und öffne diesen Dialog dann noch einmal.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="73"/>
+        <location filename="../talktome/install.py" line="74"/>
         <source>Install it with the package manager of your system, on Debian, Ubuntu and Mint: &lt;code&gt;sudo apt install python3 python3-venv&lt;/code&gt;.</source>
         <translation>Installiere es mit der Paketverwaltung deines Systems, unter Debian, Ubuntu und Mint: &lt;code&gt;sudo apt install python3 python3-venv&lt;/code&gt;.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="85"/>
+        <location filename="../talktome/install.py" line="97"/>
         <source>Talk to me: install the speech service</source>
         <translation>Talk to me: Sprachdienst installieren</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="96"/>
+        <location filename="../talktome/install.py" line="108"/>
         <source>Talk to me recognizes speech in a Python environment of its own, apart from FreeCAD&apos;s Python. Installing it downloads:&lt;ul&gt;&lt;li&gt;the Python packages faster-whisper, Piper, sounddevice and numpy from the Python Package Index (pypi.org): about 550 MB on disk, in &lt;code&gt;{}&lt;/code&gt;&lt;/li&gt;&lt;li&gt;on the first start of the microphone, the speech recognition model from Hugging Face (&quot;base&quot;: about 150 MB) and the voice of the speech output (about 60 MB)&lt;/li&gt;&lt;/ul&gt;After that, everything runs on this computer: what you say is not sent anywhere.</source>
         <translation>Talk to me erkennt Sprache in einer eigenen Python-Umgebung, getrennt von FreeCADs Python. Die Installation lädt herunter:&lt;ul&gt;&lt;li&gt;die Python-Pakete faster-whisper, Piper, sounddevice und numpy aus dem Python Package Index (pypi.org): ca. 550 MB auf der Festplatte, in &lt;code&gt;{}&lt;/code&gt;&lt;/li&gt;&lt;li&gt;beim ersten Einschalten des Mikrofons das Spracherkennungsmodell von Hugging Face („base“: ca. 150 MB) und die Stimme der Sprachausgabe (ca. 60 MB)&lt;/li&gt;&lt;/ul&gt;Danach läuft alles auf diesem Rechner: Was du sagst, wird nirgendwohin geschickt.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="131"/>
-        <location filename="../talktome/install.py" line="233"/>
+        <location filename="../talktome/install.py" line="127"/>
+        <source>Also install the GPU support for the NVIDIA graphics card</source>
+        <translation>Auch die GPU-Unterstützung für die NVIDIA-Grafikkarte installieren</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="129"/>
+        <source>Faster recognition and the more accurate models. Downloads NVIDIA&apos;s CUDA libraries from pypi.org: about 1.3 GB more.</source>
+        <translation>Schnellere Erkennung und die genaueren Modelle. Lädt NVIDIAs CUDA-Bibliotheken von pypi.org: etwa 1,3 GB zusätzlich.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="155"/>
+        <location filename="../talktome/install.py" line="260"/>
         <source>Update</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="131"/>
+        <location filename="../talktome/install.py" line="155"/>
         <source>Install</source>
         <translation>Installieren</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="133"/>
+        <location filename="../talktome/install.py" line="157"/>
         <location filename="../talktome/training.py" line="122"/>
         <location filename="../talktome/vocabulary.py" line="64"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="143"/>
+        <location filename="../talktome/install.py" line="167"/>
         <source>Installed. &quot;Update&quot; installs newer packages the addon needs.</source>
         <translation>Installiert. „Aktualisieren“ installiert neuere Pakete, die das Addon braucht.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="146"/>
+        <location filename="../talktome/install.py" line="170"/>
         <source>No Python {}.{} or newer found.</source>
         <translation>Kein Python {}.{} oder neuer gefunden.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="150"/>
+        <location filename="../talktome/install.py" line="174"/>
         <source>Python used: &lt;code&gt;{}&lt;/code&gt; ({}.{})</source>
         <translation>Verwendetes Python: &lt;code&gt;{}&lt;/code&gt; ({}.{})</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="220"/>
+        <location filename="../talktome/install.py" line="246"/>
         <source>Installation failed.</source>
         <translation>Die Installation ist fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="221"/>
+        <location filename="../talktome/install.py" line="247"/>
         <source>The output above says why.</source>
         <translation>Die Ausgabe oben nennt den Grund.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="222"/>
+        <location filename="../talktome/install.py" line="248"/>
         <source>Install again</source>
         <translation>Noch einmal installieren</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="228"/>
+        <location filename="../talktome/install.py" line="255"/>
         <source>Checking the speech service ...</source>
         <translation>Prüfe den Sprachdienst ...</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="237"/>
+        <location filename="../talktome/install.py" line="265"/>
         <source>The packages are installed, but the speech service does not start. The Report view may say why.</source>
         <translation>Die Pakete sind installiert, aber der Sprachdienst startet nicht. Die Ausgabe in der Berichtsansicht nennt vielleicht den Grund.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="242"/>
+        <location filename="../talktome/install.py" line="270"/>
         <source>Installed, but the microphone is not usable yet.</source>
         <translation>Installiert, aber das Mikrofon ist noch nicht nutzbar.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="246"/>
+        <location filename="../talktome/install.py" line="276"/>
+        <source>If it is on already, switch it off and on again to use the GPU. If the GPU does not work, the CPU is used and the status bar says so.</source>
+        <translation>Ist es schon an, schalte es aus und wieder ein, um die GPU zu nutzen. Funktioniert die GPU nicht, wird die CPU verwendet; die Statusleiste sagt es dann.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="278"/>
         <source>Installed.</source>
         <translation>Installiert.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="247"/>
+        <location filename="../talktome/install.py" line="273"/>
         <source>Switch on the microphone with the button in the toolbar &quot;Talk to me&quot;; its first start downloads the model.</source>
         <translation>Schalte das Mikrofon mit dem Button in der Symbolleiste „Talk to me“ ein; beim ersten Start wird das Modell heruntergeladen.</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="271"/>
+        <location filename="../talktome/install.py" line="29"/>
+        <source>Not enough disk space: the speech service needs about 550 MB, its GPU support about 2 GB more.</source>
+        <translation>Nicht genug Speicherplatz: Der Sprachdienst braucht etwa 550 MB, seine GPU-Unterstützung etwa 2 GB mehr.</translation>
+    </message>
+    <message>
+        <location filename="../talktome/install.py" line="301"/>
         <source>Talk to me</source>
         <translation>Talk to me</translation>
     </message>
     <message>
-        <location filename="../talktome/install.py" line="271"/>
+        <location filename="../talktome/install.py" line="301"/>
         <source>Remove the speech service ({})?
 
 Downloaded models (~/.cache/huggingface) and voices (~/.cache/talktome) stay; delete them by hand if you don&apos;t need them any more.</source>
