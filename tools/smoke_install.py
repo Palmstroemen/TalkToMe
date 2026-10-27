@@ -56,6 +56,7 @@ def run(program, args, **kwargs):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")     # it passes on the service's »«, ● (Windows: cp1252)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--venv", required=True)
     ap.add_argument("--language", default="de")
