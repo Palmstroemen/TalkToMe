@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Measure latency and accuracy of the speech recognition (Phase 0).
 
 Record your own voice (one utterance per phrase, cut automatically by the VAD):

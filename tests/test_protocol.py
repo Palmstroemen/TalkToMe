@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the line-based JSON protocol between addon and speech service."""
 
 import json

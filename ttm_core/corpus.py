@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Ground-truth corpus: sentences with the steps they must produce (DESIGN.md 16.5).
 
     lang/<code>/corpus.jsonl        one case per line; "#" starts a comment line

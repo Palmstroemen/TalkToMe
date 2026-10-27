@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for language packs: the language data of the recognition, outside the code (DESIGN.md 13.1)."""
 
 import json

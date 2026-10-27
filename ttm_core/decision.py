@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Decide what to do with a recognized sentence (DESIGN.md, sections 7 and 9.3).
 
     execute         a clear, active command

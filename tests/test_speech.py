@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the sentences of the speech output (DESIGN.md 10.1)."""
 
 import pytest

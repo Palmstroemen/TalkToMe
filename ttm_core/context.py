@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Command candidates of the current FreeCAD context (DESIGN.md, section 6).
 
 The FreeCAD addon collects raw data (toolbars, button texts, edit mode, ...) and this module

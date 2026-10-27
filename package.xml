@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>Talk to me</name>
-  <description>Local, multilingual voice control for FreeCAD.</description>
-  <version>0.0.1</version>
-  <date>2026-10-18</date>
+  <description>Local, multilingual voice control for FreeCAD: spoken commands run FreeCAD's own commands. Beta, for testers. The speech service is installed from the settings page and needs about 550 MB, plus a speech model of 75–500 MB.</description>
+  <version>0.1.0</version>
+  <date>2026-10-27</date>
   <maintainer email="19696982+Palmstroemen@users.noreply.github.com">Palmstroemen</maintainer>
   <license file="LICENSE">LGPL-2.1-or-later</license>
+  <url type="repository" branch="main">https://github.com/Palmstroemen/TalkToMe</url>
+  <url type="bugtracker">https://github.com/Palmstroemen/TalkToMe/issues</url>
+  <url type="readme">https://github.com/Palmstroemen/TalkToMe/blob/main/README.md</url>
   <icon>Resources/icons/TalkToMe.svg</icon>
+  <tag>voice</tag>
+  <tag>speech</tag>
+  <tag>speech recognition</tag>
+  <tag>accessibility</tag>
+  <tag>productivity</tag>
   <content>
     <!-- Not a real workbench but a global toolbar. FreeCAD only runs InitGui.py for
          "workbench" content, so it is declared as one, without a classname. -->

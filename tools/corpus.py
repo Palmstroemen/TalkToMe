@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Play the ground-truth corpus of a language pack (DESIGN.md 16.5) and show the result.
 
     python tools/corpus.py de                   summary and the cases that are not correct

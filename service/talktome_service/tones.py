@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Synthetic confirmation and error tones. See DESIGN.md, section 10."""
 
 import threading

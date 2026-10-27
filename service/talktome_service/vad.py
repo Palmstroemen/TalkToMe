@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Streaming voice activity detection with the Silero VAD model bundled with faster-whisper."""
 
 import os

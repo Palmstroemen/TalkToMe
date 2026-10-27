@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Line-based JSON protocol between the FreeCAD addon and the speech service.
 
 Every message is a JSON object with a "type" field, sent as one UTF-8 line.

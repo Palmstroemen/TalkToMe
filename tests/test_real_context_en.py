@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """English: decisions in contexts recorded from FreeCAD 1.1.4 with English user interface.
 
 The same code as for German, only the language pack differs (lang/en/). Recorded like the German

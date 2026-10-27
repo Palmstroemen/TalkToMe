@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Piper voices for the speech output (DESIGN.md 10.1).
 
 A voice is a name from https://huggingface.co/rhasspy/piper-voices ("de_DE-thorsten-medium"),

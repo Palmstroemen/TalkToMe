@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for matching a sentence with the help texts of commands (DESIGN.md 7, stage 1b)."""
 
 from ttm_core.description import DescriptionIndex, terms

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for values spoken while a tool waits for them (DESIGN.md 6.5): "50 mal 30", "Höhe 30"."""
 
 import pytest

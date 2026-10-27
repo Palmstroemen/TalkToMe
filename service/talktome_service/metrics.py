@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Word error rate for measuring the speech recognition."""
 
 from ttm_core.text import normalize  # noqa: F401  (re-exported for callers of metrics)

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Phrases for commands, from button texts and vocabulary files (DESIGN.md, section 8)."""
 
 import re

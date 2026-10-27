@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Record the current FreeCAD context for the corpus (DESIGN.md 16.5).
 
 Run it in FreeCAD as a macro (Macro → Macros… → this file → Execute), in the state the corpus

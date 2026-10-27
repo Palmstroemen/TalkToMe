@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Find a document object by its spoken name (DESIGN.md 7, Umbenennen).
 
 "Benenne den Körper zwei in Grundplatte um": the user reads the tree, where FreeCAD writes

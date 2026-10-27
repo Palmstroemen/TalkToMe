@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the word error rate used by the measurement tool."""
 
 import pytest

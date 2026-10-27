@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Values spoken while a tool waits for them (DESIGN.md 6.5).
 
 After the first corner of a rectangle, the sketcher asks for its width and height in fields in the

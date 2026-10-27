@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Stage 1b of the matching pipeline: comparison with the help texts of commands (DESIGN.md 7).
 
 FreeCAD describes every command in a status tip, translated into the user's language:

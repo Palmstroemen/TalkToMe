@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Audio sources delivering float32 frames of FRAME samples at 16 kHz."""
 
 import threading

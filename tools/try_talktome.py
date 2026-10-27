@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Try "Talk to me" outside FreeCAD.
 
 Starts the speech service, switches the microphone on and prints every recognized

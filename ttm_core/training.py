@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Training: learn how the speech recognition hears the user (DESIGN.md 8.7).
 
 The user says what was meant a few times; what the recognizer made of it is stored as "heard"

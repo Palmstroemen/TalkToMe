@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Phonetic codes for matching misheard words (DESIGN.md, section 7).
 
 German uses the Cologne phonetics, English Metaphone; a language pack names its algorithm.

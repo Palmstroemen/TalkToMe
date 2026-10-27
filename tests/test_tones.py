@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the synthetic confirmation and error tones."""
 
 import numpy as np

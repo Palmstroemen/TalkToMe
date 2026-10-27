@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Crude word stemmers: enough to make inflected forms of one word equal, not linguistics.
 
     "Extrudiere", "extrudiert", "extrudieren" → "extrud"

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for training: learning how the recognizer hears the user (DESIGN.md 8.7)."""
 
 import json

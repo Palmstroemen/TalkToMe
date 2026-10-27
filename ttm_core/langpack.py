@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Language packs: what the recognition needs to know about a language (DESIGN.md 13.1).
 
     lang/<code>/language.json   word lists, number words, names of the phonetic and stemming algorithm

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Language specific word lists used by the matching, read from the language packs (lang/<code>/).
 
 Each name is a view language → value, e.g. FILLER_WORDS.get("de", set()).

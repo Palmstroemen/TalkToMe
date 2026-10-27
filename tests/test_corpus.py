@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the ground-truth corpus (DESIGN.md 16.5): sentences with the steps they must produce,
 played against recorded FreeCAD contexts with the vocabulary of the pack under test."""
 

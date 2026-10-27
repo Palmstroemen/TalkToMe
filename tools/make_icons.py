@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Generate the icons in Resources/icons in FreeCAD's style (Tango: gradients, light from the upper
 left, dark outline, highlight). One microphone, its states differ in color and overlay.
 

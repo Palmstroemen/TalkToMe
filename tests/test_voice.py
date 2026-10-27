@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for finding and loading Piper voices (DESIGN.md 10.1); no download, no model."""
 
 import numpy as np

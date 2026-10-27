@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Split an utterance into clauses (DESIGN.md 7, sequences).
 
 "Wechsle zu Part Design, erstelle einen Körper und dann speichern" has three clauses.

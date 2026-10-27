@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Start the speech service.
 
     TTM_TOKEN=<secret> python -m talktome_service --language de

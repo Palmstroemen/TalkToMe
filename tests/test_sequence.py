@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for splitting an utterance into clauses and finding the next step (DESIGN.md 7.x)."""
 
 from ttm_core.clauses import split_clauses

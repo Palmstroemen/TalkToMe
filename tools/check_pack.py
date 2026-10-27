@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Check a language pack before a pull request (DESIGN.md 16.1).
 
     python tools/check_pack.py fr          errors, warnings and the corpus result

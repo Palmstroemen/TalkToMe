@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Stage 1 of the matching pipeline: comparison with a vocabulary (DESIGN.md, section 7).
 
 commands maps a command ID to the phrases that may trigger it:

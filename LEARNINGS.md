@@ -364,6 +364,24 @@ Profil wählbar machen (CPU: `base`, GPU: `small`/`medium`) und mit dem Ziel-Mod
   Werkzeuge, Mausklicks (simulierte Ereignisse), Bildschirmfotos und sogar die echte
   Spracherkennung mit Piper-WAV-Dateien prüfen, ohne den Nutzer zu stören.
 
+### 3.6 Veröffentlichen
+
+- **Das Addon ist klein, die Spracherkennung groß:** Repo wenige MB, Dienst ~550 MB (faster-whisper
+  mit ctranslate2, FFmpeg, onnxruntime, numpy), Modell 75–500 MB, Stimme 60 MB, zusammen etwa so
+  viel wie FreeCAD selbst. Das gehört gut sichtbar ins README und in den Installationsdialog.
+- **Neuer Addon-Index** für FreeCAD 1.x: `github.com/FreeCAD/Addons` (das alte `FreeCAD-addons` mit
+  `.gitmodules` gilt nur noch für ältere Versionen). Aufnahme per Issue „Addon – Addition“. Das Repo
+  muss mindestens 30 Tage alt sein, der Index ist „nicht zum Alpha-Testen“; Tester nehmen das Repo
+  vorher als „Custom repository“ im Addon-Manager.
+- **Python-Abhängigkeiten** müssen auf einer Allow-List stehen. Eine eigene venv des Dienstes umgeht
+  das sauber, braucht dann aber einen Installer: Tester legen keine venv von Hand an.
+- **Die venv gehört in den Benutzerordner,** nicht in den Addon-Ordner, den ein Update ersetzt.
+- **Ein AppImage setzt sein `usr/bin` an den Anfang von `PATH`:** `python3` wäre dort FreeCADs
+  Python, das mit dem Einhängepunkt verschwindet. Beim Suchen nach dem System-Python `$APPDIR`
+  auslassen.
+- **Globale Toolbar:** Der Index verlangt, dass Befehle und Toolbars in der eigenen Workbench
+  bleiben. Für ein Mikrofon, das überall gilt, muss man das bei der Einreichung begründen.
+
 ---
 
 ## 4. Übertrag auf die Betriebssystemebene

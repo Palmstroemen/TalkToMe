@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for turning button texts and vocabulary files into phrases."""
 
 import pytest

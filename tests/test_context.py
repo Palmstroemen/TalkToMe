@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for building the command candidates of the current context (DESIGN.md section 6)."""
 
 from ttm_core.context import build_candidates

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the first, vocabulary-based matching stage (DESIGN.md section 7, stage 1)."""
 
 from ttm_core.matching import hotwords, match

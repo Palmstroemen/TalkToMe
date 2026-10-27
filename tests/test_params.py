@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for commands with free-text parameters, recognized by sentence patterns (DESIGN.md 7)."""
 
 import pytest

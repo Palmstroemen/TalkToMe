@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for checking a language pack before a pull request (tools/check_pack.py, DESIGN.md 16.1)."""
 
 import json

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Decisions in contexts recorded from FreeCAD 1.1.4 (German), with all their real labels and
 help texts. Small hand-made candidate lists miss the coincidences of 80 real commands.
 

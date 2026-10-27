@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Sentences of the speech output (DESIGN.md 10.1), from the language pack's speech.json.
 
 Tones for the everyday, speech where a tone explains too little. Each sentence has a level:

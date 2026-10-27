@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for the Cologne phonetics (Kölner Phonetik) used to match misheard German words."""
 
 import pytest

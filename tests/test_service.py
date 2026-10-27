@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Integration test of the speech service with fake microphone, VAD, recognizer and tones."""
 
 import socket

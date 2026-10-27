@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Commands with free-text parameters, recognized by sentence patterns (DESIGN.md 7).
 
 "Den nennen wir Bodenplatte" renames an object. The name is free text, so it can't be matched

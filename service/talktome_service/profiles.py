@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """GPU and CPU profiles for the speech recognition. See DESIGN.md, section 12.1."""
 
 from dataclasses import dataclass

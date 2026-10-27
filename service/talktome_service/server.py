@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Socket server tying microphone, VAD, segmenter, speech recognition and tones together.
 
 All hardware-facing parts are passed in, so the service can be tested with fakes:

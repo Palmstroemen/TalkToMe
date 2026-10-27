@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Find the next step of a spoken command sequence (DESIGN.md 7, sequences).
 
 "Wechsle zu Part Design, erstelle einen Körper" becomes two steps. They are decided one after

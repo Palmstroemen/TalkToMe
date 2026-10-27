@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Cut a continuous stream of audio frames into utterances, using VAD probabilities.
 
 Pure logic: frames are opaque objects, so this module needs neither numpy nor audio.

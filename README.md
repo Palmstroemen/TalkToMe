@@ -1,25 +1,85 @@
 # Talk to me
 
-Local, multilingual voice control for FreeCAD 1.x. Status: **Phase 1** (single commands).
-Design: see [DESIGN.md](DESIGN.md).
+Local, multilingual voice control for FreeCAD 1.x. Spoken commands run FreeCAD's own commands;
+nothing is generated, and speech is recognized on your computer. Design: see [DESIGN.md](DESIGN.md).
+
+**Status: beta, looking for testers.** Tested on Linux with the FreeCAD 1.1.4 AppImage, without a GPU,
+in German and English. Windows and macOS are untested.
 
 The microphone button listens continuously while switched on. Spoken commands of the current
 context ("Rechteck", "Schließe den Sketch", "Rückansicht", "Wechsle zu Part Design", "Abbrechen")
-are executed; the result shows in the status bar. Set the parameter `DryRun` to only show what
-would be executed.
+are executed; the result shows in the status bar. What works:
 
-## Setup (Linux)
+- commands of the current workbench, edit mode and dialog, by their name, a synonym or a description
+  of what they do ("Extrudiere das und ziehe es vom Körper ab" → Pocket)
+- several commands in one sentence ("Wechsle zu Part Design, erstelle einen Körper und dann eine Skizze")
+- values for sketcher tools and PartDesign dialogs ("Rechteck 50 mal 30", "Aufpolsterung 12 mm"),
+  the plane of a new sketch ("in der XY-Ebene"), renaming ("Den nennen wir Bodenplatte")
+- talk is ignored ("Der Kreis ist zu groß"); when not sure, a menu next to the mouse pointer asks
+- training of how the speech recognition hears you, a vocabulary editor, speech output, settings
+- languages: German, English
+
+Not yet: dialogs of other workbenches than PartDesign, push-to-talk, a level meter for the microphone.
+
+## Install
+
+You need a Python 3.10 or newer on your system (not FreeCAD's): the speech service runs in an
+environment of its own. On Debian, Ubuntu and Mint:
 
 ```bash
-sudo apt install libportaudio2                       # audio library for sounddevice
+sudo apt install python3-venv libportaudio2
+```
+
+1. **Add the addon.** Until it is in FreeCAD's addon index: Edit → Preferences → Addon Manager →
+   Custom repositories, add `https://github.com/Palmstroemen/TalkToMe` with branch `main`. Then
+   Tools → Addon manager, find "Talk to me", install it and restart FreeCAD.
+2. **Install the speech service.** Press the microphone button in the toolbar "Talk to me", or
+   Edit → Preferences → Talk to me → General → Install…. The dialog says what it downloads, then
+   creates the environment and installs the packages (a few minutes).
+3. **Switch on the microphone.** Its first start downloads the speech model; the status bar says
+   when it listens.
+
+"Update…" in the same place installs newer packages after an update of the addon.
+
+### Size and downloads
+
+The addon itself is a few MB. Speech recognition needs much more, about as much as FreeCAD:
+
+| What | Size | Where | From |
+|---|---|---|---|
+| Speech service (faster-whisper, Piper, numpy, …) | ~550 MB | `<UserAppDataDir>/TalkToMe/venv` | pypi.org |
+| Speech model, downloaded on first use | `tiny` ~75 MB, `base` ~150 MB (default without GPU), `small` ~500 MB (default with GPU), `medium` ~1.5 GB | `~/.cache/huggingface` | huggingface.co |
+| Voice of the speech output, per language | ~60 MB | `~/.cache/talktome/voices` | huggingface.co |
+
+A usual installation without GPU takes about 750 MB. With an NVIDIA GPU, the CUDA libraries come
+on top (often more than 1 GB), see [faster-whisper](https://github.com/SYSTRAN/faster-whisper#gpu).
+
+These downloads are the only connections to the internet. What you say, the documents and
+what Talk to me learns stay on your computer.
+
+The default voices are free: Thorsten (German, CC0) and LJSpeech (English, public domain). Any
+other Piper voice works too (`Voice` parameter); check its license yourself.
+
+### Remove
+
+Edit → Preferences → Talk to me → General → Remove… deletes the speech service. Models and voices
+stay in the caches above (another program may use the models); delete them by hand if you don't
+need them. Then uninstall the addon in the Addon Manager. Your settings and what you taught it are
+in `<UserAppDataDir>/TalkToMe`.
+
+## Development
+
+```bash
+git clone https://github.com/Palmstroemen/TalkToMe ~/Development/TalkToMe
+ln -s ~/Development/TalkToMe "<UserAppDataDir>/Mod/TalkToMe"
+sudo apt install python3-venv libportaudio2
 python3 -m venv service/.venv
 service/.venv/bin/pip install -r service/requirements.txt pytest
 ```
 
-The first start downloads the speech model (`base`: ~150 MB, `small`: ~500 MB) to `~/.cache/huggingface`
-and the voice of the speech output (~60 MB) to `~/.cache/talktome/voices`. The default voices are
-free: Thorsten (German, CC0) and LJSpeech (English, public domain). Any other Piper voice works
-too (`Voice` parameter); check its license yourself.
+FreeCAD's Python console shows the folder with `App.getUserAppDataDir()` (FreeCAD 1.1 on Linux:
+`~/.local/share/FreeCAD/v1-1/`). The addon uses `service/.venv` as long as the speech service is
+not installed in the user folder; the tools below need it.
 
 ## Try it outside FreeCAD
 
@@ -48,15 +108,9 @@ FreeCAD **1.x** is the target; 0.19 works as far as tested, but without newer sk
 | **AppImage** from [FreeCAD's releases](https://github.com/FreeCAD/FreeCAD/releases) | **Yes, recommended.** Runs directly on the system, so it can start the speech service and use the microphone. |
 | Flatpak, Snap | **Not yet.** FreeCAD runs in a sandbox: the service's venv points to the system's Python, which doesn't exist inside the sandbox, and microphone access is restricted. |
 | `apt install freecad` | Works, but Debian/Ubuntu/Mint LTS releases ship an old version (Ubuntu 22.04 / Mint 21: FreeCAD 0.19). |
+| Windows, macOS | Untested. The installer looks for `python.exe`/`py` (Windows) and for Python of python.org or Homebrew (macOS). Reports welcome. |
 
 ## Use in FreeCAD
-
-Link the repository into FreeCAD's Mod folder and restart FreeCAD. The folder differs between
-installations; FreeCAD's Python console shows it with `App.getUserAppDataDir()` (append `Mod`):
-
-```bash
-ln -s ~/Development/TalkToMe "<UserAppDataDir>/Mod/TalkToMe"
-```
 
 A toolbar "Talk to me" with a microphone button appears in every workbench. To give it a
 keyboard shortcut (or a foot pedal key), assign one to the command "Talk to me" in
@@ -77,9 +131,9 @@ it on purpose: pick what you meant, say it three times. Learned forms are stored
 on the training page and in the settings) shows them by command: delete them, or move a form
 learned for the wrong command to the right one.
 
-Settings: Edit → Preferences → Talk to me (language, microphone, volume, model, GPU/CPU, question
-menu, speech output and voice, word lists of the language, training). Changes the speech service
-needs restart it. The page writes these parameters (`BaseApp/Preferences/Mod/TalkToMe`):
+Settings: Edit → Preferences → Talk to me (speech service, language, microphone, volume, model,
+GPU/CPU, question menu, speech output and voice, word lists of the language, training). Changes
+the speech service needs restart it. The page writes these parameters (`BaseApp/Preferences/Mod/TalkToMe`):
 
 | Parameter | Default | Meaning |
 |---|---|---|
@@ -88,7 +142,7 @@ needs restart it. The page writes these parameters (`BaseApp/Preferences/Mod/Tal
 | `Volume` | `40` | Volume of tones and voice in percent |
 | `Model` | by hardware | `tiny`, `base`, `small`, ... |
 | `Device` | `auto` | `auto`, `cuda`, `cpu` |
-| `ServicePython` | `service/.venv/bin/python` | Python of the speech service |
+| `ServicePython` | the installed one | Python of the speech service: `<UserAppDataDir>/TalkToMe/venv`, else `service/.venv` |
 | `DryRun` | `false` | Only show recognized commands, don't execute them |
 | `AskMenu` | `true` | Question menu next to the mouse pointer when not sure |
 | `Speech` | `important` | Speech output: `off` (tones only), `important` (not understood, questions, training), `chatty` (also "Mache ich.") |

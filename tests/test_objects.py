@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for finding a document object by its spoken name (DESIGN.md 7, Umbenennen)."""
 
 import pytest

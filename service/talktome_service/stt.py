@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Speech recognition with faster-whisper in a fixed language."""
 
 import time

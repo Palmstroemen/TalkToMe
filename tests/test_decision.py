@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for deciding whether to execute, reject or ignore an utterance (DESIGN.md 7 and 9.3)."""
 
 import pytest

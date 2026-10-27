@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 """Tests for choosing between the GPU and the CPU profile."""
 
 import pytest
