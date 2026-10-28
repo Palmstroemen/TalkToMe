@@ -6,7 +6,8 @@ Local, multilingual voice control for FreeCAD 1.x. Spoken commands run FreeCAD's
 nothing is generated, and speech is recognized on your computer. Design: see [DESIGN.md](DESIGN.md).
 
 **Status: beta, looking for testers.** Tested on Linux with the FreeCAD 1.1.4 AppImage, without a GPU,
-in German and English. Windows and macOS are untested.
+in German and English, and by a user on Windows, with and without an NVIDIA graphics card. macOS is
+untested.
 
 The microphone button listens continuously while switched on. Spoken commands of the current
 context ("Rechteck", "Schließe den Sketch", "Rückansicht", "Wechsle zu Part Design", "Abbrechen")
@@ -116,7 +117,8 @@ FreeCAD **1.x** is the target; 0.19 works as far as tested, but without newer sk
 | **AppImage** from [FreeCAD's releases](https://github.com/FreeCAD/FreeCAD/releases) | **Yes, recommended.** Runs directly on the system, so it can start the speech service and use the microphone. |
 | Flatpak, Snap | **Not yet.** FreeCAD runs in a sandbox: the service's venv points to the system's Python, which doesn't exist inside the sandbox, and microphone access is restricted. |
 | `apt install freecad` | Works, but Debian/Ubuntu/Mint LTS releases ship an old version (Ubuntu 22.04 / Mint 21: FreeCAD 0.19). |
-| Windows, macOS | Untested. The installer looks for `python.exe`/`py` (Windows) and for Python of python.org or Homebrew (macOS). Reports welcome. |
+| Windows | Tested by a user, with and without an NVIDIA graphics card. The installer looks for `python.exe`/`py`. |
+| macOS | Untested. The installer looks for Python of python.org or Homebrew. Reports welcome. |
 
 ## Use in FreeCAD
 
